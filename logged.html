@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Prototype</title>
+    <link rel="stylesheet" href="build/layout.css">
+    <link rel="stylesheet" href="build/dark.css">
+    <link rel="stylesheet" href="lib/codemirror.css">
+    <script src="lib/codemirror.js"></script>
+    <script src="./codemirror-5.0/mode/commonlisp/commonlisp.js"></script>
+    <script src="lib/markdown-it.js"></script>
+    <script src="lib/react.js"></script>
+    <script src="build/Editor.js"></script>
+    <script src="build/AVM.js"></script>
+    <script src="build/MDText.js"></script>
+    <script src="build/Tabs.js"></script>
+    <script src="code.js"></script>
+</head>
+<body>
+
+    <header>
+        Prototype for master project
+    </header>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="index.html">Settings</a>
+        <span class="spacer"></span>
+        <a href="index.html">Logout</a>
+    </nav>
+
+    <main>
+
+        <section>
+        </section>
+
+        <div id="gutter_l" class="gutter"></div>
+
+        <section class="central">
+        </section>
+
+        <div id="gutter_r" class="gutter"></div>
+
+        <section class="lateral">
+        </section>
+
+    </main>
+
+    <footer>
+        <span class="spacer"></span>
+        <span>author: <a href="mailto:antonio@garciasevilla.com">Antonio F. G. Sevilla</a></span>
+    </footer>
+
+    <script>
+        window.onload = function() {
+            init_gutters();
+            var welcome = "Welcome back!\n" +
+                "## Your projects\n" +
+                "- [HPSG grammar](project.html)\n" +
+                "- [CFG grammar](project.html)\n" +
+                "- [Treebank](project.html)\n" +
+                "- [Grammar for English](project.html)\n" +
+                "- [FS Morphology](project.html)\n" +
+                "- [Modern corpus](project.html)\n";
+            var msg = "### Latest messages:\n" +
+                "- Collaboration possibility for grammars\n" +
+                "- Bug in HPSG interpreter\n" +
+                "- New sentences in corpus\n";
+            var longtext = welcome+welcome+welcome+welcome+welcome+welcome+welcome;
+
+            var wel_node = React.createElement(MDText, { text: welcome });
+            var code_node = React.createElement(Editor, null);
+            var avm_node = React.createElement(AVM, { data:{ _type: 'noun' }});
+            var long_node = React.createElement(MDText, { text: longtext });
+            var msg_node = React.createElement(MDText, { text: msg });
+
+            React.render(React.createElement(Tabs, {
+                initTabs: [
+                    { title: 'Welcome', node: wel_node },
+                    { title: 'Code', node: code_node },
+                ]}), document.querySelector('section.central'));
+            React.render(React.createElement(Tabs, {
+                initTabs: [
+                    { title: 'Messages', node: msg_node },
+                    { title: 'Long text', node: long_node },
+                    //{ title: 'AVM', node: avm_node },
+                    { title: 'Code', node: code_node },
+                ]}), document.querySelector('section.lateral'));
+        };
+    </script>
+</body>
+</html>

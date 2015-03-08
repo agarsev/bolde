@@ -1,0 +1,125 @@
+@headersize: 4ex;
+@navsize: 4ex;
+@footersize: 4ex;
+
+.unselectable {
+    -moz-user-select: -moz-none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+}
+body > footer, body > nav, body > header {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+}
+
+body > header {
+    height: @headersize;
+    top: 0;
+}
+
+body > nav {
+    top: @headersize;
+    height: @navsize;
+
+    display: flex;
+    flex-direction: row;
+    a {
+        .unselectable();
+        display: inline-block;
+        flex: 0;
+    }
+}
+
+body > footer {
+    display: flex;
+    flex-direction: row;
+    height: @footersize;
+    bottom: 0;
+}
+
+body > main {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: @headersize+@navsize;
+    bottom: @footersize;
+
+    display: flex;
+    flex-direction: row;
+    align-content: stretch;
+
+    section {
+        position: relative;
+        overflow-y: auto;
+        &:first-child {
+            width: 20%;
+        }
+        &:last-child {
+            width: 30%;
+        }
+        & > * {
+            height: 100%;
+        }
+
+    }
+
+    .central {
+        flex: 1;
+    }
+
+}
+
+a {
+    cursor: pointer;
+}
+
+.spacer {
+    flex: 1;
+}
+
+.tabs {
+    display: flex;
+    flex-direction: column;
+    nav {
+        flex: 0;
+        display: flex;
+        flex-direction: row;
+        a {
+            flex: 0 0 auto;
+            .unselectable();
+            display: inline-block;
+        }
+    }
+    & > div {
+        flex: 1;
+        overflow-y: auto;
+        & > div {
+            height: 100%;
+        }
+    }
+}
+
+.paper {
+    min-height: 100%;
+}
+
+.CodeMirror {
+    height: 100% !important;
+    max-height: 100%;
+}
