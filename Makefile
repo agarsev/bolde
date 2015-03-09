@@ -4,7 +4,7 @@ JS:=$(patsubst src/%.jsx, build/%.js, $(wildcard src/*.jsx))
 all: $(CSS) $(JS)
 
 build/%.css: src/%.less
-	lessc $< >$@
+	lessc $< --autoprefix="last 3 versions" >$@
 
 build/%.js: src/%.jsx
 	jsx $< >$@
