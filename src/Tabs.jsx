@@ -1,37 +1,40 @@
 var Tabs = React.createClass({
     getInitialState: function () {
-        return { selected: 0, tabs: this.props.initTabs };
+        if (React.Children.count(this.props.children)>1) {
+            return { selected: this.props.children[0].props.title };
+        } else if (React.Children.count(this.props.children)>0) {
+            return { selected: this.props.children.props.title };
+        } else {
+            return { selected: null };
+        }
     },
-    tabClick: function (number) {
+    tabClick: function (which) {
         return function (e) {
-            this.setState({selected: number});
+            this.setState({selected: which});
         }.bind(this);
     },
     render: function () {
-        if (this.state.tabs.length==0) {
-            return <span></span>;
+        if (React.Children.count(this.props.children)<1) {
+            return(<section style={this.props.style} />);
         }
-        if (this.state.tabs.length==1) {
+        if (React.Children.count(this.props.children)==1) {
             return (
-                <div className="tabs">
-                <div>{this.state.tabs[0].node}</div>
-                </div>
+                <section style={this.props.style}>
+                <div>{React.Children.only(this.props.children)}</div>
+                </section>
             );
         }
-        var navlinks = [];
-        var cont = [];
-        for (var i = 0; i<this.state.tabs.length; i++) {
-            var t = this.state.tabs[i];
-            if (i == this.state.selected) {
-                navlinks.push(<a className="selected" key={t.title}>{t.title}</a>);
-                cont.push(<div key={i} ref={i} style={{display: 'block'}}>{t.node}</div>);
-            } else {
-                navlinks.push(<a onClick={this.tabClick(i)} key={t.title}>{t.title}</a>);
-                cont.push(<div key={i} ref={i} style={{display: 'none'}}>{t.node}</div>);
-            }
-        }
+        var navlinks = React.Children.map(this.props.children,function(child) {
+            return (<a className={child.props.title==this.state.selected?"selected":""}
+                    onClick={this.tabClick(child.props.title)}
+                    key={child.props.title}>{child.props.title}</a>);
+        }, this);
+        var cont = React.Children.map(this.props.children,function(child) {
+            return (<div style={{display:(child.props.title==this.state.selected?"":"none")}}
+                    >{child}</div>);
+        }, this);
         return (
-            <div className="tabs">
+            <section style={this.props.style} >
                 <nav>
                     {navlinks}
                     <span className="spacer"></span>
@@ -39,7 +42,7 @@ var Tabs = React.createClass({
                 <div>
                     {cont}
                 </div>
-            </div>
+            </section>
         );
     },
 });
