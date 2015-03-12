@@ -1,36 +1,34 @@
 // expects:
-// views: array with: id(title) node(reactnode)
+// views: global views object, each with id, title and node
 var TabPanel = React.createClass({
     getInitialState: function () {
         return {
-            tabs: [ [], this.props.views.map(function(x,i){return i;}), [] ],
+            // an array of panels, each one an array of view's titles (ordering)
+            tabs: [ [], this.props.views.map(function(x){return x.id;}), [] ],
+            // an array of panels, each one with the index of the selected tab
             selected: [ undefined, 0, undefined ]
         }
     },
     focus: function (id) {
         var sel = this.state.selected;
-        for (var i=0; i<this.state.tabs.length; i++) {
+        var found = false;
+        for (var i=0; !found && i<this.state.tabs.length; i++) {
             var t = this.state.tabs[i];
-            for (var j=0; j<t.length; j++) {
-                if (this.props.views[t[j]].id==id) {
+            for (var j=0; !found && j<t.length; j++) {
+                if (t[j]==id) {
                     sel[i] = j;
-                    break;
+                    found = true;
                 }
             }
-            if (j<t.length) { break; }
         }
         this.setState({selected: sel});
     },
-    tabMouseDown: function (panel, tab) {
+    tabMouseDown: function (panel, tab, id) {
         var centralrect = this.refs.central.getDOMNode().getBoundingClientRect();
-        var fallback_sel = this.state.tabs.map(function (x) {
-            if (tab == x[0]) { return x[1]; }
-            return x[0];
-        });
         var selected = this.state.selected;
         var tabs = this.state.tabs;
         selected[panel]=tab;
-        this.setState({tabs:tabs,selected:selected});
+        this.setState({selected:selected});
         document.onmousemove = function(e) {
             var newpanel;
             if (e.clientX<centralrect.left) {
@@ -43,19 +41,20 @@ var TabPanel = React.createClass({
             if (newpanel!=panel) {
                 tabs = tabs.map(function(x){
                     return x.filter(function (y) {
-                        return y!=tab;
+                        return y!=id;
                     });
                 });
-                tabs[newpanel].push(tab);
-                selected[panel]=fallback_sel[panel];
+                tabs[newpanel].push(id);
+                selected[newpanel] = tabs[newpanel].length-1;
+                if (selected[panel]==tabs[panel].length){
+                    selected[panel]--;
+                }
+                this.setState({tabs:tabs,selected:selected});
+                panel = newpanel;
             }
-            selected[newpanel]=tab;
-            this.setState({tabs:tabs,selected:selected});
             e.preventDefault();
-            panel = newpanel;
         }.bind(this);
         document.onmouseup = function(e) {
-            this.setState({tabs:tabs,selected:selected});
             document.onmousemove = null;
             document.onmouseup = null;
             e.preventDefault();
@@ -69,10 +68,10 @@ var TabPanel = React.createClass({
             if (tabs.length==0) { return undefined; }
             return (
                     <nav>
-                    {tabs.map(function(x) {
-                        return (<a className={x==this.state.selected[i]?'selected':''}
-                                onMouseDown={this.tabMouseDown.bind(this,i,x)}
-                                key={'nav'+x}>{this.props.views[x].id}</a>);
+                    {tabs.map(function(x, j) {
+                        return (<a className={j==this.state.selected[i]?'selected':''}
+                                onMouseDown={this.tabMouseDown.bind(this,i,j,x)}
+                                key={'nav'+x}>{this.props.views.get(x).title}</a>);
                     }, this)}
                     <span className="spacer"></span>
                     </nav>
@@ -80,10 +79,10 @@ var TabPanel = React.createClass({
         }, this);
         var conts = this.state.tabs.map(function(tabs, i) {
             if (tabs.length==0) { return undefined; }
-            return tabs.map(function(x) {
+            return tabs.map(function(x, j) {
                 return (<div key={'cont'+x}
-                    style={{display:(x==this.state.selected[i]?'':'none')}}
-                    >{this.props.views[x].node}</div>);
+                    style={{display:(j==this.state.selected[i]?'':'none')}}
+                    >{this.props.views.get(x).node}</div>);
             }, this);
         }, this);
         return (

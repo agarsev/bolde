@@ -3,64 +3,24 @@
 <head>
     <meta charset="UTF-8" />
     <title>Prototype</title>
+
     <link rel="stylesheet" href="build/layout.css">
     <link rel="stylesheet" href="build/dark.css">
     <link rel="stylesheet" href="lib/codemirror.css">
+
     <script src="lib/codemirror.js"></script>
     <script src="./codemirror-5.0/mode/commonlisp/commonlisp.js"></script>
     <script src="lib/markdown-it.js"></script>
     <script src="lib/react.js"></script>
+    <script src="lib/stapes.js"></script>
+
     <script src="build/Editor.js"></script>
     <script src="build/AVM.js"></script>
     <script src="build/MDText.js"></script>
-    <script src="build/Tabs.js"></script>
-    <script src="code.js"></script>
+    <script src="build/Gutter.js"></script>
+    <script src="build/TabPanel.js"></script>
+    <script src="build/main.js"></script>
 </head>
 <body>
-
-    <header>
-        Prototype for master project
-    </header>
-
-    <nav>
-        <a href="index.html">Home</a>
-        <span class="spacer"></span>
-        <a href="logged.html">Login</a>
-    </nav>
-
-    <main>
-
-        <section>
-        </section>
-
-        <div id="gutter_l" class="gutter"></div>
-
-        <section class="central">
-        </section>
-
-        <div id="gutter_r" class="gutter"></div>
-
-        <section class="lateral">
-        </section>
-
-    </main>
-
-    <footer>
-        <span class="spacer"></span>
-        <span>author: <a href="mailto:antonio@garciasevilla.com">Antonio F. G. Sevilla</a></span>
-    </footer>
-
-    <script>
-        window.onload = function() {
-            init_gutters();
-            var welcome = "# Welcome\nThis is a prototype for the project\n### Instructions:\n"+
-                "- first click login\n- then select a project\n- then edit an HPSG grammar\n";
-            var wel_node = React.createElement(MDText, { text: welcome });
-            React.render(React.createElement(Tabs, {
-                initTabs: [
-                    { title: 'Welcome', node: wel_node },
-                ]}), document.querySelector('section.central'));
-        };
-    </script>
 </body>
 </html>

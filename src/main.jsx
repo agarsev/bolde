@@ -17,9 +17,9 @@ var App = React.createClass({
             "- New sentences in corpus\n";
         var longtext = welcome+welcome+welcome+welcome+welcome+welcome+welcome;
         var views = new ViewList();
-        views.set("Welcome", { node: <MDText key="Welcome" title="Welcome" text={welcome} /> });
-        views.set("Code", { node: <Editor key="Code" title="Code" /> });
-        views.set("Long text", { node: <MDText key="Long text" title="Long text" text={longtext} />});
+        views.set("Welcome", { id: "Welcome", title: "Welcome", node: <MDText text={welcome} /> });
+        views.set("Code", { id: "Code", title: "Code", node: <Editor /> });
+        views.set("Long", { id: "Long", title: "Long text", node: <MDText text={longtext} />});
         return {
             views: views
         };
@@ -37,7 +37,7 @@ var App = React.createClass({
                 <span className="spacer"></span>
                 <a href="index.html">Logout</a>
             </nav>
-            <TabPanel ref="tabpanel" views={this.state.views.getAllAsArray()} />
+            <TabPanel ref="tabpanel" views={this.state.views} />
             <footer>
                 <span className="spacer"></span>
                 <span>author: <a href="mailto:antonio@garciasevilla.com">Antonio F. G. Sevilla</a></span>
