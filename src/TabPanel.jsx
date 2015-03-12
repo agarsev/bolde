@@ -2,12 +2,35 @@
 // views: global views object, each with id, title and node
 var TabPanel = React.createClass({
     getInitialState: function () {
+        this.props.views.on("create", this.viewCreated, this);
+        this.props.views.on("remove", this.viewDeleted, this);
         return {
             // an array of panels, each one an array of view's titles (ordering)
             tabs: [ [], this.props.views.map(function(x){return x.id;}), [] ],
             // an array of panels, each one with the index of the selected tab
             selected: [ undefined, 0, undefined ]
         }
+    },
+    viewCreated: function (key) {
+        tabs = this.state.tabs;
+        selected = this.state.selected;
+        tabs[1].push(key);
+        selected[1] = tabs[1].length-1;
+        this.setState({tabs: tabs, selected: selected});
+    },
+    viewDeleted: function (key) {
+        var which_panel;
+        tabs = this.state.tabs.map(function(x, i){
+            return x.filter(function (y) {
+                if (y==key) { which_panel=i; }
+                return y!=key;
+            });
+        });
+        selected = this.state.selected;
+        if (selected[which_panel]==tabs[which_panel].length) {
+            selected[which_panel]--;
+        }
+        this.setState({tabs: tabs, selected: selected});
     },
     focus: function (id) {
         var sel = this.state.selected;
