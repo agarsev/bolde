@@ -1,21 +1,33 @@
+var default_panel = {
+    'DirTree': 0,
+};
+
 // expects:
 // views: global views object, each with id, title and node
 var TabPanel = React.createClass({
     getInitialState: function () {
         this.props.views.on("create", this.viewCreated, this);
         this.props.views.on("remove", this.viewDeleted, this);
+        var panels = [0, 1, 2].map(function (t) {
+            return this.props.views.filter(function(x){
+                return (default_panel[x.node.type.displayName]==t) ||
+                    (t==1 && default_panel[x.node.type.displayName]==undefined);
+            }).map(x => x.id);
+        }, this);
         return {
             // an array of panels, each one an array of view's titles (ordering)
-            tabs: [ [], this.props.views.map(function(x){return x.id;}), [] ],
+            tabs: panels,
             // an array of panels, each one with the index of the selected tab
-            selected: [ undefined, 0, undefined ]
+            selected: [0,1,2].map(t => panels[t].length-1)
         }
     },
     viewCreated: function (key) {
         tabs = this.state.tabs;
         selected = this.state.selected;
-        tabs[1].push(key);
-        selected[1] = tabs[1].length-1;
+        var panel = default_panel[this.props.views.get(key).node.type.displayName];
+        if (panel === undefined) { panel = 1; }
+        tabs[panel].push(key);
+        selected[panel] = tabs[panel].length-1;
         this.setState({tabs: tabs, selected: selected});
     },
     viewDeleted: function (key) {
