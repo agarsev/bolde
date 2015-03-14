@@ -1,7 +1,23 @@
 window.onload = function () {
 
+var tabpanel;
+
 var ViewList = Stapes.subclass({
+    open: function(filename) {
+        var key = 'open'+filename;
+        if (this.has(key)) {
+            tabpanel.focus(key);
+        } else {
+            this.set(key,
+                     { id: key
+                     , title: filename.substr(filename.search(/\/[^\/]+$/)+1)
+                     , node: <Editor filename={filename} />
+                     });
+        }
+    }
 });
+
+var views = new ViewList();
 
 var welcome = "Welcome back!\n" +
     "## Your projects\n" +
@@ -16,16 +32,11 @@ var msg = "### Latest messages:\n" +
     "- Bug in HPSG interpreter\n" +
     "- New sentences in corpus\n";
 var longtext = welcome+welcome+welcome+welcome+welcome+welcome+welcome;
-var views = new ViewList();
+
 views.set("Welcome", { id: "Welcome", title: "Welcome", node: <MDText text={welcome} /> });
-views.set("Code", { id: "Code", title: "Code", node: <Editor /> });
 views.set("Long", { id: "Long", title: "Long text", node: <MDText text={longtext} />});
-views.set("ProjectFiles", { id: "ProjectFiles", title: "Files", node: <DirTree name='Project' />});
+views.set("ProjectFiles", { id: "ProjectFiles", title: "Files", node: <DirTree openFile={views.open.bind(views)} name='Project' />});
 
-tabpanel = React.render(<TabPanel views={views} />, document.getElementById('TabPanel'));
-
-document.getElementById('Code').onclick = function () {
-    tabpanel.focus("Code");
-};
+var tabpanel = React.render(<TabPanel views={views} />, document.getElementById('TabPanel'));
 
 } // window.onload();

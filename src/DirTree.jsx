@@ -6,6 +6,9 @@ var DirTree = React.createClass({
     toggleDir: function () {
         this.setState({open: !this.state.open});
     },
+    clickFile: function (file) {
+        this.props.openFile(file);
+    },
     componentDidMount: function () {
         $.ajax({
             url: "/api/list/"+this.state.fullname,
@@ -19,9 +22,9 @@ var DirTree = React.createClass({
         if (this.state.open) {
             var list = this.state.files.map(function(file, i) {
                 if (file.type=='dir') {
-                    return(<li key={file.name}><DirTree path={this.state.fullname} name={file.name} data={file.files} /></li>);
+                    return(<li key={file.name}><DirTree openFile={this.props.openFile} path={this.state.fullname} name={file.name} data={file.files} /></li>);
                 } else {
-                    return(<li key={file.name}>{file.name}</li>);
+                    return(<li key={file.name} onClick={this.clickFile.bind(this, this.state.fullname+'/'+file.name)}><a>{file.name}</a></li>);
                 }
             }, this);
             below = <ul>{list}</ul>;
