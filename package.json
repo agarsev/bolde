@@ -1,0 +1,12 @@
+{
+  "name": "tfm",
+  "version": "1.0.0",
+  "description": "Prototype tfm",
+  "main": "app.js",
+  "dependencies": {
+    "express": "^4.12.2",
+    "less": "^2.4.0",
+    "morgan": "^1.5.1",
+    "react-tools": "^0.12.2"
+  }
+}
