@@ -30,10 +30,16 @@ body > nav {
 
     display: flex;
     flex-direction: row;
-    a {
-        user-select: none;
+    & > * {
         display: inline-block;
         flex: 0 0 auto;
+    }
+    a {
+        user-select: none;
+    }
+    input {
+        width: 5em;
+        font-size: small;
     }
 }
 

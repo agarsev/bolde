@@ -27,16 +27,28 @@ var welcome = "Welcome back!\n" +
     "- [Grammar for English](project.html)\n" +
     "- [FS Morphology](project.html)\n" +
     "- [Modern corpus](project.html)\n";
-var msg = "### Latest messages:\n" +
-    "- Collaboration possibility for grammars\n" +
-    "- Bug in HPSG interpreter\n" +
-    "- New sentences in corpus\n";
-var longtext = welcome+welcome+welcome+welcome+welcome+welcome+welcome;
 
 views.set("Welcome", { id: "Welcome", title: "Welcome", node: <MDText text={welcome} /> });
-views.set("Long", { id: "Long", title: "Long text", node: <MDText text={longtext} />});
-views.set("ProjectFiles", { id: "ProjectFiles", title: "Files", node: <DirTree openFile={views.open.bind(views)} name='Project' />});
 
 var tabpanel = React.render(<TabPanel views={views} />, document.getElementById('TabPanel'));
+
+document.getElementById('Login').onclick = function() {
+    var user = document.querySelector('input[name="user"]').value;
+    var password = document.querySelector('input[name="password"]').value;
+    $.ajax({
+        method: 'POST',
+        url: "/api/login/",
+        data: JSON.stringify({user:user, password:password}),
+        contentType: 'application/json',
+        success: function(data) {
+            if (data.ok) {
+                views.set("ProjectFiles", { id: "ProjectFiles", title: "Files",
+                          node: <DirTree path="test" openFile={views.open.bind(views)} name={data.projects[0].name} files={data.projects[0].files} />});
+            } else {
+                console.log(data.error);
+            }
+        }
+    });
+}
 
 } // window.onload();
