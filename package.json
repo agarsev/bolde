@@ -8,6 +8,7 @@
     "express": "^4.12.2",
     "js-yaml": "^3.2.7",
     "less": "^2.4.0",
+    "less-plugin-autoprefix": "^1.4.0",
     "morgan": "^1.5.1",
     "react-tools": "^0.12.2"
   }
