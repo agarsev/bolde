@@ -37,7 +37,7 @@ document.getElementById('Login').onclick = function() {
     var password = document.querySelector('input[name="password"]').value;
     $.ajax({
         method: 'POST',
-        url: "/api/login/",
+        url: "api/login/",
         data: JSON.stringify({user:user, password:password}),
         contentType: 'application/json',
         success: function(data) {
