@@ -12,8 +12,13 @@ var express = require('express'),
 var app = express();
 var server = http.createServer(app);
 
+app.use(morgan('combined', {
+    skip: function (req, res) {
+        // TODO: skip sharejs
+        return false;
+    }
+}));
 app.use('/api/sharejs',sharejs);
-app.use(morgan('combined'));
 app.use(bodyParser.json());
 app.use('/api', auth);
 app.use('/', express.static('.'));

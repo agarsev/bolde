@@ -14,6 +14,11 @@ var ViewList = Stapes.subclass({
                      , node: <Editor filename={filename} />
                      });
         }
+    },
+    close: function(view) {
+        if (this.has(view)) {
+            this.remove(view);
+        }
     }
 });
 

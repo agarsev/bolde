@@ -52,7 +52,7 @@ body > nav {
     }
     nav {
         border-bottom: 2px solid @light;
-        a {
+        & > a {
             border: 1px solid @dark;
             border-radius: 8px 8px 0px 0px;
             background: lighten(@dark,20%);
@@ -63,12 +63,28 @@ body > nav {
                 background: @light;
                 margin-top: 1px;
                 border-bottom: none;
+                .close {
+                    border: 1px solid darken(@light, 20%);
+                }
             }
             &:not(.selected):hover {
                 background: darken(@light, 10%);
             }
             &:first-child {
                 border-left: none;
+            }
+            .close {
+                display: inline-block;
+                width: 1.3ex;
+                height: 1.3ex;
+                margin: -1px -1px 1px 6px;
+                vertical-align: baseline;
+                border: 1px solid @dark;
+                border-radius: 3px;
+                &:hover {
+                    border: 1px solid @dark;
+                    background: rgba(255, 155, 155, 0.8);
+                }
             }
         }
         .spacer {

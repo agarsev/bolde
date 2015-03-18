@@ -95,6 +95,19 @@ var TabPanel = React.createClass({
             e.preventDefault();
         }.bind(this);
     },
+    closeTab: function (tab, e) {
+        document.onmouseup = function(e) {
+            this.props.views.close(tab);
+            document.onmousemove = null;
+            document.onmouseup = null;
+        }.bind(this);
+        e.target.onmouseout = function(e) {
+            document.onmousemove = null;
+            document.onmouseup = null;
+        }
+        e.preventDefault();
+        e.stopPropagation();
+    },
     refDOM: function (name) {
         return this.refs[name].getDOMNode();
     },
@@ -106,7 +119,10 @@ var TabPanel = React.createClass({
                     {tabs.map(function(x, j) {
                         return (<a className={j==this.state.selected[i]?'selected':''}
                                 onMouseDown={this.tabMouseDown.bind(this,i,j,x)}
-                                key={'nav'+x}>{this.props.views.get(x).title}</a>);
+                                key={'nav'+x}>
+                                {this.props.views.get(x).title}
+                                <span className="close" onMouseDown={this.closeTab.bind(this,x)} />
+                                </a>);
                     }, this)}
                     <span className="spacer"></span>
                     </nav>
