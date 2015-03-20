@@ -1,5 +1,5 @@
 // DirTree
-define(["react"], function (React) {
+define(["react/react"], function (React) {
 
 var DirTree = React.createClass({
     getInitialState: function () {

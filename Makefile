@@ -8,3 +8,8 @@ build/%.css: src/%.less
 
 build/%.js: src/%.jsx
 	jsx --harmony $< >$@
+
+update:
+	npm install
+	bower install
+	preen

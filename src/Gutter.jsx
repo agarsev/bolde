@@ -1,5 +1,5 @@
 // Gutter
-define(["react"], function (React) { return React.createClass({
+define(["react/react"], function (React) { return React.createClass({
     getInitialState: function () {
         if (this.props.dir=="right") {
             return { handler: function(e) {

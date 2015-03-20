@@ -1,13 +1,16 @@
 requirejs.config({
-    baseUrl: 'lib',
+    baseUrl: '',
     paths: {
-        ace: 'ace',
-        app: '../build',
-        sjs: '../api/sharejs'
+        ace: 'bower_components/ace-builds/src-min-noconflict',
+        "markdown-it": "bower_components/markdown-it/dist",
+        react: "bower_components/react",
+        stapes: "bower_components/stapes",
+        app: 'build',
+        sjs: 'api/sharejs'
     },
 });
 
-require(["require", "stapes", "react", "app/TabPanel", "app/MDText"],
+require(["require", "stapes/stapes", "react/react", "app/TabPanel", "app/MDText"],
     function (require, Stapes, React, TabPanel, MDText) {
 
 var tabpanel;

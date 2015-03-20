@@ -1,7 +1,7 @@
 // TabPanel
 // expects:
 // views: views object, each with id, title and node
-define(["react", "./Gutter"], function (React, Gutter) {
+define(["react/react", "./Gutter"], function (React, Gutter) {
 
 var default_panel = {
     'DirTree': 0,

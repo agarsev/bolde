@@ -1,5 +1,5 @@
 // Editor
-define(["require", "react", "ace/ace"], function (require, React) { return React.createClass({
+define(["require", "react/react", "ace/ace"], function (require, React) { return React.createClass({
     render: function () {
         return (
             <div id={"Editor_"+this.props.filename}>Loading {this.props.filename}...</div>

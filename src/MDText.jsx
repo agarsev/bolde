@@ -1,5 +1,5 @@
 // MDText
-define(["react", "markdown-it"], function (React, markdownit) {
+define(["react/react", "markdown-it/markdown-it"], function (React, markdownit) {
 var md = markdownit();
 return React.createClass({
     render: function() {

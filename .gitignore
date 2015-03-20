@@ -1,4 +1,5 @@
 build/*
 node_modules/*
+bower_components/*
 user_files/*
 config/local.yml
