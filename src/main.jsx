@@ -1,4 +1,14 @@
-window.onload = function () {
+requirejs.config({
+    baseUrl: 'lib',
+    paths: {
+        ace: 'ace',
+        app: '../build',
+        sjs: '../api/sharejs'
+    },
+});
+
+require(["require", "stapes", "react", "app/TabPanel", "app/MDText"],
+    function (require, Stapes, React, TabPanel, MDText) {
 
 var tabpanel;
 
@@ -8,11 +18,13 @@ var ViewList = Stapes.subclass({
         if (this.has(key)) {
             tabpanel.focus(key);
         } else {
-            this.set(key,
-                     { id: key
-                     , title: filename.substr(filename.search(/\/[^\/]+$/)+1)
-                     , node: <Editor filename={filename} />
-                     });
+            require(["app/Editor"], function(Editor) {
+                this.set(key,
+                         { id: key
+                         , title: filename.substr(filename.search(/\/[^\/]+$/)+1)
+                         , node: <Editor filename={filename} />
+                         });
+            }.bind(this));
         }
     },
     close: function(view) {
@@ -47,8 +59,10 @@ document.getElementById('Login').onsubmit = function() {
         contentType: 'application/json',
         success: function(data) {
             if (data.ok) {
-                views.set("ProjectFiles", { id: "ProjectFiles", title: "Files",
-                          node: <DirTree path="test" openFile={views.open.bind(views)} name={data.projects[0].name} files={data.projects[0].files} />});
+                require(["app/DirTree"], function(DirTree) {
+                    views.set("ProjectFiles", { id: "ProjectFiles", title: "Files",
+                              node: <DirTree path="test" openFile={views.open.bind(views)} name={data.projects[0].name} files={data.projects[0].files} />});
+                }.bind(this));
             } else {
                 console.log(data.error);
             }
@@ -57,4 +71,4 @@ document.getElementById('Login').onsubmit = function() {
     return false;
 }
 
-} // window.onload();
+}); // require

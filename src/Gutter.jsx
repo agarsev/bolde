@@ -1,4 +1,5 @@
-var Gutter = React.createClass({
+// Gutter
+define(["react"], function (React) { return React.createClass({
     getInitialState: function () {
         if (this.props.dir=="right") {
             return { handler: function(e) {
@@ -24,3 +25,4 @@ var Gutter = React.createClass({
         e.preventDefault();
     }
 });
+}); // define

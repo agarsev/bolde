@@ -1,3 +1,6 @@
+// DirTree
+define(["react"], function (React) {
+
 var DirTree = React.createClass({
     getInitialState: function () {
         var fullname = this.props.path?this.props.path+'/'+this.props.name:this.props.name;
@@ -55,3 +58,6 @@ var DirTree = React.createClass({
         );
     }
 });
+
+return DirTree;
+}); // define
