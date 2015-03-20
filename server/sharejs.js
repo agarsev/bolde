@@ -20,6 +20,9 @@ var i = 0;
 sharejs.attach(router, {db: {type: 'none'}});
 
 router.use('/open', function (req, res) {
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.header('Expires', '-1');
+    res.header('Pragma', 'no-cache');
     var file = req.path;
     if (docs[file]) {
         console.log(router.mountpath+": opening existing pad for file "+file);
