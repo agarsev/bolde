@@ -37,7 +37,7 @@ views.set("Welcome", { id: "Welcome", title: "Welcome", node: <MDText text={welc
 
 var tabpanel = React.render(<TabPanel views={views} />, document.getElementById('TabPanel'));
 
-document.getElementById('Login').onclick = function() {
+document.getElementById('Login').onsubmit = function() {
     var user = document.querySelector('input[name="user"]').value;
     var password = document.querySelector('input[name="password"]').value;
     $.ajax({
@@ -54,6 +54,7 @@ document.getElementById('Login').onclick = function() {
             }
         }
     });
+    return false;
 }
 
 } // window.onload();

@@ -35,9 +35,11 @@
     <nav>
         <a id="Home" href="index.html">Home</a>
         <span class="spacer"></span>
-        <input name="user" type="text" />
-        <input name="password" type="password" />
-        <a id="Login">Login</a>
+        <form id="Login">
+            <input placeholder="username" name="user" type="text" />
+            <input placeholder="password" name="password" type="password" />
+            <button formaction="submit">Login</button>
+        </form>
     </nav>
     <div id="TabPanel"></div>
     <footer>

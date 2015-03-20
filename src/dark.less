@@ -19,7 +19,7 @@ body > header {
 
 body > nav {
     background: @light;
-    a {
+    a, button {
         text-decoration: none;
         border: 1px solid @dark;
         border-right: 1px solid lighten(@dark, 20%);
@@ -36,7 +36,7 @@ body > nav {
 
 #TabPanel > main {
     .gutter {
-        width: 8px;
+        width: 6px;
         border-left: 1px solid @dark;
         border-right: 1px solid @dark;
         background: @light;
@@ -53,6 +53,7 @@ body > nav {
     nav {
         border-bottom: 2px solid @light;
         & > a {
+            @closesize: 1.3ex;
             border: 1px solid @dark;
             border-radius: 8px 8px 0px 0px;
             background: lighten(@dark,20%);
@@ -75,12 +76,12 @@ body > nav {
             }
             .close {
                 display: inline-block;
-                width: 1.3ex;
-                height: 1.3ex;
-                margin: -1px -1px 1px 6px;
+                width: @closesize;
+                height: @closesize;
+                margin: 1px -2px 0px 4px;
                 vertical-align: baseline;
                 border: 1px solid @dark;
-                border-radius: 3px;
+                border-radius: 5px;
                 &:hover {
                     border: 1px solid @dark;
                     background: rgba(255, 155, 155, 0.8);
@@ -104,6 +105,8 @@ body > nav {
 .DirTree {
     background: white;
     padding: 1em;
+    white-space: nowrap;
+    user-select: none;
     .DirTree {
         padding: 0;
         padding-top: 0.5em;
@@ -111,6 +114,7 @@ body > nav {
     h3 {
         font-weight: normal;
         font-size: medium;
+        cursor: pointer;
         a {
             display: inline-block;
             text-align: center;
@@ -120,6 +124,10 @@ body > nav {
             border: 1px solid black;
             margin-right: 5px;
         }
+        &.selected span {
+            border: 1px dotted rgb(0, 0, 150);
+            background: rgba(0, 0, 150, 0.2);
+        }
     }
     ul {
         border-left: 2px solid darken(@light, 20%);
@@ -127,6 +135,10 @@ body > nav {
         li {
             margin-left: 0.75em;
             list-style: none;
+            &.selected a {
+                border: 1px dotted rgb(0, 0, 150);
+                background: rgba(0, 0, 150, 0.2);
+            }
         }
     }
 }

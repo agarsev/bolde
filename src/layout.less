@@ -39,7 +39,7 @@ body > nav {
     }
     input {
         width: 5em;
-        font-size: small;
+        margin: 3px 0 3px 0;
     }
 }
 
@@ -67,6 +67,7 @@ body > footer {
         align-content: stretch;
 
         section {
+            min-width: 1em;
             position: relative;
             overflow-y: auto;
             height: 100%;
@@ -83,9 +84,18 @@ body > footer {
                 display: flex;
                 flex-direction: row;
                 & > a {
-                    flex: 0 0 auto;
+                    white-space: nowrap;
+                    flex: 1 1 auto;
                     user-select: none;
-                    display: inline-block;
+                    display: inline-flex;
+                    overflow: hidden;
+                    span {
+                        flex: 1 1 auto;
+                        overflow: hidden;
+                    }
+                    .close {
+                        flex: 0 0 auto;
+                    }
                 }
             }
             & > div {
@@ -110,7 +120,7 @@ a {
 }
 
 .spacer {
-    flex: 1;
+    flex: 10000 10000 0;
 }
 
 .paper {

@@ -120,7 +120,7 @@ var TabPanel = React.createClass({
                         return (<a className={j==this.state.selected[i]?'selected':''}
                                 onMouseDown={this.tabMouseDown.bind(this,i,j,x)}
                                 key={'nav'+x}>
-                                {this.props.views.get(x).title}
+                                <span>{this.props.views.get(x).title}</span>
                                 <span className="close" onMouseDown={this.closeTab.bind(this,x)} />
                                 </a>);
                     }, this)}
