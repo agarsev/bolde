@@ -12,8 +12,10 @@ var DirTree = React.createClass({
         } else {
             this.setState({selected: file});
         }
-        e.stopPropagation();
-        e.preventDefault();
+        if (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
     },
     dblClickFile: function (file, e) {
         this.props.openFile(file);

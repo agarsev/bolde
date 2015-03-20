@@ -31,15 +31,23 @@ var TabPanel = React.createClass({
         this.setState({tabs: tabs, selected: selected});
     },
     viewDeleted: function (key) {
-        var which_panel;
+        var which_panel, which_tab;
         tabs = this.state.tabs.map(function(x, i){
-            return x.filter(function (y) {
-                if (y==key) { which_panel=i; }
-                return y!=key;
-            });
+            var ret = [];
+            for (var j = 0; j<x.length; j++) {
+                var y = x[j];
+                if (x[j]==key) {
+                    which_panel=i;
+                    which_tab=j;
+                } else {
+                    ret.push(x[j]);
+                }
+            }
+            return ret;
         });
         selected = this.state.selected;
-        if (selected[which_panel]==tabs[which_panel].length) {
+        if (selected[which_panel]==tabs[which_panel].length ||
+            which_tab < selected[which_panel]) {
             selected[which_panel]--;
         }
         this.setState({tabs: tabs, selected: selected});
