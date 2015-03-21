@@ -1,5 +1,6 @@
-// Gutter
-define(["react/react"], function (React) { return React.createClass({
+var React = require('../bower_components/react/react.js');
+
+var Gutter = React.createClass({
     getInitialState: function () {
         if (this.props.dir=="right") {
             return { handler: function(e) {
@@ -25,4 +26,5 @@ define(["react/react"], function (React) { return React.createClass({
         e.preventDefault();
     }
 });
-}); // define
+
+module.exports = Gutter;

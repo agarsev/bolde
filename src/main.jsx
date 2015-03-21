@@ -1,17 +1,9 @@
-requirejs.config({
-    baseUrl: '',
-    paths: {
-        ace: 'bower_components/ace-builds/src-min-noconflict',
-        "markdown-it": "bower_components/markdown-it/dist",
-        react: "bower_components/react",
-        stapes: "bower_components/stapes",
-        app: 'build',
-        sjs: 'api/sharejs'
-    },
-});
+var $ = require('../bower_components/jquery/dist/jquery.js');
+var React = require('../bower_components/react/react.js');
+var Stapes = require('../bower_components/stapes/stapes.js');
 
-require(["require", "stapes/stapes", "react/react", "app/TabPanel", "app/MDText"],
-    function (require, Stapes, React, TabPanel, MDText) {
+var TabPanel = require('./TabPanel.js');
+var MDText = require('./MDText.js');
 
 var tabpanel;
 
@@ -21,13 +13,14 @@ var ViewList = Stapes.subclass({
         if (this.has(key)) {
             tabpanel.focus(key);
         } else {
-            require(["app/Editor"], function(Editor) {
-                this.set(key,
+            var This = this;
+            require(["./Editor"], function(Editor) {
+                This.set(key,
                          { id: key
                          , title: filename.substr(filename.search(/\/[^\/]+$/)+1)
                          , node: <Editor filename={filename} />
                          });
-            }.bind(this));
+            });
         }
     },
     close: function(view) {
@@ -62,7 +55,7 @@ document.getElementById('Login').onsubmit = function() {
         contentType: 'application/json',
         success: function(data) {
             if (data.ok) {
-                require(["app/DirTree"], function(DirTree) {
+                require(["./DirTree"], function(DirTree) {
                     views.set("ProjectFiles", { id: "ProjectFiles", title: "Files",
                               node: <DirTree path="test" openFile={views.open.bind(views)} name={data.projects[0].name} files={data.projects[0].files} />});
                 }.bind(this));
@@ -73,5 +66,3 @@ document.getElementById('Login').onsubmit = function() {
     });
     return false;
 }
-
-}); // require

@@ -1,13 +1,13 @@
-// TabPanel
-// expects:
-// views: views object, each with id, title and node
-define(["react/react", "./Gutter"], function (React, Gutter) {
+var React = require('../bower_components/react/react.js');
+var Gutter = require('./Gutter');
 
 var default_panel = {
     'DirTree': 0,
 };
 
-return React.createClass({
+// expects:
+// views: views object, each with id, title and node
+var TabPanel = React.createClass({
     getInitialState: function () {
         this.props.views.on("create", this.viewCreated, this);
         this.props.views.on("remove", this.viewDeleted, this);
@@ -167,4 +167,5 @@ return React.createClass({
         );
     }
 });
-}); // define
+
+module.exports = TabPanel;

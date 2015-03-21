@@ -1,11 +1,13 @@
-// MDText
-define(["react/react", "markdown-it/markdown-it"], function (React, markdownit) {
+var React = require('../bower_components/react/react.js');
+var markdownit = require('../bower_components/markdown-it/dist/markdown-it.min.js');
+
 var md = markdownit();
-return React.createClass({
+
+var MDText = React.createClass({
     render: function() {
         var rawMarkup = md.render(this.props.text);
         return (<div className="paper" dangerouslySetInnerHTML={{__html: rawMarkup}} />);
     }
 });
 
-}); // define
+module.exports = MDText;

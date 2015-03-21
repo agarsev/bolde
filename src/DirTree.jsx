@@ -1,5 +1,4 @@
-// DirTree
-define(["react/react"], function (React) {
+var React = require('../bower_components/react/react.js');
 
 var DirTree = React.createClass({
     getInitialState: function () {
@@ -59,5 +58,4 @@ var DirTree = React.createClass({
     }
 });
 
-return DirTree;
-}); // define
+module.exports = DirTree;

@@ -1,5 +1,10 @@
-// Editor
-define(["require", "react/react", "ace/ace"], function (require, React) { return React.createClass({
+var $ = require('../bower_components/jquery/dist/jquery.js');
+var React = require('../bower_components/react/react.js');
+
+require('../bower_components/ace-builds/src-min-noconflict/ace.js');
+ace.config.set("basePath", "bower_components/ace-builds/src-min-noconflict");
+
+var Editor = React.createClass({
     render: function () {
         return (
             <div id={"Editor_"+this.props.filename}>Loading {this.props.filename}...</div>
@@ -19,17 +24,20 @@ define(["require", "react/react", "ace/ace"], function (require, React) { return
         $.ajax({
             url: "api/sharejs/open/"+this.props.filename,
             success: function(data) {
-                require(["sjs/share/ace"], function() {
-                    sharejs.open(data.name, 'text',
-                        location.href.substr(0, location.href.search(/\/[^\/]*$/))+'/api/sharejs/channel',
-                        function(error, doc) {
-                            doc.attach_ace(editor);
-                            editor.getSession().setMode("ace/mode/"+data.mode);
-                        }
-                    );
-                });
+                window.BCSocket = require("../node_modules/share/node_modules/browserchannel/dist/bcsocket.js").BCSocket;
+                require("../node_modules/share/webclient/share.js");
+                require("../node_modules/share/webclient/ace.js");
+
+                sharejs.open(data.name, 'text',
+                    location.href.substr(0, location.href.search(/\/[^\/]*$/))+'/api/sharejs/channel',
+                    function(error, doc) {
+                        doc.attach_ace(editor);
+                        editor.getSession().setMode("ace/mode/"+data.mode);
+                    }
+                );
             }
         });
     }
 });
-});
+
+module.exports = Editor;
