@@ -1,5 +1,5 @@
-var $ = require('../bower_components/jquery/dist/jquery.js');
-var React = require('../bower_components/react/react.js');
+var $ = require('jquery');
+var React = require('react');
 
 require('../bower_components/ace-builds/src-min-noconflict/ace.js');
 ace.config.set("basePath", "bower_components/ace-builds/src-min-noconflict");

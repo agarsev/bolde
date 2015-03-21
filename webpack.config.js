@@ -8,7 +8,7 @@ module.exports = {
     },
     module: {
         noParse: [
-            /node_modules/,
+            /share/,
             /bower_components/
         ]
     }

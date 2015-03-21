@@ -13,4 +13,9 @@ build/%.js: src/%.jsx
 update:
 	npm install
 	bower install
-	preen
+	mkdir -p build
+
+clean:
+	rm -rf build/*
+
+.PHONY: update clean

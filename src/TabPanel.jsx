@@ -1,4 +1,4 @@
-var React = require('../bower_components/react/react.js');
+var React = require('react');
 var Gutter = require('./Gutter');
 
 var default_panel = {

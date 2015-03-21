@@ -1,9 +1,9 @@
-var $ = require('../bower_components/jquery/dist/jquery.js');
-var React = require('../bower_components/react/react.js');
-var Stapes = require('../bower_components/stapes/stapes.js');
+var $ = require('jquery');
+var React = require('react');
+var Stapes = require('stapes');
 
-var TabPanel = require('./TabPanel.js');
-var MDText = require('./MDText.js');
+var TabPanel = require('./TabPanel');
+var MDText = require('./MDText');
 
 var tabpanel;
 

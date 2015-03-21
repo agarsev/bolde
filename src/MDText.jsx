@@ -1,4 +1,4 @@
-var React = require('../bower_components/react/react.js');
+var React = require('react');
 var markdownit = require('../bower_components/markdown-it/dist/markdown-it.min.js');
 
 var md = markdownit();
