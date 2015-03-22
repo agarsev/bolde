@@ -31,6 +31,23 @@ body > header {
         &:hover {
             background-color: lighten(@light, 20%);
         }
+        ul {
+            margin-top: -4px;
+            background: fadeout(@dark, 10%);
+            color: @light;
+            li {
+                padding: 5px;
+                list-style: none;
+                &:hover {
+                    background: lighten(@dark, 10%);
+                    color: white;
+                }
+            }
+        }
+    }
+    input {
+        width: 5em;
+        margin: 3px 0 3px 0;
     }
 }
 

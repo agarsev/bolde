@@ -9,19 +9,25 @@ var Project = Stapes.subclass({
         this.user = json.user;
         this.global = global;
         this.key = 'Proj_'+this.name+'_files';
-        global.views.set(this.key, { id: this.key, title: this.name,
-              node: <DirTree path={this.user}
+        /* from this on should be done by controller (main) */
+        // tools
+        global.tools.set(this.key, {title: this.name,
+            menu: [ {title:'New file',click:function(){alert('new');}},
+                    {title:'Run',click:function(){alert('run');}} ] });
+        // views
+        this.view = <DirTree path={this.user}
                      openFile={global.openFile.bind(global)}
                      name={this.name}
-                     files={this.files} />
-        });
+                     files={this.files} />;
+        global.views.add(this.key, this.name, this.view);
         var This = this;
         global.views.on('remove:'+this.key, function() {
             global.views.remove(function(view) {
                 return view.id.match("^file_"+This.user+"/"+This.name);
             });
-        });
-    }
+            global.tools.remove(this.key);
+        }, this);
+    },
 });
 
 module.exports = Project;

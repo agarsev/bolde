@@ -48,11 +48,15 @@ body > footer {
             flex: 0 0 auto;
         }
         a {
+            position: relative;
             user-select: none;
-        }
-        input {
-            width: 5em;
-            margin: 3px 0 3px 0;
+            ul {
+                width: 100%;
+                position: absolute;
+                left: 0;
+                top: @navsize;
+                z-index: 10;
+            }
         }
     }
 }
@@ -92,7 +96,7 @@ body > footer {
                 flex-direction: row;
                 & > a {
                     white-space: nowrap;
-                    flex: 1 1 auto;
+                    flex: 1 10 auto;
                     user-select: none;
                     display: inline-flex;
                     overflow: hidden;
@@ -104,7 +108,7 @@ body > footer {
                         flex: 0 0 auto;
                     }
                     &.selected {
-                        flex: 0 0 auto;
+                        flex: 0 1 auto;
                     }
                 }
             }

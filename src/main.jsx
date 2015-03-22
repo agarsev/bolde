@@ -3,6 +3,7 @@ var React = require('react');
 var Stapes = require('stapes');
 
 var ViewList = require('./ViewList');
+var ToolList = require('./ToolList');
 var Project = require('./Project');
 
 var NavBar = require('./NavBar');
@@ -36,8 +37,7 @@ var global = new (Stapes.subclass({
     openProject: function(name) {
         for (var i=0; i<this.userprojects.length; i++) {
             if (this.userprojects[i].name == name) {
-                this.set('project', new Project(this.userprojects[i], this));
-                return;
+                return new Project(this.userprojects[i], this);
             }
         }
     },
@@ -59,7 +59,7 @@ var global = new (Stapes.subclass({
 }));
 
 global.views = new ViewList();
-global.project = undefined;
+global.tools = new ToolList();
 
 var welcome = "# Collaborative Platform for the Development of Empirical Grammars\n" +
     "Work in progress online system\n\n" +
