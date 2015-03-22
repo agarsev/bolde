@@ -9,15 +9,17 @@ var default_panel = {
 // views: views object, each with id, title and node
 var TabPanel = React.createClass({
     getInitialState: function () {
-        this.props.views.on("create", this.viewCreated, this);
-        this.props.views.on("remove", this.viewDeleted, this);
+        var views = this.props.global.views;
+        views.on("create", this.viewCreated, this);
+        views.on("remove", this.viewDeleted, this);
         var panels = [0, 1, 2].map(function (t) {
-            return this.props.views.filter(function(x){
+            return views.filter(function(x){
                 return (default_panel[x.node.type.displayName]==t) ||
                     (t==1 && default_panel[x.node.type.displayName]==undefined);
             }).map(x => x.id);
         }, this);
         return {
+            views: views,
             // an array of panels, each one an array of view's titles (ordering)
             tabs: panels,
             // an array of panels, each one with the index of the selected tab
@@ -27,7 +29,7 @@ var TabPanel = React.createClass({
     viewCreated: function (key) {
         tabs = this.state.tabs;
         selected = this.state.selected;
-        var panel = default_panel[this.props.views.get(key).node.type.displayName];
+        var panel = default_panel[this.state.views.get(key).node.type.displayName];
         if (panel === undefined) { panel = 1; }
         tabs[panel].push(key);
         selected[panel] = tabs[panel].length-1;
@@ -108,7 +110,7 @@ var TabPanel = React.createClass({
     },
     closeTab: function (tab, e) {
         document.onmouseup = function(e) {
-            this.props.views.close(tab);
+            this.state.views.close(tab);
             document.onmousemove = null;
             document.onmouseup = null;
         }.bind(this);
@@ -131,7 +133,7 @@ var TabPanel = React.createClass({
                         return (<a className={j==this.state.selected[i]?'selected':''}
                                 onMouseDown={this.tabMouseDown.bind(this,i,j,x)}
                                 key={'nav'+x}>
-                                <span>{this.props.views.get(x).title}</span>
+                                <span>{this.state.views.get(x).title}</span>
                                 <span className="close" onMouseDown={this.closeTab.bind(this,x)} />
                                 </a>);
                     }, this)}
@@ -144,7 +146,7 @@ var TabPanel = React.createClass({
             return tabs.map(function(x, j) {
                 return (<div key={'cont'+x}
                     style={{display:(j==this.state.selected[i]?'':'none')}}
-                    >{this.props.views.get(x).node}</div>);
+                    >{this.state.views.get(x).node}</div>);
             }, this);
         }, this);
         return (

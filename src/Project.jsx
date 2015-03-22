@@ -1,0 +1,27 @@
+var Stapes = require('stapes');
+var React = require('react');
+var DirTree = require('./DirTree');
+
+var Project = Stapes.subclass({
+    constructor: function(json, global) {
+        this.name = json.name;
+        this.files = json.files;
+        this.user = json.user;
+        this.global = global;
+        this.key = 'Proj_'+this.name+'_files';
+        global.views.set(this.key, { id: this.key, title: this.name,
+              node: <DirTree path={this.user}
+                     openFile={global.openFile.bind(global)}
+                     name={this.name}
+                     files={this.files} />
+        });
+        var This = this;
+        global.views.on('remove:'+this.key, function() {
+            global.views.remove(function(view) {
+                return view.id.match("^file_"+This.user+"/"+This.name);
+            });
+        });
+    }
+});
+
+module.exports = Project;
