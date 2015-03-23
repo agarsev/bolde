@@ -46,14 +46,22 @@ router.use('/open', function (req, res) {
                     name: name
                 });
             });
+            // TODO close properly when no longer used
             var version = doc.version;
-            setInterval(function() {
+            var counts = 0;
+            var saver = setInterval(function() {
                 if (doc.version>version) {
                     console.log("Saving file "+filename);
                     fs.writeFileSync(filename, doc.snapshot);
                     version = doc.version;
+                    counts=0;
+                } else if (counts>10) {
+                    clearInterval(saver);
+                    doc.close();
+                } else {
+                    counts++;
                 }
-            },2000);
+            },3000);
         });
     }
 });
