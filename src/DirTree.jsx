@@ -28,6 +28,9 @@ var DirTree = React.createClass({
         e.stopPropagation();
         e.preventDefault();
     },
+    deleteClick: function (file) {
+        this.props.project.deleteFile(file);
+    },
     render: function () {
         var below;
         var selected = this.props.selected || this.state.selected;
@@ -42,10 +45,15 @@ var DirTree = React.createClass({
                            </li>);
                 } else {
                     var fullname = this.state.fullname+'/'+filename;
+                    var remove;
+                    if (selected == fullname) {
+                        remove = <a onClick={this.deleteClick.bind(this, fullname)}>x</a>;
+                    }
                     return(<li key={filename} className={selected==fullname?'selected':''}
                            onClick={this.clickFile.bind(this, fullname)}
                            onDoubleClick={this.dblClickFile.bind(this, fullname)}>
-                           <a>{filename}</a></li>);
+                           <a>{filename}</a>{remove}
+                           </li>);
                 }
             }, this);
             below = <ul>{list}</ul>;

@@ -54,6 +54,12 @@ var global = new (Stapes.subclass({
             });
         }
     },
+    closeFile: function(filename) {
+        var key = 'file_'+filename;
+        if (this.views.has(key)) {
+            this.views.remove(key);
+        }
+    }
 }));
 
 global.views = new ViewList();

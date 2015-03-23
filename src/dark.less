@@ -152,9 +152,16 @@ body > header {
         li {
             margin-left: 0.75em;
             list-style: none;
-            &.selected a {
+            a {
+                padding: 1px 2px;
+            }
+            &.selected a:first-child {
                 border: 1px dotted rgb(0, 0, 150);
                 background: rgba(0, 0, 150, 0.2);
+            }
+            a:not(:first-child) {
+                color: red;
+                margin-left: 1ex;
             }
         }
     }

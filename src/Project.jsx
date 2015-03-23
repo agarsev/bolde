@@ -46,6 +46,24 @@ var Project = Stapes.subclass({
                 }
             }
         });
+    },
+    deleteFile: function(fullname) {
+        if (!fullname) { return false; }
+        var This = this;
+        $.ajax({
+            method: 'POST',
+            url: 'api/file/delete/'+fullname,
+            contentType: 'application/json',
+            data: JSON.stringify({token: This.global.get('token')}),
+            success: function(data) {
+                if (data.ok) {
+                    This.global.closeFile(fullname);
+                    This.set('files', data.files);
+                } else {
+                    console.log(data.error);
+                }
+            }
+        });
     }
 });
 
