@@ -38,13 +38,22 @@ router.use('/open', function (req, res) {
         client.open(name, 'text',
                 config.get('server.protocol')+'://localhost:'+config.get('server.port')+router.mountpath+'/channel',
                 function(error, doc) {
-            doc.insert(0, fs.readFileSync(config.get('user_files')+file, { encoding: 'utf8' }), function () {
+            var filename = config.get('user_files')+file;
+            doc.insert(0, fs.readFileSync(filename, { encoding: 'utf8' }), function () {
                 console.log(router.mountpath+": created pad for file "+file+" ("+name+")");
                 res.status(200).send({
                     mode: mode,
                     name: name
                 });
             });
+            var version = doc.version;
+            setInterval(function() {
+                if (doc.version>version) {
+                    console.log("Saving file "+filename);
+                    fs.writeFileSync(filename, doc.snapshot);
+                    version = doc.version;
+                }
+            },2000);
         });
     }
 });
