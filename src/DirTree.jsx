@@ -2,8 +2,12 @@ var React = require('react');
 
 var DirTree = React.createClass({
     getInitialState: function () {
+        this.props.project.on('update:files', function(files) {
+            this.setState({files: files});
+        }, this);
         var fullname = this.props.path?this.props.path+'/'+this.props.name:this.props.name;
-        return { open: true, fullname: fullname, selected: this.props.selected };
+        return { files: this.props.project.get('files'),
+            open: true, fullname: fullname, selected: this.props.selected };
     },
     toggleDir: function () {
         this.setState({open: !this.state.open});
@@ -28,19 +32,20 @@ var DirTree = React.createClass({
         var below;
         var selected = this.props.selected || this.state.selected;
         if (this.state.open) {
-            var list = this.props.files.map(function(file, i) {
+            var list = Object.keys(this.state.files).map(function(filename) {
+                var file = this.state.files[filename];
                 if (file.type=='dir') {
-                    return(<li key={file.name}>
+                    return(<li key={filename}>
                            <DirTree openFile={this.props.openFile} path={this.state.fullname}
                            selected={selected} selectFile={this.clickFile}
-                           name={file.name} files={file.files} />
+                           name={filename} files={file.files} />
                            </li>);
                 } else {
-                    var fullname = this.state.fullname+'/'+file.name;
-                    return(<li key={file.name} className={selected==fullname?'selected':''}
+                    var fullname = this.state.fullname+'/'+filename;
+                    return(<li key={filename} className={selected==fullname?'selected':''}
                            onClick={this.clickFile.bind(this, fullname)}
                            onDoubleClick={this.dblClickFile.bind(this, fullname)}>
-                           <a>{file.name}</a></li>);
+                           <a>{filename}</a></li>);
                 }
             }, this);
             below = <ul>{list}</ul>;

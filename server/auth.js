@@ -10,13 +10,6 @@ var router = express.Router();
 var users = yaml.safeLoad(fs.readFileSync(config.get('user_files')+'/users.yml', 'utf8'));
 var sessions = {};
 
-router.use(function(req, res, next) {
-    if (req.body.token && sessions[req.body.token]) {
-        req.user = sessions[req.body.token].user;
-    }
-    next();
-});
-
 router.use('/login', function(req, res, next) {
     var us = req.body.user;
     if (users[us]) {
@@ -43,6 +36,15 @@ router.use('/login', function(req, res, next) {
         }
     }
     res.status(200).send({ ok: false, error: 'wrong credentials' });
+});
+
+router.use(function(req, res, next) {
+    if (req.body.token && sessions[req.body.token]) {
+        req.user = sessions[req.body.token].user;
+        next();
+    } else {
+        res.status(403).send({ ok: false, error: 'not authenticated' });
+    }
 });
 
 return router;

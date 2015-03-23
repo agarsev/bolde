@@ -20,12 +20,14 @@ var global = new (Stapes.subclass({
             contentType: 'application/json',
             success: function(data) {
                 if (data.ok) {
+                    This.set('token', data.token);
                     This.set('user', user);
                     This.userprojects = data.projects;
                     var list = "Welcome back, "+user+"\n## Your Projects\n";
-                    data.projects.forEach(function(p, i) {
-                        p.user = user;
-                        list += "- ["+p.name+"](#"+p.name+")\n";
+                    Object.keys(data.projects).forEach(function(p) {
+                        data.projects[p].user = user;
+                        data.projects[p].name = p;
+                        list += "- ["+p+"](#"+p+")\n";
                     });
                     This.views.add('projects', 'Projects', <MDText links={This.openProject.bind(This)} text={list} />);
                 } else {
@@ -35,11 +37,7 @@ var global = new (Stapes.subclass({
         });
     },
     openProject: function(name) {
-        for (var i=0; i<this.userprojects.length; i++) {
-            if (this.userprojects[i].name == name) {
-                return new Project(this.userprojects[i], this);
-            }
-        }
+        return new Project(this.userprojects[name], this);
     },
     openFile: function(filename) {
         var key = 'file_'+filename;
