@@ -1,5 +1,6 @@
-var Stapes = require('stapes');
 var React = require('react');
+var LoginForm = require('./LoginForm');
+var Actions = require('./Actions');
 
 var ToolButton = React.createClass({
     render: function () {
@@ -17,16 +18,14 @@ var ToolButton = React.createClass({
 });
 
 var ToolBar = React.createClass({
-    getInitialState: function () {
-        this.props.tools.on('change', function() {
-            this.setState(this.state);
+    componentDidMount: function () {
+        window.ToolStore.on('changed', function() {
+            this.forceUpdate();
         }, this);
-        return {};
     },
     open: function (value) {
-        var This = this;
-        document.onclick = function (e) {
-            This.setState({open: ''});
+        document.onclick = e => {
+            this.setState({open: ''});
             document.onclick = null;
             e.stopPropagation();
             e.preventDefault();
@@ -34,7 +33,7 @@ var ToolBar = React.createClass({
         this.setState({open: value});
     },
     render: function () {
-        var map_to_node = function(item) {
+        var map_to_node = item => {
             var key = 'toolbutton_'+item.title;
             if (item.node) {
                 return item.node;
@@ -45,21 +44,22 @@ var ToolBar = React.createClass({
                     open={this.state.open==key} menu={item.menu} />;
             }
         };
+        var log;
+        if (window.UserStore.isLogged()) {
+            log = <ToolButton title="Logout" click={() => Actions.logout()} />;
+        } else {
+            log = <LoginForm />;
+        }
         return (
             <nav>
                 <a id="Home" href="index.html">Home</a>
-                {this.props.tools.filter(x => !x.right).map(map_to_node, this)}
+                {window.ToolStore.getTools(false).map(map_to_node)}
                 <span className="spacer"></span>
-                {this.props.tools.filter(x => x.right).map(map_to_node, this)}
+                {window.ToolStore.getTools(true).map(map_to_node)}
+                {log}
             </nav>
         );
     },
 });
 
-var ToolList = Stapes.subclass({
-    constructor: function (mount) {
-        React.render(<ToolBar tools={this} />, mount);
-    }
-});
-
-module.exports = ToolList;
+module.exports = ToolBar;

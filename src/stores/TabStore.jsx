@@ -1,6 +1,7 @@
 var React = require('react');
 var Stapes = require('stapes');
 
+var Actions = require('./Actions');
 var MDText = require('./MDText');
 
 var default_panel = {
@@ -8,23 +9,26 @@ var default_panel = {
 };
 
 var TabStore = Stapes.subclass({
-    constructor: function (mount) {
+    constructor: function () {
         this.tabs = {};
         this.selected = [ -1, -1, -1 ];
-        this.counter = 0;
 
         window.Dispatcher.register(a => {
             switch (a.actionType) {
                 case 'login':
                     var list = "Welcome back, "+a.user+"\n## Your Projects\n";
                     Object.keys(a.projects).forEach(p => {
-                        a.projects[p].user = user;
+                        a.projects[p].user = a.user;
                         a.projects[p].name = p;
                         list += "- ["+p+"](#"+p+")\n";
                     });
-                    this.openMessage(list, name => Actions.open_project(name));
+                    this.openMessage("Projects", list, name => Actions.open_project(name));
+                    break;
+                case 'logout':
+                    this.closeTab('message_Projects');
+                    break;
                 case 'open_message':
-                    this.openMessage(a.text, a.links);
+                    this.openMessage(a.title, a.text, a.links);
                     break;
                 case 'close_tab':
                     this.closeTab(a.id);
@@ -41,7 +45,7 @@ var TabStore = Stapes.subclass({
         });
     },
     openMessage: function (title, text, links) {
-        this.addTab(this.counter++, title, { node: <MDText text={text} links={links} /> });
+        this.addTab('message_'+title, title, { node: <MDText text={text} links={links} /> });
     },
     addTab: function (id, title, node) {
         this.tabs[id] = { id: id, title: title, panel: 1, node: node };

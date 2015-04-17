@@ -39,9 +39,10 @@ exports.close_file = function (filename) {
     });
 };
 
-exports.open_message = function (text, links) {
+exports.open_message = function (title, text, links) {
     window.Dispatcher.dispatch({
         actionType: 'open_message',
+        title: title,
         text: text,
         links: links
     });
@@ -87,5 +88,11 @@ exports.login = function (user, password) {
                 console.log(data.error);
             }
         }
+    });
+};
+
+exports.logout = function () {
+    window.Dispatcher.dispatch({
+        actionType: 'logout'
     });
 };

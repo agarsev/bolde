@@ -4,10 +4,10 @@ var Stapes = require('stapes');
 
 var UserStore = require('./UserStore');
 var TabStore = require('./TabStore');
-
 var TabPanel = require('./TabPanel');
+var ToolStore = require('./ToolStore');
+var ToolBar = require('./ToolBar');
 
-//var ToolStore = require('./ToolStore');
 //var ProjectStore = require('./ProjectStore');
 
 var Actions = require('./Actions');
@@ -18,11 +18,12 @@ window.Dispatcher = new Dispatcher();
 
 window.UserStore = new UserStore();
 window.TabStore = new TabStore();
-//window.ToolStore = new ToolStore();
+window.ToolStore = new ToolStore();
+
 //window.ProjectStore = new ProjectStore();
 
 this.node = React.render(<TabPanel />, document.getElementById('TabPanel'));
-//this.node = React.render(<ToolBar />, document.getElementById('NavBar'));
+this.node = React.render(<ToolBar />, document.getElementById('NavBar'));
 
 /*window.global = new (Stapes.subclass({
     openFile: function(filename) {
@@ -57,4 +58,3 @@ var welcome = "# Collaborative Platform for the Development of Empirical Grammar
     "- Real-time collaborative editing\n";
 
 Actions.open_message('Welcome', welcome);
-Actions.open_message('Welcome 2', welcome);

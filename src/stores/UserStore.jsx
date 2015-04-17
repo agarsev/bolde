@@ -2,16 +2,22 @@ var Stapes = require('stapes');
 
 var UserStore = Stapes.subclass({
     constructor: function() {
-        window.Dispatcher.register(function (a) {
+        this.user = null;
+        window.Dispatcher.register(a => {
             if (a.actionType == 'login') {
                 this.user = a.user;
                 this.token = a.token;
+                this.emit('changed');
             } else if (a.actionType == 'logout') {
                 this.user = null;
                 this.token = null;
+                this.emit('changed');
             }
         });
     },
+    isLogged: function() {
+        return this.user != null;
+    }
 });
 
 module.exports = UserStore;

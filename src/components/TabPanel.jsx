@@ -4,9 +4,8 @@ var Actions = require('./Actions');
 
 var TabPanel = React.createClass({
     componentDidMount: function () {
-        window.TabStore.on('changed', function () {
-            this.forceUpdate();
-        }, this);
+        window.TabStore.on('changed', this.forceUpdate.bind(this));
+        window.UserStore.on('changed', this.forceUpdate.bind(this));
     },
     tabMouseDown: function (id) {
         var centralrect = this.refs.central.getDOMNode().getBoundingClientRect();
