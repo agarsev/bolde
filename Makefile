@@ -1,14 +1,23 @@
-CSS:=$(patsubst src/%.less, build/%.css, $(wildcard src/*.less))
-JS:=$(patsubst src/%.jsx, build/%.js, $(wildcard src/*.jsx))
+SRC:=$(wildcard src/*.*) $(wildcard src/**/*)
 
-all: $(CSS) $(JS)
+OUT:=$(notdir $(SRC))
+OUT:=$(patsubst %.jsx, %.js, $(OUT))
+OUT:=$(patsubst %.less, %.css, $(OUT))
+OUT:=$(addprefix build/, $(OUT))
+
+VPATH:=src:src/components:src/styles:src/stores
+
+all: $(OUT)
 	webpack
 
-build/%.css: src/%.less
+build/%.css: %.less
 	lessc $< --autoprefix="last 3 versions" >$@
 
-build/%.js: src/%.jsx
+build/%.js: %.jsx
 	jsx --harmony $< >$@
+
+build/%.js: %.js
+	cp $< $@
 
 update:
 	npm install

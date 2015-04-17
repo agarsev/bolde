@@ -2,28 +2,29 @@ var $ = require('jquery');
 var React = require('react');
 var Stapes = require('stapes');
 
-var ViewList = require('./ViewList');
-var ToolList = require('./ToolList');
-var Project = require('./Project');
+var UserStore = require('./UserStore');
+var TabStore = require('./TabStore');
 
-var MDText = require('./MDText');
-var User = require('./User');
+var TabPanel = require('./TabPanel');
 
-window.global = new (Stapes.subclass({
-    constructor: function () {
-        this.views = new ViewList(document.getElementById('TabPanel'));
-        this.tools = new ToolList(document.getElementById('NavBar'));
-    },
-    open: function (system, data) {
-        switch (system) {
-            case 'User':
-                return new User();
-                break;
-            case 'Project':
-                return new Project(data);
-                break;
-        }
-    },
+//var ToolStore = require('./ToolStore');
+//var ProjectStore = require('./ProjectStore');
+
+var Actions = require('./Actions');
+
+var Dispatcher = require('flux').Dispatcher;
+
+window.Dispatcher = new Dispatcher();
+
+window.UserStore = new UserStore();
+window.TabStore = new TabStore();
+//window.ToolStore = new ToolStore();
+//window.ProjectStore = new ProjectStore();
+
+this.node = React.render(<TabPanel />, document.getElementById('TabPanel'));
+//this.node = React.render(<ToolBar />, document.getElementById('NavBar'));
+
+/*window.global = new (Stapes.subclass({
     openFile: function(filename) {
         var key = 'file_'+filename;
         if (this.views.has(key)) {
@@ -45,7 +46,7 @@ window.global = new (Stapes.subclass({
             this.views.remove(key);
         }
     }
-}))();
+}))();*/
 
 var welcome = "# Collaborative Platform for the Development of Empirical Grammars\n" +
     "Work in progress online system\n\n" +
@@ -55,6 +56,5 @@ var welcome = "# Collaborative Platform for the Development of Empirical Grammar
     "## Features\n"+
     "- Real-time collaborative editing\n";
 
-window.global.views.add("Welcome", "Welcome", <MDText text={welcome} />);
-
-new User();
+Actions.open_message('Welcome', welcome);
+Actions.open_message('Welcome 2', welcome);
