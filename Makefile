@@ -16,9 +16,6 @@ build/%.css: %.less
 build/%.js: %.jsx
 	jsx --harmony $< >$@
 
-build/%.js: %.js
-	cp $< $@
-
 update:
 	npm install
 	bower install

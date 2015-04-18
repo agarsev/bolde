@@ -2,18 +2,8 @@ var React = require('react');
 
 var DirTree = React.createClass({
     getInitialState: function () {
-        var files;
-        if (this.props.project) {
-            this.props.project.on('update:files', function(files) {
-                this.setState({files: files});
-            }, this);
-            files = this.props.project.get('files');
-        } else {
-            files = this.props.files;
-        }
-        var fullname = this.props.path?this.props.path+'/'+this.props.name:this.props.name;
-        return { files: files,
-            open: true, fullname: fullname, selected: this.props.selected };
+        var fullname = this.props.path+'/'+this.props.name;
+        return { open: true, fullname: fullname, selected: this.props.selected };
     },
     toggleDir: function () {
         this.setState({open: !this.state.open});
@@ -42,8 +32,8 @@ var DirTree = React.createClass({
         var below;
         var selected = this.props.selected || this.state.selected;
         if (this.state.open) {
-            var list = Object.keys(this.state.files).map(function(filename) {
-                var file = this.state.files[filename];
+            var list = Object.keys(this.props.files).map(filename => {
+                var file = this.props.files[filename];
                 if (file.type=='dir') {
                     return(<li key={filename}>
                            <DirTree openFile={this.props.openFile} path={this.state.fullname}
@@ -62,7 +52,7 @@ var DirTree = React.createClass({
                            <a>{filename}</a>{remove}
                            </li>);
                 }
-            }, this);
+            });
             below = <ul>{list}</ul>;
         }
         return (

@@ -13,17 +13,6 @@ exports.close_project = function (name) {
         name: name
     });
 };
-/*
-        if (this.children[name]) {
-            this.children[name].focus();
-        } else {
-            var p = window.global.open("Project", this.userprojects[name]);
-            this.children[name] = p;
-            p.on('close', function() {
-                delete this.children[name];
-            }, this);
-        }
-*/
 
 exports.open_file = function (filename) {
     window.Dispatcher.dispatch({
@@ -45,6 +34,15 @@ exports.open_message = function (title, text, links) {
         title: title,
         text: text,
         links: links
+    });
+};
+
+exports.open_tab = function (id, title, node) {
+    window.Dispatcher.dispatch({
+        actionType: 'open_tab',
+        id: id,
+        title: title,
+        node: node
     });
 };
 
@@ -94,5 +92,32 @@ exports.login = function (user, password) {
 exports.logout = function () {
     window.Dispatcher.dispatch({
         actionType: 'logout'
+    });
+};
+
+exports.add_menu = function (id, title, menu, right) {
+    window.Dispatcher.dispatch({
+        actionType: 'add_tool',
+        id: id,
+        title: title,
+        menu: menu,
+        right: right
+    });
+};
+
+exports.add_tool = function (id, title, click, right) {
+    window.Dispatcher.dispatch({
+        actionType: 'add_tool',
+        id: id,
+        title: title,
+        click: click,
+        right: right
+    });
+};
+
+exports.remove_tool = function (id) {
+    window.Dispatcher.dispatch({
+        actionType: 'remove_tool',
+        id: id
     });
 };

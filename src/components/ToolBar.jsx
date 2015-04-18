@@ -18,10 +18,12 @@ var ToolButton = React.createClass({
 });
 
 var ToolBar = React.createClass({
+    getInitialState: function () {
+        return {open: ''};
+    },
     componentDidMount: function () {
-        window.ToolStore.on('changed', function() {
-            this.forceUpdate();
-        }, this);
+        window.ToolStore.on('changed', this.forceUpdate, this);
+        window.UserStore.on('changed', this.forceUpdate, this);
     },
     open: function (value) {
         document.onclick = e => {

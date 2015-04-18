@@ -28,7 +28,10 @@ var TabPanel = React.createClass({
     },
     closeTab: function (tab, e) {
         document.onmouseup = function(e) {
-            Actions.close_tab(tab);
+            var sc = window.TabStore.getShouldClose(tab);
+            if (sc === undefined || sc()) {
+                Actions.close_tab(tab);
+            }
             document.onmousemove = null;
             document.onmouseup = null;
         }.bind(this);
