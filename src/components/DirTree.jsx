@@ -26,7 +26,7 @@ var DirTree = React.createClass({
     },
     deleteClick: function (file) {
         // TODO nested deleting
-        this.props.project.deleteFile(file);
+        this.props.deleteFile(file);
     },
     render: function () {
         var below;

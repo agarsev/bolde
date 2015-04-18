@@ -21,6 +21,16 @@ var ProjectStore = Stapes.subclass({
                     ]);
                     this.projects = {};
                     break;
+                case 'new_file':
+                    var r = /^([^/]+)\/([^/]+)\/(.+)$/.exec(a.filename);
+                    this.projects[r[2]].files[r[3]] = 'text';
+                    this.emit('changed:'+r[2]);
+                    break;
+                case 'delete_file':
+                    var r = /^([^/]+)\/([^/]+)\/(.+)$/.exec(a.filename);
+                    delete this.projects[r[2]].files[r[3]];
+                    this.emit('changed:'+r[2]);
+                    break;
             }
         });
     },
@@ -29,46 +39,6 @@ var ProjectStore = Stapes.subclass({
     },
     getAll: function () {
         return Object.keys(this.projects);
-    },
-    newFile: function() {
-        name = prompt('New file name:');
-        /*
-        if (!name) { return false; }
-        var This = this;
-        $.ajax({
-            method: 'POST',
-            url: 'api/file/new/'+This.user+'/'+This.name+'/'+name,
-            contentType: 'application/json',
-            data: JSON.stringify({token: window.global.get('token')}),
-            success: function(data) {
-                if (data.ok) {
-                    This.set('files', data.files);
-                } else {
-                    console.log(data.error);
-                }
-            }
-        });
-        */
-    },
-    deleteFile: function(fullname) {
-        /*
-        if (!fullname) { return false; }
-        var This = this;
-        $.ajax({
-            method: 'POST',
-            url: 'api/file/delete/'+fullname,
-            contentType: 'application/json',
-            data: JSON.stringify({token: window.global.get('token')}),
-            success: function(data) {
-                if (data.ok) {
-                    window.global.closeFile(fullname);
-                    This.set('files', data.files);
-                } else {
-                    console.log(data.error);
-                }
-            }
-        });
-        */
     },
 });
 

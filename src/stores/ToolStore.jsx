@@ -1,4 +1,5 @@
 var Stapes = require('stapes');
+var Actions = require('./Actions');
 
 var ToolStore = Stapes.subclass({
     constructor: function () {
@@ -24,7 +25,12 @@ var ToolStore = Stapes.subclass({
                     break;
                 case 'open_project':
                     this.addMenu('Proj_'+a.name, a.name, [
-                        {title:'New file',click:() => alert('new file')},
+                        {title:'New file',click: function () {
+                            var filename = prompt('New file name:');
+                            if (filename.length<1) { return; }
+                            Actions.new_file(window.UserStore.getUser()
+                                             +'/'+a.name+'/'+filename);
+                        }},
                         {title:'Run',click:() => alert('run')}
                     ]);
                     break;

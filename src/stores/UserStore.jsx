@@ -17,6 +17,12 @@ var UserStore = Stapes.subclass({
     },
     isLogged: function() {
         return this.user != null;
+    },
+    getUser: function() {
+        return this.user;
+    },
+    getToken: function() {
+        return this.token;
     }
 });
 

@@ -62,6 +62,9 @@ var TabStore = Stapes.subclass({
                         );
                     }
                     break;
+                case 'delete_file':
+                    this.closeTab('file_'+a.filename);
+                    break;
             }
         });
     },

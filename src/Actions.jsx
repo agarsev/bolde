@@ -121,3 +121,41 @@ exports.remove_tool = function (id) {
         id: id
     });
 };
+
+exports.new_file = function (path) {
+    $.ajax({
+        method: 'POST',
+        url: 'api/file/new/'+path,
+        contentType: 'application/json',
+        data: JSON.stringify({token: window.UserStore.getToken()}),
+        success: function(data) {
+            if (data.ok) {
+                window.Dispatcher.dispatch({
+                    actionType: 'new_file',
+                    filename: path
+                });
+            } else {
+                console.log(data.error);
+            }
+        }
+    });
+};
+
+exports.delete_file = function (path) {
+    $.ajax({
+        method: 'POST',
+        url: 'api/file/delete/'+path,
+        contentType: 'application/json',
+        data: JSON.stringify({token: window.UserStore.getToken()}),
+        success: function(data) {
+            if (data.ok) {
+                window.Dispatcher.dispatch({
+                    actionType: 'delete_file',
+                    filename: path
+                });
+            } else {
+                console.log(data.error);
+            }
+        }
+    });
+};
