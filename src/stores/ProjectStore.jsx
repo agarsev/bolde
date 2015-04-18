@@ -15,6 +15,10 @@ var ProjectStore = Stapes.subclass({
                     });
                     break;
                 case 'logout':
+                    window.Dispatcher.waitFor([
+                        window.TabStore.dispatchToken,
+                        window.ToolStore.dispatchToken
+                    ]);
                     this.projects = {};
                     break;
             }
@@ -22,6 +26,9 @@ var ProjectStore = Stapes.subclass({
     },
     get: function (name) {
         return this.projects[name];
+    },
+    getAll: function () {
+        return Object.keys(this.projects);
     },
     newFile: function() {
         name = prompt('New file name:');

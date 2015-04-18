@@ -4,13 +4,14 @@ var Stapes = require('stapes');
 var Actions = require('./Actions');
 var MDText = require('./MDText');
 var ProjectView = require('./ProjectView');
+var Editor = require('./Editor');
 
 var TabStore = Stapes.subclass({
     constructor: function () {
         this.tabs = {};
         this.selected = [ -1, -1, -1 ];
 
-        window.Dispatcher.register(a => {
+        this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
                 case 'open_message':
                     this.openMessage(a.title, a.text, a.links);
@@ -25,9 +26,7 @@ var TabStore = Stapes.subclass({
                     this.moveTab(a.tab, a.panel);
                     break;
                 case 'focus_tab':
-                    var tab = this.tabs[a.id];
-                    this.selected[tab.panel] = a.id;
-                    this.emit('changed');
+                    this.focusTab(a.id);
                     break;
                 case 'login':
                     var list = "Welcome back, "+a.user+"\n## Your Projects\n";
@@ -37,15 +36,31 @@ var TabStore = Stapes.subclass({
                     this.openMessage("Projects", list, name => Actions.open_project(name));
                     break;
                 case 'logout':
+                    window.ProjectStore.getAll()
+                        .forEach(name => this.closeProjectView(name));
                     this.closeTab('message_Projects');
                     break;
                 case 'open_project':
-                    this.addTab('_ProjectView_'+a.name, a.name, <ProjectView project={a.name} />, 0,
-                                () => { Actions.close_project(a.name); return false; }
-                    );
+                    if (this.tabs['projv_'+a.name]) {
+                        this.focusTab('projv_'+a.name);
+                    } else {
+                        this.addTab('projv_'+a.name, a.name, <ProjectView project={a.name} />, 0,
+                                    () => { Actions.close_project(a.name); return false; }
+                        );
+                    }
                     break;
                 case 'close_project':
-                    this.closeTab('_ProjectView_'+a.name);
+                    this.closeProjectView(a.name);
+                    break;
+                case 'open_file':
+                    if (this.tabs['file_'+a.filename]) {
+                        this.focusTab('file_'+a.filename);
+                    } else {
+                        this.addTab('file_'+a.filename,
+                             a.filename.substr(a.filename.search(/\/[^\/]+$/)+1),
+                             <Editor filename={a.filename} />
+                        );
+                    }
                     break;
             }
         });
@@ -97,6 +112,11 @@ var TabStore = Stapes.subclass({
             this.emit('changed');
         }
     },
+    focusTab: function (id) {
+        var tab = this.tabs[id];
+        this.selected[tab.panel] = id;
+        this.emit('changed');
+    },
     unselect: function (panel) {
         if(!Object.keys(this.tabs).some(function(id) {
             if (this.tabs[id].panel == panel) {
@@ -106,6 +126,13 @@ var TabStore = Stapes.subclass({
         }, this)) {
             this.selected[panel] = -1;
         };
+    },
+    closeProjectView: function (name) {
+        Object.keys(this.tabs)
+            .filter(id => id.match('^file_[^/]*\\/'+name))
+            .forEach(id => this.closeTab(id));
+        this.closeTab('projv_'+name);
+        this.emit('changed');
     }
 });
 

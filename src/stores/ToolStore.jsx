@@ -3,12 +3,14 @@ var Stapes = require('stapes');
 var ToolStore = Stapes.subclass({
     constructor: function () {
         this.tools = {};
-        window.Dispatcher.register(a => {
+        this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
                 case 'login':
                     this.addTool('_settings', 'Settings', () => false, true);
                     break;
                 case 'logout':
+                    window.ProjectStore.getAll()
+                        .forEach(name => this.removeTool('Proj_'+name));
                     this.removeTool('_settings');
                     break;
                 case 'add_tool':

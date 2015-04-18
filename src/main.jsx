@@ -23,30 +23,6 @@ window.ProjectStore = new ProjectStore();
 this.node = React.render(<TabPanel />, document.getElementById('TabPanel'));
 this.node = React.render(<ToolBar />, document.getElementById('NavBar'));
 
-/*window.global = new (Stapes.subclass({
-    openFile: function(filename) {
-        var key = 'file_'+filename;
-        if (this.views.has(key)) {
-            this.views.focus(key);
-        } else {
-            var This = this;
-            require(["./Editor"], function(Editor) {
-                This.views.set(key,
-                         { id: key
-                         , title: filename.substr(filename.search(/\/[^\/]+$/)+1)
-                         , node: <Editor filename={filename} />
-                         });
-            });
-        }
-    },
-    closeFile: function(filename) {
-        var key = 'file_'+filename;
-        if (this.views.has(key)) {
-            this.views.remove(key);
-        }
-    }
-}))();*/
-
 var welcome = "# Collaborative Platform for the Development of Empirical Grammars\n" +
     "Work in progress online system\n\n" +
     "## Testing\n"+
