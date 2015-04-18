@@ -33,6 +33,7 @@ var Editor = React.createClass({
                     function(error, doc) {
                         doc.attach_ace(editor);
                         editor.getSession().setMode("ace/mode/"+data.mode);
+                        editor.getSession().setUndoManager(new ace.UndoManager());
                     }
                 );
             }
