@@ -12,13 +12,31 @@ var docs = {};
 var modes = {
     'js': 'javascript',
     'cl': 'lisp',
-    'pm': 'perl'
+    'pm': 'perl',
+    'yml': 'yaml'
 };
 
-var i = 0;
+function startSaving(file) {
+    file.saved = file.doc.version;
+    file.idleCount= 0;
+    file.saver = setInterval(function() {
+        if (file.doc.version>file.saved) {
+            console.log("Saving file "+file.file);
+            fs.writeFileSync(config.get('user_files')+file.file, file.doc.snapshot);
+            file.saved = file.doc.version;
+            file.idleCount=0;
+        } else if (file.idleCount>100) {
+            clearInterval(file.saver);
+            file.doc.close();
+        } else {
+            file.idleCount++;
+        }
+    },3000);
+}
 
 sharejs.attach(router, {db: {type: 'none'}});
 
+var padNumber=0;
 router.use('/open', function (req, res) {
     res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
     res.header('Expires', '-1');
@@ -26,19 +44,21 @@ router.use('/open', function (req, res) {
     var file = req.path;
     if (docs[file]) {
         console.log(router.mountpath+": opening existing pad for file "+file);
+        startSaving(docs[file]);
         res.status(200).send({
             mode: docs[file].mode,
             name: docs[file].name
         });
     } else {
         console.log(router.mountpath+": creating pad for file "+file);
-        var name = "doc_"+(i++);
+        var name = "doc_"+(padNumber++);
         var mode = modes[file.substr(file.search(/\.[^.]+$/)+1)];
-        docs[file] = {name: name, mode: mode};
+        docs[file] = {file: file, name: name, mode: mode};
         client.open(name, 'text',
                 config.get('server.protocol')+'://localhost:'+config.get('server.port')+router.mountpath+'/channel',
                 function(error, doc) {
             var filename = config.get('user_files')+file;
+            docs[file].doc = doc;
             doc.insert(0, fs.readFileSync(filename, { encoding: 'utf8' }), function () {
                 console.log(router.mountpath+": created pad for file "+file+" ("+name+")");
                 res.status(200).send({
@@ -47,21 +67,7 @@ router.use('/open', function (req, res) {
                 });
             });
             // TODO close properly when no longer used
-            var version = doc.version;
-            var counts = 0;
-            var saver = setInterval(function() {
-                if (doc.version>version) {
-                    console.log("Saving file "+filename);
-                    fs.writeFileSync(filename, doc.snapshot);
-                    version = doc.version;
-                    counts=0;
-                } else if (counts>10) {
-                    clearInterval(saver);
-                    doc.close();
-                } else {
-                    counts++;
-                }
-            },3000);
+            startSaving(docs[file]);
         });
     }
 });
