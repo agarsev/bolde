@@ -8,6 +8,7 @@ var TabPanel = require('./TabPanel');
 var ToolStore = require('./ToolStore');
 var ToolBar = require('./ToolBar');
 var ProjectStore = require('./ProjectStore');
+var FileStore = require('./FileStore');
 
 var Actions = require('./Actions');
 
@@ -19,6 +20,7 @@ window.UserStore = new UserStore();
 window.TabStore = new TabStore();
 window.ToolStore = new ToolStore();
 window.ProjectStore = new ProjectStore();
+window.FileStore = new FileStore();
 
 this.node = React.render(<TabPanel />, document.getElementById('TabPanel'));
 this.node = React.render(<ToolBar />, document.getElementById('NavBar'));

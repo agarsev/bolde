@@ -14,20 +14,6 @@ exports.close_project = function (name) {
     });
 };
 
-exports.open_file = function (filename) {
-    window.Dispatcher.dispatch({
-        actionType: 'open_file',
-        filename: filename
-    });
-};
-
-exports.close_file = function (filename) {
-    window.Dispatcher.dispatch({
-        actionType: 'close_file',
-        filename: filename
-    });
-};
-
 exports.open_message = function (title, text, links) {
     window.Dispatcher.dispatch({
         actionType: 'open_message',
@@ -159,3 +145,53 @@ exports.delete_file = function (path) {
         }
     });
 };
+
+var load_file = function (path) {
+    return new Promise(function (resolve, reject) {
+        if (window.FileStore.isLoaded(path)) {
+            resolve();
+        } else {
+            $.ajax({
+                url: "api/sharejs/open/"+path,
+                success: function(data) {
+                    window.BCSocket = require("../node_modules/share/node_modules/browserchannel/dist/bcsocket.js").BCSocket;
+                    require("../node_modules/share/webclient/share.js");
+                    require("../node_modules/share/webclient/ace.js");
+
+                    sharejs.open(data.name, 'text',
+                        location.href.substr(0, location.href.search(/\/[^\/]*$/))+'/api/sharejs/channel',
+                        function(error, doc) {
+                            if (error) { reject(error); }
+                            else {
+                                window.Dispatcher.dispatch({
+                                    actionType: 'load_file',
+                                    filename: path,
+                                    doc,
+                                    mode: data.mode
+                                });
+                                resolve();
+                            }
+                        }
+                    );
+                }
+            });
+        }
+    });
+};
+exports.load_file = load_file;
+
+exports.open_file = function (path) {
+    load_file(path).then(() =>
+        window.Dispatcher.dispatch({
+          actionType: 'open_file',
+          filename: path
+        }));
+};
+
+exports.close_file = function (filename) {
+    window.Dispatcher.dispatch({
+        actionType: 'close_file',
+        filename: filename
+    });
+};
+

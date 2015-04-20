@@ -1,4 +1,3 @@
-var $ = require('jquery');
 var React = require('react');
 
 require('../bower_components/ace-builds/src-min-noconflict/ace.js');
@@ -7,7 +6,7 @@ ace.config.set("basePath", "bower_components/ace-builds/src-min-noconflict");
 var Editor = React.createClass({
     render: function () {
         return (
-            <div id={"Editor_"+this.props.filename}>Loading {this.props.filename}...</div>
+            <div id={"Editor_"+this.props.filename}></div>
         );
     },
     init: function (editor) {
@@ -18,27 +17,11 @@ var Editor = React.createClass({
     componentDidMount: function () {
         var editor = ace.edit("Editor_"+this.props.filename);
         this.init(editor);
-        this.share(editor);
+        var file = window.FileStore.getFile(this.props.filename);
+        file.doc.attach_ace(editor);
+        editor.getSession().setMode("ace/mode/"+file.mode);
+        editor.getSession().setUndoManager(new ace.UndoManager());
     },
-    share: function (editor) {
-        $.ajax({
-            url: "api/sharejs/open/"+this.props.filename,
-            success: function(data) {
-                window.BCSocket = require("../node_modules/share/node_modules/browserchannel/dist/bcsocket.js").BCSocket;
-                require("../node_modules/share/webclient/share.js");
-                require("../node_modules/share/webclient/ace.js");
-
-                sharejs.open(data.name, 'text',
-                    location.href.substr(0, location.href.search(/\/[^\/]*$/))+'/api/sharejs/channel',
-                    function(error, doc) {
-                        doc.attach_ace(editor);
-                        editor.getSession().setMode("ace/mode/"+data.mode);
-                        editor.getSession().setUndoManager(new ace.UndoManager());
-                    }
-                );
-            }
-        });
-    }
 });
 
 module.exports = Editor;
