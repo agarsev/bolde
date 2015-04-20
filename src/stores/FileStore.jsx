@@ -25,6 +25,10 @@ class FileStore {
         return this.files[path];
     }
 
+    getContents (path) {
+        return this.files[path].doc.getText();
+    }
+
 };
 
 module.exports = FileStore;

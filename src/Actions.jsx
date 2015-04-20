@@ -195,3 +195,10 @@ exports.close_file = function (filename) {
     });
 };
 
+exports.run = function (project) {
+    load_file(project+'/run.js').then(function () {
+        var body = window.FileStore.getContents(project+'/run.js');
+        var run = new Function('input', 'output', 'log', body);
+        run('', data => console.log(data), (chan, data) => console.log(chan+': '+data));
+    });
+};

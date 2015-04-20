@@ -27,11 +27,13 @@ var ToolStore = Stapes.subclass({
                     this.addMenu('Proj_'+a.name, a.name, [
                         {title:'New file',click: function () {
                             var filename = prompt('New file name:');
-                            if (filename.length<1) { return; }
+                            if (!filename || filename.length<1) { return; }
                             Actions.new_file(window.UserStore.getUser()
                                              +'/'+a.name+'/'+filename);
                         }},
-                        {title:'Run',click:() => alert('run')}
+                        {title:'Run',click: function() {
+                            Actions.run(window.UserStore.getUser()+'/'+a.name);
+                        }}
                     ]);
                     break;
                 case 'close_project':
