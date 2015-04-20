@@ -1,0 +1,49 @@
+table.borjs_tfs {
+    display: inline-block;
+    border-collapse: collapse;
+    text-align: left;
+    border-radius: 15px;
+    margin: 4px 3px;
+    padding: 5px 8px;
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    vertical-align: middle;
+    font-family: serif;
+    tr td:not(:first-child) {
+        padding-top: 4px;
+    }
+    td:first-child {
+        padding-right: 10px;
+    }
+    .borjs_feat {
+        font-variant: small-caps;
+    }
+    .borjs_literal, .borjs_type {
+        font-style: italic;
+        color: green;
+    }
+    th {
+        font-style: italic;
+        font-weight: normal;
+        cursor: pointer;
+        color: #c30;
+    }
+    .borjs_var {
+        padding: 0px 2px;
+        margin: 2px;
+        border: 1px solid blue;
+        color: blue;
+        cursor: pointer;
+    }
+    ul {
+        padding: 0;
+        margin: 0;
+    }
+    li {
+        padding: 3px;
+        list-style-type: none;
+    }
+    .borjs_error {
+        color: #c30;
+    }
+}

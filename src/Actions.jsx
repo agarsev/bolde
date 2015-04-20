@@ -208,7 +208,14 @@ exports.run = function (project) {
             body += window.FileStore.getContents(project+'/'+conf.run);
             var input = window.FileStore.getContents(project+'/'+conf.input);
             var run = new Function('input', 'output', 'log', body);
-            run(input, data => console.log(data), (channel, data) => console.log(channel+': '+data));
+            run(input, function(data) {
+                window.Dispatcher.dispatch({
+                    actionType: 'run_result',
+                    project: project,
+                    type: conf.output,
+                    data: data
+                });
+            }, (channel, data) => console.log(channel+': '+data));
         });
     })
     .catch (function (error) {

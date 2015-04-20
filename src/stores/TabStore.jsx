@@ -2,9 +2,11 @@ var React = require('react');
 var Stapes = require('stapes');
 
 var Actions = require('./Actions');
+
 var MDText = require('./MDText');
 var ProjectView = require('./ProjectView');
 var Editor = require('./Editor');
+var AVM = require('./AVM');
 
 var TabStore = Stapes.subclass({
     constructor: function () {
@@ -64,6 +66,14 @@ var TabStore = Stapes.subclass({
                     break;
                 case 'delete_file':
                     this.closeTab('file_'+a.filename);
+                    break;
+                case 'run_result':
+                    var project = a.project.substr(a.project.search(/\/[^\/]+$/)+1);
+                    this.addTab('run_'+a.project,project+' results',
+                                a.type=='avm'?
+                                <div className="Tab"><AVM data={a.data} /></div>:
+                                <MDText text={a.data} />,
+                                2);
                     break;
             }
         });
