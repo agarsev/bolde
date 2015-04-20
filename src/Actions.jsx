@@ -1,4 +1,5 @@
 var $ = require('jquery');
+var yaml = require('js-yaml');
 
 exports.open_project = function (name) {
     window.Dispatcher.dispatch({
@@ -196,9 +197,21 @@ exports.close_file = function (filename) {
 };
 
 exports.run = function (project) {
-    load_file(project+'/run.js').then(function () {
-        var body = window.FileStore.getContents(project+'/run.js');
-        var run = new Function('input', 'output', 'log', body);
-        run('', data => console.log(data), (chan, data) => console.log(chan+': '+data));
+    load_file(project+'/run.yml')
+    .then (function () {
+        var conf = yaml.safeLoad(window.FileStore.getContents(project+'/run.yml'));
+        var allfiles = conf.deps.map(file => load_file(project+'/'+file));
+        allfiles.push(load_file(project+'/'+conf.run));
+        allfiles.push(load_file(project+'/'+conf.input));
+        return Promise.all(allfiles).then(function () {
+            var body = conf.deps.reduce((body, file) => body+";"+window.FileStore.getContents(project+'/'+file), '');
+            body += window.FileStore.getContents(project+'/'+conf.run);
+            var input = window.FileStore.getContents(project+'/'+conf.input);
+            var run = new Function('input', 'output', 'log', body);
+            run(input, data => console.log(data), (channel, data) => console.log(channel+': '+data));
+        });
+    })
+    .catch (function (error) {
+        console.log(error);
     });
 };
