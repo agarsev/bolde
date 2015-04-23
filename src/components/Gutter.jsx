@@ -1,30 +1,37 @@
+"use strict";
+
 var React = require('react');
 
-var Gutter = React.createClass({
-    getInitialState: function () {
+class Gutter extends React.Component {
+
+    constructor (props) {
+        super(props);
         if (this.props.dir=="right") {
-            return { handler: function(e) {
+            this.state = { handler: function(e) {
                 this.style.width = e.clientX+"px";
             }};
         } else {
-            return { handler: function(e) {
+            this.state = { handler: function(e) {
                 this.style.width = (document.body.clientWidth-e.clientX)+"px";
             }};
         }
-    },
-    render: function () {
+    }
+
+    render () {
         return (
-            <div onMouseDown={this.handleMouse}
+            <div onMouseDown={this.handleMouse.bind(this)}
                 className="gutter" />
         );
-    },
-    handleMouse: function (e) {
+    }
+
+    handleMouse (e) {
         document.onmousemove = this.state.handler.bind(this.props.getTarget());
         document.onmouseup = function() {
             document.onmousemove = null;
         };
         e.preventDefault();
     }
-});
+
+};
 
 module.exports = Gutter;

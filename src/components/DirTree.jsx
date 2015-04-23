@@ -1,14 +1,20 @@
+"use strict";
+
 var React = require('react');
 
-var DirTree = React.createClass({
-    getInitialState: function () {
+class DirTree extends React.Component {
+
+    constructor (props) {
+        super(props);
         var fullname = this.props.path+'/'+this.props.name;
-        return { open: true, fullname: fullname, selected: this.props.selected };
-    },
-    toggleDir: function () {
+        this.state = { open: true, fullname: fullname, selected: this.props.selected };
+    }
+
+    toggleDir () {
         this.setState({open: !this.state.open});
-    },
-    clickFile: function (file, e) {
+    }
+
+    clickFile (file, e) {
         if (this.props.selectFile) {
             this.props.selectFile(file);
         } else {
@@ -18,17 +24,20 @@ var DirTree = React.createClass({
             e.stopPropagation();
             e.preventDefault();
         }
-    },
-    dblClickFile: function (file, e) {
+    }
+
+    dblClickFile (file, e) {
         this.props.openFile(file);
         e.stopPropagation();
         e.preventDefault();
-    },
-    deleteClick: function (file) {
+    }
+
+    deleteClick (file) {
         // TODO nested deleting
         this.props.deleteFile(file);
-    },
-    render: function () {
+    }
+
+    render () {
         var below;
         var selected = this.props.selected || this.state.selected;
         if (this.state.open) {
@@ -66,6 +75,6 @@ var DirTree = React.createClass({
             </div>
         );
     }
-});
+};
 
 module.exports = DirTree;

@@ -1,5 +1,7 @@
+"use strict";
+
+var EventEmitter = require('events').EventEmitter;
 var React = require('react');
-var Stapes = require('stapes');
 
 var Actions = require('./Actions');
 
@@ -8,8 +10,9 @@ var ProjectView = require('./ProjectView');
 var Editor = require('./Editor');
 var AVM = require('./AVM');
 
-var TabStore = Stapes.subclass({
-    constructor: function () {
+class TabStore extends EventEmitter {
+
+    constructor () {
         this.tabs = {};
         this.selected = [ -1, -1, -1 ];
 
@@ -77,24 +80,29 @@ var TabStore = Stapes.subclass({
                     break;
             }
         });
-    },
-    openMessage: function (title, text, links) {
+    }
+
+    openMessage (title, text, links) {
         this.addTab('message_'+title, title, { node: <MDText text={text} links={links} /> });
-    },
-    addTab: function (id, title, node, panel, closeCallback) {
+    }
+
+    addTab (id, title, node, panel, closeCallback) {
         if (panel === undefined) { panel = 1; }
         this.tabs[id] = { id: id, title: title, panel: panel, node: node,
             closecb: closeCallback };
         this.selected[panel] = id;
         this.emit('changed');
-    },
-    getShouldClose: function (id) {
+    }
+
+    getShouldClose (id) {
         return this.tabs[id].closecb;
-    },
-    getTab: function (id) {
+    }
+
+    getTab (id) {
         return this.tabs[id];
-    },
-    closeTab: function (id) {
+    }
+
+    closeTab (id) {
         if (this.tabs[id] === undefined) { return; }
         var panel = this.tabs[id].panel;
         delete this.tabs[id];
@@ -102,8 +110,9 @@ var TabStore = Stapes.subclass({
             this.unselect(panel);
         }
         this.emit('changed');
-    },
-    getTabs: function (panel) {
+    }
+
+    getTabs (panel) {
         return Object.keys(this.tabs)
             .filter(id => this.tabs[id].panel == panel)
             .map(id => {
@@ -111,8 +120,9 @@ var TabStore = Stapes.subclass({
                 ret.selected = this.selected[panel] == id;
                 return ret;
             });
-    },
-    moveTab: function (id, panel) {
+    }
+
+    moveTab (id, panel) {
         var tab = this.tabs[id];
         if (tab.panel != panel) {
             var oldpanel = tab.panel;
@@ -124,13 +134,15 @@ var TabStore = Stapes.subclass({
             this.selected[panel] = id;
             this.emit('changed');
         }
-    },
-    focusTab: function (id) {
+    }
+
+    focusTab (id) {
         var tab = this.tabs[id];
         this.selected[tab.panel] = id;
         this.emit('changed');
-    },
-    unselect: function (panel) {
+    }
+
+    unselect (panel) {
         if(!Object.keys(this.tabs).some(function(id) {
             if (this.tabs[id].panel == panel) {
                 this.selected[panel] = id;
@@ -139,14 +151,16 @@ var TabStore = Stapes.subclass({
         }, this)) {
             this.selected[panel] = -1;
         };
-    },
-    closeProjectView: function (name) {
+    }
+
+    closeProjectView (name) {
         Object.keys(this.tabs)
             .filter(id => id.match('^file_[^/]*\\/'+name))
             .forEach(id => this.closeTab(id));
         this.closeTab('projv_'+name);
         this.emit('changed');
     }
-});
+
+};
 
 module.exports = TabStore;

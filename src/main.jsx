@@ -1,6 +1,7 @@
+"use strict";
+
 var $ = require('jquery');
 var React = require('react');
-var Stapes = require('stapes');
 
 var UserStore = require('./UserStore');
 var TabStore = require('./TabStore');

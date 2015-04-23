@@ -1,9 +1,10 @@
-var Stapes = require('stapes');
-var React = require('react');
-var $ = require('jquery');
+"use strict";
 
-var ProjectStore = Stapes.subclass({
-    constructor: function () {
+var EventEmitter = require('events').EventEmitter;
+
+class ProjectStore extends EventEmitter {
+
+    constructor () {
         this.projects = {};
         window.Dispatcher.register(a => {
             switch (a.actionType) {
@@ -33,13 +34,16 @@ var ProjectStore = Stapes.subclass({
                     break;
             }
         });
-    },
-    get: function (name) {
+    }
+
+    get (name) {
         return this.projects[name];
-    },
-    getAll: function () {
+    }
+
+    getAll () {
         return Object.keys(this.projects);
-    },
-});
+    }
+
+};
 
 module.exports = ProjectStore;

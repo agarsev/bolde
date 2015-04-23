@@ -1,9 +1,12 @@
+"use strict";
+
 var React = require('react');
 var LoginForm = require('./LoginForm');
 var Actions = require('./Actions');
 
-var ToolButton = React.createClass({
-    render: function () {
+class ToolButton extends React.Component {
+
+    render () {
         if (this.props.open) {
             var menu = this.props.menu.map(function (item) {
                 return (<li key={'menu_'+item.title} onClick={item.click}>{item.title}</li>);
@@ -15,17 +18,22 @@ var ToolButton = React.createClass({
             return (<a onClick={this.props.click}>{this.props.title}</a>);
         }
     }
-});
 
-var ToolBar = React.createClass({
-    getInitialState: function () {
-        return {open: ''};
-    },
-    componentDidMount: function () {
-        window.ToolStore.on('changed', this.forceUpdate, this);
-        window.UserStore.on('changed', this.forceUpdate, this);
-    },
-    open: function (value) {
+};
+
+class ToolBar extends React.Component {
+
+    constructor (props) {
+        super(props);
+        this.state = {open: ''};
+    }
+
+    componentDidMount () {
+        window.ToolStore.on('changed', this.forceUpdate.bind(this));
+        window.UserStore.on('changed', this.forceUpdate.bind(this));
+    }
+
+    open (value) {
         document.onclick = e => {
             this.setState({open: ''});
             document.onclick = null;
@@ -33,8 +41,9 @@ var ToolBar = React.createClass({
             e.preventDefault();
         };
         this.setState({open: value});
-    },
-    render: function () {
+    }
+
+    render () {
         var map_to_node = item => {
             var key = 'toolbutton_'+item.title;
             if (item.node) {
@@ -61,7 +70,8 @@ var ToolBar = React.createClass({
                 {log}
             </nav>
         );
-    },
-});
+    }
+
+};
 
 module.exports = ToolBar;

@@ -1,14 +1,18 @@
+"use strict";
+
 var React = require('react');
 var Gutter = require('./Gutter');
 var Actions = require('./Actions');
 
-var TabPanel = React.createClass({
-    componentDidMount: function () {
+class TabPanel extends React.Component {
+
+    componentDidMount () {
         window.TabStore.on('changed', this.forceUpdate.bind(this));
         window.UserStore.on('changed', this.forceUpdate.bind(this));
-    },
-    tabMouseDown: function (id) {
-        var centralrect = this.refs.central.getDOMNode().getBoundingClientRect();
+    }
+
+    tabMouseDown (id) {
+        var centralrect = React.findDOMNode(this.refs.central).getBoundingClientRect();
         document.onmousemove = function(e) {
             if (e.clientX<centralrect.left) {
                 Actions.move_tab_panel(id, 0);
@@ -25,8 +29,9 @@ var TabPanel = React.createClass({
             document.onmouseup = null;
             e.preventDefault();
         };
-    },
-    closeTab: function (tab, e) {
+    }
+
+    closeTab (tab, e) {
         document.onmouseup = function(e) {
             var sc = window.TabStore.getShouldClose(tab);
             if (sc === undefined || sc()) {
@@ -41,11 +46,9 @@ var TabPanel = React.createClass({
         }
         e.preventDefault();
         e.stopPropagation();
-    },
-    refDOM: function (name) {
-        return this.refs[name].getDOMNode();
-    },
-    render: function () {
+    }
+
+    render () {
         var navs = [0, 1, 2].map(panel => {
             var tabs = window.TabStore.getTabs(panel);
             if (tabs.length==0) { return undefined; }
@@ -79,12 +82,12 @@ var TabPanel = React.createClass({
                     {navs[0]}
                     {conts[0]}
                 </section>
-                <Gutter dir="right" getTarget={() => this.refs['left'].getDOMNode()} />
+                <Gutter dir="right" getTarget={() => React.findDOMNode(this.refs['left'])} />
                 <section ref="central" style={{flex:"1"}} >
                     {navs[1]}
                     {conts[1]}
                 </section>
-                <Gutter dir="left" getTarget={() => this.refs['right'].getDOMNode()} />
+                <Gutter dir="left" getTarget={() => React.findDOMNode(this.refs['right'])} />
                 <section ref="right">
                     {navs[2]}
                     {conts[2]}
@@ -92,6 +95,7 @@ var TabPanel = React.createClass({
             </main>
         );
     }
-});
+
+};
 
 module.exports = TabPanel;

@@ -1,23 +1,28 @@
+"use strict";
+
 var React = require('react');
 
-var AVM = React.createClass({
-    getInitialState: function () {
-        var show = true;
-        if (this.isVariable()) { show = false; }
-        return { show };
-    },
-    toggle: function () {
+class AVM extends React.Component {
+
+    constructor (props) {
+        super(props);
+        this.state = { show: !this.isVariable() };
+    }
+
+    toggle () {
         this.setState({ show: !this.state.show });
-    },
-    isVariable: function () {
+    }
+
+    isVariable () {
         return (typeof this.props.data === 'string' && /^[A-Z]/.test(this.props.data));
-    },
-    render: function () {
+    }
+
+    render () {
         var o = this.props.data;
-        var bindings = this.props.bindings || o._bindings;
+        var bindings = this.props.bindings !== undefined ? this.props.bindings : o['_bindings'];
         if (this.isVariable()) {
             return (<span>
-                <a className="borjs_var" onClick={this.toggle} >{o}</a>
+                <a className="borjs_var" onClick={this.toggle.bind(this)} >{o}</a>
                 {this.state.show?<AVM data={bindings.get(o)} bindings={bindings} />:null}
             </span>);
         } else if (typeof o === 'string') { // literal
@@ -37,8 +42,8 @@ var AVM = React.createClass({
                 return (<AVM data={o._type} bindings={bindings}/>);
             }
             return (<table className="borjs_tfs">
-                <thead><tr><th colSpan="2" onClick={this.toggle}>
-                {o._type}
+                <thead><tr><th colSpan="2" onClick={this.toggle.bind(this)}>
+                {o['_type']}
                 </th></tr></thead>
                 <tbody>
                 {this.state.show?atrs.map(x => {
@@ -52,7 +57,8 @@ var AVM = React.createClass({
         } else {
             return (<span className="borjs_unknown">{o.toSource()}</span>);
         }
-    },
-});
+    }
+
+};
 
 module.exports = AVM;

@@ -1,14 +1,18 @@
+"use strict";
+
 var React = require('react');
-var markdownit = require('../bower_components/markdown-it/dist/markdown-it.min.js');
+var markdownit = require('markdown-it');
 
-var md = markdownit();
+var md = markdownit({html: true});
 
-var MDText = React.createClass({
-    render: function() {
+class MDText extends React.Component {
+
+    render () {
         var rawMarkup = md.render(this.props.text);
         return (<div ref="div" className="paper" dangerouslySetInnerHTML={{__html: rawMarkup}} />);
-    },
-    componentDidMount: function() {
+    }
+
+    componentDidMount () {
         if (this.props.links) {
             var Links = this.props.links;
             var as = this.refs.div.getDOMNode().querySelectorAll('a');
@@ -22,6 +26,7 @@ var MDText = React.createClass({
             }
         }
     }
-});
+
+};
 
 module.exports = MDText;

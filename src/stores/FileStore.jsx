@@ -1,6 +1,8 @@
-//var Events = require('events');
+"use strict";
 
-class FileStore {
+var EventEmitter = require('events').EventEmitter;
+
+class FileStore extends EventEmitter {
 
     constructor () {
         this.files = {};

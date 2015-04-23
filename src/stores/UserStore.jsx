@@ -1,7 +1,10 @@
-var Stapes = require('stapes');
+"use strict";
 
-var UserStore = Stapes.subclass({
-    constructor: function() {
+var EventEmitter = require('events').EventEmitter;
+
+class UserStore extends EventEmitter {
+
+    constructor () {
         this.user = null;
         window.Dispatcher.register(a => {
             if (a.actionType == 'login') {
@@ -14,16 +17,19 @@ var UserStore = Stapes.subclass({
                 this.emit('changed');
             }
         });
-    },
-    isLogged: function() {
+    }
+
+    isLogged () {
         return this.user != null;
-    },
-    getUser: function() {
+    }
+
+    getUser () {
         return this.user;
-    },
-    getToken: function() {
+    }
+
+    getToken () {
         return this.token;
     }
-});
+};
 
 module.exports = UserStore;

@@ -1,8 +1,11 @@
-var Stapes = require('stapes');
+"use strict";
+
+var EventEmitter = require('events').EventEmitter;
 var Actions = require('./Actions');
 
-var ToolStore = Stapes.subclass({
-    constructor: function () {
+class ToolStore extends EventEmitter {
+
+    constructor () {
         this.tools = {};
         this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
@@ -41,30 +44,35 @@ var ToolStore = Stapes.subclass({
                     break;
             }
         });
-    },
-    getTools: function (right) {
+    }
+
+    getTools (right) {
         return Object.keys(this.tools)
             .filter(id => this.tools[id].right == right)
             .map(id => this.tools[id]);
-    },
-    addTool: function (id, title, click, right) {
+    }
+
+    addTool (id, title, click, right) {
         if (right === undefined) { right = false; }
         this.tools[id] = { title: title,
                 click: click,
                 right: right };
         this.emit('changed');
-    },
-    addMenu: function (id, title, menu, right) {
+    }
+
+    addMenu (id, title, menu, right) {
         if (right === undefined) { right = false; }
         this.tools[id] = { title: title,
                 menu: menu,
                 right: right };
         this.emit('changed');
-    },
-    removeTool: function (id) {
+    }
+
+    removeTool (id) {
         delete this.tools[id];
         this.emit('changed');
     }
-});
+
+};
 
 module.exports = ToolStore;

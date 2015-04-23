@@ -5,6 +5,5 @@
   "private": true,
   "dependencies": {
     "ace-builds": "ajaxorg/ace-builds#~1.1.8",
-    "markdown-it": "~4.0.1"
   }
 }

@@ -8,7 +8,7 @@ OUT:=$(addprefix build/, $(OUT))
 VPATH:=src:src/components:src/styles:src/stores
 
 all: $(OUT)
-	webpack
+	browserify build/main.js -o build/bundle.js
 
 build/%.css: %.less
 	lessc $< --autoprefix="last 3 versions" >$@
