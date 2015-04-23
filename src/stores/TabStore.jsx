@@ -13,6 +13,8 @@ var AVM = require('./AVM');
 class TabStore extends EventEmitter {
 
     constructor () {
+        super();
+
         this.tabs = {};
         this.selected = [ -1, -1, -1 ];
 

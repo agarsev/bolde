@@ -6,6 +6,8 @@ var Actions = require('./Actions');
 class ToolStore extends EventEmitter {
 
     constructor () {
+        super();
+
         this.tools = {};
         this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {

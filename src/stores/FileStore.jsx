@@ -5,6 +5,8 @@ var EventEmitter = require('events').EventEmitter;
 class FileStore extends EventEmitter {
 
     constructor () {
+        super();
+
         this.files = {};
 
         this.dispatchToken = window.Dispatcher.register(a => {

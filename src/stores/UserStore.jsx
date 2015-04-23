@@ -5,6 +5,8 @@ var EventEmitter = require('events').EventEmitter;
 class UserStore extends EventEmitter {
 
     constructor () {
+        super();
+
         this.user = null;
         window.Dispatcher.register(a => {
             if (a.actionType == 'login') {

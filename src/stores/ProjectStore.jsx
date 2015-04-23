@@ -5,6 +5,8 @@ var EventEmitter = require('events').EventEmitter;
 class ProjectStore extends EventEmitter {
 
     constructor () {
+        super();
+
         this.projects = {};
         window.Dispatcher.register(a => {
             switch (a.actionType) {
