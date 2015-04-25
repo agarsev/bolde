@@ -17,6 +17,15 @@ exports.close_project = function (name) {
     });
 };
 
+exports.delete_project = () => console.log('unimplemented');
+exports.new_project = () => console.log('unimplemented');
+exports.update_project_description = function (name, desc) {
+    window.Dispatcher.dispatch({
+        actionType: 'update_project_description',
+        name, desc
+    });
+};
+
 exports.open_message = function (title, text, links) {
     window.Dispatcher.dispatch({
         actionType: 'open_message',

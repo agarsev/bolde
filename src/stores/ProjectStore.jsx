@@ -16,6 +16,7 @@ class ProjectStore extends EventEmitter {
                         this.projects[p].user = a.user;
                         this.projects[p].name = p;
                     });
+                    this.emit('changed');
                     break;
                 case 'logout':
                     window.Dispatcher.waitFor([
@@ -23,6 +24,7 @@ class ProjectStore extends EventEmitter {
                         window.ToolStore.dispatchToken
                     ]);
                     this.projects = {};
+                    this.emit('changed');
                     break;
                 case 'new_file':
                     var r = /^([^/]+)\/([^/]+)\/(.+)$/.exec(a.filename);
@@ -33,6 +35,10 @@ class ProjectStore extends EventEmitter {
                     var r = /^([^/]+)\/([^/]+)\/(.+)$/.exec(a.filename);
                     delete this.projects[r[2]].files[r[3]];
                     this.emit('changed:'+r[2]);
+                    break;
+                case 'update_project_description':
+                    this.projects[a.name].desc = a.desc;
+                    this.emit('changed:'+[a.name]);
                     break;
             }
         });

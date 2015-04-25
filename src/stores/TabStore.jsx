@@ -37,16 +37,12 @@ class TabStore extends EventEmitter {
                     this.focusTab(a.id);
                     break;
                 case 'login':
-                    var list = "Welcome back, "+a.user+"\n## Your Projects\n";
-                    Object.keys(a.projects).forEach(p => {
-                        list += "- ["+p+"](#"+p+")\n";
-                    });
-                    this.openMessage("Projects", list, name => Actions.open_project(name));
+                    this.addTab('_ProjectList', 'Projects', <ProjectList />, 1);
                     break;
                 case 'logout':
                     window.ProjectStore.getAll()
                         .forEach(name => this.closeProjectView(name));
-                    this.closeTab('message_Projects');
+                    this.closeTab('_ProjectList');
                     break;
                 case 'open_project':
                     if (this.tabs['projv_'+a.name]) {
