@@ -34,6 +34,12 @@ class ProjectList extends React.Component {
         window.ProjectStore.on('changed', this.forceUpdate.bind(this));
     }
 
+    newProj () {
+        var name = prompt('New project name:');
+        if (!name || name.length<1) { return; }
+        Actions.project.new(name);
+    }
+
     render () {
         return <div className="paper">
         <p>Welcome back, {window.UserStore.getUser()}</p>
@@ -41,7 +47,7 @@ class ProjectList extends React.Component {
         <ul>
         {window.ProjectStore.getAll().map(x => <ProjectSnippet key={x} name={x} />)}
         </ul>
-        <a onClick={() => Actions.project.new()}>New project</a>
+        <a onClick={this.newProj}>New project</a>
         </div>;
     }
 
