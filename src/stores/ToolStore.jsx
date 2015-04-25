@@ -1,7 +1,7 @@
 "use strict";
 
 var EventEmitter = require('events').EventEmitter;
-var Actions = require('./Actions');
+var Actions = require('../Actions');
 
 class ToolStore extends EventEmitter {
 

@@ -2,7 +2,7 @@
 
 var React = require('react');
 var LoginForm = require('./LoginForm');
-var Actions = require('./Actions');
+var Actions = require('../Actions');
 
 class ToolButton extends React.Component {
 

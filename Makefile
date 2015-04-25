@@ -1,20 +1,16 @@
-SRC:=$(wildcard src/*.*) $(wildcard src/**/*)
+SRC:=$(wildcard src/**/*.less)
 
 OUT:=$(notdir $(SRC))
-OUT:=$(patsubst %.jsx, %.js, $(OUT))
 OUT:=$(patsubst %.less, %.css, $(OUT))
 OUT:=$(addprefix build/, $(OUT))
 
-VPATH:=src:src/components:src/styles:src/stores
+VPATH:=src/styles
 
 all: $(OUT)
-	browserify build/main.js -o build/bundle.js
+	browserifyinc -v --extension=.jsx -t [ reactify --es6 ] src/main.jsx -o build/bundle.js
 
 build/%.css: %.less
 	lessc $< --autoprefix="last 3 versions" >$@
-
-build/%.js: %.jsx
-	jsx --harmony $< >$@
 
 update:
 	npm install

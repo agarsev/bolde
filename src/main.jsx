@@ -3,13 +3,13 @@
 var $ = require('jquery');
 var React = require('react');
 
-var UserStore = require('./UserStore');
-var TabStore = require('./TabStore');
-var TabPanel = require('./TabPanel');
-var ToolStore = require('./ToolStore');
-var ToolBar = require('./ToolBar');
-var ProjectStore = require('./ProjectStore');
-var FileStore = require('./FileStore');
+var UserStore = require('./stores/UserStore');
+var TabStore = require('./stores/TabStore');
+var TabPanel = require('./components/TabPanel');
+var ToolStore = require('./stores/ToolStore');
+var ToolBar = require('./components/ToolBar');
+var ProjectStore = require('./stores/ProjectStore');
+var FileStore = require('./stores/FileStore');
 
 var Actions = require('./Actions');
 

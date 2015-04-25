@@ -2,7 +2,7 @@
 
 var React = require('react');
 var Gutter = require('./Gutter');
-var Actions = require('./Actions');
+var Actions = require('../Actions');
 
 class TabPanel extends React.Component {
 

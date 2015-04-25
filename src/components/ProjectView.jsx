@@ -1,7 +1,7 @@
 "use strict";
 
 var React = require('react');
-var Actions = require('./Actions');
+var Actions = require('../Actions');
 var DirTree = require('./DirTree');
 
 class ProjectView extends React.Component {

@@ -3,12 +3,13 @@
 var EventEmitter = require('events').EventEmitter;
 var React = require('react');
 
-var Actions = require('./Actions');
+var Actions = require('../Actions');
 
-var MDText = require('./MDText');
-var ProjectView = require('./ProjectView');
-var Editor = require('./Editor');
-var AVM = require('./AVM');
+var MDText = require('../components/MDText');
+var ProjectView = require('../components/ProjectView');
+var ProjectList = require('../components/ProjectList');
+var Editor = require('../components/Editor');
+var AVM = require('../components/AVM');
 
 class TabStore extends EventEmitter {
 

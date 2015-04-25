@@ -2,7 +2,7 @@
 
 var React = require('react');
 
-var Actions = require('./Actions');
+var Actions = require('../Actions');
 
 class LoginForm extends React.Component {
 
