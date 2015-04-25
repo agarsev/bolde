@@ -21,19 +21,19 @@ class TabStore extends EventEmitter {
 
         this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
-                case 'open_message':
+                case 'tab.new_msg':
                     this.openMessage(a.title, a.text, a.links);
                     break;
-                case 'open_tab':
+                case 'tab.open':
                     this.addTab(a.id, a.title, a.node);
                     break;
-                case 'close_tab':
+                case 'tab.close':
                     this.closeTab(a.id);
                     break;
-                case 'move_tab_panel':
+                case 'tab.move_to_panel':
                     this.moveTab(a.tab, a.panel);
                     break;
-                case 'focus_tab':
+                case 'tab.focus':
                     this.focusTab(a.id);
                     break;
                 case 'login':
@@ -44,7 +44,7 @@ class TabStore extends EventEmitter {
                         .forEach(name => this.closeProjectView(name));
                     this.closeTab('_ProjectList');
                     break;
-                case 'open_project':
+                case 'project.open':
                     if (this.tabs['projv_'+a.name]) {
                         this.focusTab('projv_'+a.name);
                     } else {
@@ -53,10 +53,10 @@ class TabStore extends EventEmitter {
                         );
                     }
                     break;
-                case 'close_project':
+                case 'project.close':
                     this.closeProjectView(a.name);
                     break;
-                case 'open_file':
+                case 'file.open':
                     if (this.tabs['file_'+a.filename]) {
                         this.focusTab('file_'+a.filename);
                     } else {
@@ -66,10 +66,10 @@ class TabStore extends EventEmitter {
                         );
                     }
                     break;
-                case 'delete_file':
+                case 'file.delete':
                     this.closeTab('file_'+a.filename);
                     break;
-                case 'run_result':
+                case 'run':
                     var project = a.project.substr(a.project.search(/\/[^\/]+$/)+1);
                     this.addTab('run_'+a.project,project+' results',
                                 a.type=='avm'?

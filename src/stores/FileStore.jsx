@@ -11,7 +11,7 @@ class FileStore extends EventEmitter {
 
         this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
-                case 'load_file':
+                case 'file.load':
                     this.files[a.filename] = {
                         doc: a.doc,
                         mode: a.mode

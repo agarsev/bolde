@@ -19,16 +19,16 @@ class ToolStore extends EventEmitter {
                         .forEach(name => this.removeTool('Proj_'+name));
                     this.removeTool('_settings');
                     break;
-                case 'add_tool':
+                case 'toolbar.add':
                     this.addTool(a.id, a.title, a.click, a.right);
                     break;
-                case 'add_menu':
+                case 'toolbar.add_menu':
                     this.addMenu(a.id, a.title, a.menu, a.right);
                     break;
-                case 'remove_tool':
+                case 'toolbar.remove':
                     this.removeTool(a.id);
                     break;
-                case 'open_project':
+                case 'project.open':
                     this.addMenu('Proj_'+a.name, a.name, [
                         {title:'New file',click: function () {
                             var filename = prompt('New file name:');
@@ -41,7 +41,7 @@ class ToolStore extends EventEmitter {
                         }}
                     ]);
                     break;
-                case 'close_project':
+                case 'project.close':
                     this.removeTool('Proj_'+a.name);
                     break;
             }

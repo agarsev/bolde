@@ -15,16 +15,16 @@ class TabPanel extends React.Component {
         var centralrect = React.findDOMNode(this.refs.central).getBoundingClientRect();
         document.onmousemove = function(e) {
             if (e.clientX<centralrect.left) {
-                Actions.move_tab_panel(id, 0);
+                Actions.tab.move_to_panel(id, 0);
             } else if (e.clientX>centralrect.right) {
-                Actions.move_tab_panel(id, 2);
+                Actions.tab.move_to_panel(id, 2);
             } else {
-                Actions.move_tab_panel(id, 1);
+                Actions.tab.move_to_panel(id, 1);
             }
             e.preventDefault();
         };
         document.onmouseup = function(e) {
-            Actions.focus_tab(id);
+            Actions.tab.focus(id);
             document.onmousemove = null;
             document.onmouseup = null;
             e.preventDefault();
@@ -35,7 +35,7 @@ class TabPanel extends React.Component {
         document.onmouseup = function(e) {
             var sc = window.TabStore.getShouldClose(tab);
             if (sc === undefined || sc()) {
-                Actions.close_tab(tab);
+                Actions.tab.close(tab);
             }
             document.onmousemove = null;
             document.onmouseup = null;

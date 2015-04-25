@@ -34,4 +34,4 @@ var welcome = "# Collaborative Platform for the Development of Empirical Grammar
     "## Features\n"+
     "- Real-time collaborative editing\n";
 
-Actions.open_message('Welcome', welcome);
+Actions.tab.new_msg('Welcome', welcome);

@@ -20,11 +20,11 @@ class ProjectView extends React.Component {
     }
 
     openFile (name) {
-        Actions.open_file(name);
+        Actions.file.open(name);
     }
 
     deleteFile (name) {
-        Actions.delete_file(name);
+        Actions.file.delete(name);
     }
 
 };

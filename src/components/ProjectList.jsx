@@ -15,14 +15,14 @@ class ProjectSnippet extends React.Component {
         return <li>
             <h3>{name}</h3>
             <p ref="desc" contentEditable="true" onBlur={this.updateDesc.bind(this)}>{desc}</p>
-            <a onClick={() => Actions.open_project(name)}>Open</a>
-            <a onClick={() => Actions.delete_project(name)}>Delete</a>
+            <a onClick={() => Actions.project.open(name)}>Open</a>
+            <a onClick={() => Actions.project.delete(name)}>Delete</a>
         </li>;
     }
 
     updateDesc () {
         var d = React.findDOMNode(this.refs.desc).textContent;
-        Actions.update_project_description(this.props.name, d);
+        Actions.project.update_description(this.props.name, d);
     }
 
 }
@@ -41,7 +41,7 @@ class ProjectList extends React.Component {
         <ul>
         {window.ProjectStore.getAll().map(x => <ProjectSnippet key={x} name={x} />)}
         </ul>
-        <a onClick={() => Actions.new_project()}>New project</a>
+        <a onClick={() => Actions.project.new()}>New project</a>
         </div>;
     }
 
