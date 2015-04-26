@@ -49,7 +49,7 @@ class TabStore extends EventEmitter {
                         this.focusTab('projv_'+a.name);
                     } else {
                         this.addTab('projv_'+a.name, a.name, <ProjectView project={a.name} />, 0,
-                                    () => { Actions.close_project(a.name); return false; }
+                                    () => { Actions.project.close(a.name); return false; }
                         );
                     }
                     break;
