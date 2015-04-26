@@ -11,7 +11,7 @@ exports.init = function (conf) {
 
 function loadYML (file) {
     return new Promise(function (resolve, reject) {
-        fs.readFile(file, function (err, data) {
+        fs.readFile(file, { encoding: 'utf8'}, function (err, data) {
             if (err) {
                 reject(err);
             } else {
@@ -38,4 +38,16 @@ exports.getUser = function (user) {
 
 exports.getProjectFiles = function (project) {
     return loadYML(config.get('user_files')+'/'+project+'/files.yml');
+};
+
+exports.getFile = function (path) {
+    return new Promise(function (resolve, reject) {
+        fs.readFile(config.get('user_files')+'/'+path, { encoding: 'utf8'}, function (err, data) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(data);
+            }
+        });
+    });
 };

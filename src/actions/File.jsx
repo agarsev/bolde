@@ -27,7 +27,7 @@ var load = function (path) {
         if (window.FileStore.isLoaded(path)) {
             resolve();
         } else {
-            api.call('api/sharejs/open/'+path, {})
+            api.call('api/sharejs/open/', {file: path})
             .then(function(data) {
                 window.BCSocket = require("share/node_modules/browserchannel/dist/bcsocket.js").BCSocket;
                 require("share/webclient/share.js");

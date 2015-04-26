@@ -1,11 +1,11 @@
-var express = require('express'),
-    fs = require('fs'),
+var fs = require('fs'),
     sharejs = require('share').server,
-    client = require('share').client;
+    client = require('share').client,
+    log4js = require('log4js'),
 
-module.exports = function(config) {
+    store = require('./store');
 
-var router = express();
+var log = log4js.getLogger('sharejs');
 
 var docs = {};
 
@@ -34,44 +34,42 @@ function startSaving(file) {
     },3000);
 }
 
-sharejs.attach(router, {db: {type: 'none'}});
+var mountpath;
+var config;
+exports.init = function (router, mount, conf) {
+    config = conf;
+    mountpath = mount;
+    sharejs.attach(router, {db: {type: 'none'}});
+}
 
 var padNumber=0;
-router.use('/open', function (req, res) {
-    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-    res.header('Expires', '-1');
-    res.header('Pragma', 'no-cache');
-    var file = req.path;
-    if (docs[file]) {
-        console.log(router.mountpath+": opening existing pad for file "+file);
-        startSaving(docs[file]);
-        res.send({ ok: true, data:{
-            mode: docs[file].mode,
-            name: docs[file].name
-        }});
-    } else {
-        console.log(router.mountpath+": creating pad for file "+file);
-        var name = "doc_"+(padNumber++);
-        var mode = modes[file.substr(file.search(/\.[^.]+$/)+1)];
-        docs[file] = {file: file, name: name, mode: mode};
-        client.open(name, 'text',
-                config.get('server.protocol')+'://localhost:'+config.get('server.port')+router.mountpath+'/channel',
-                function(error, doc) {
-            var filename = config.get('user_files')+file;
-            docs[file].doc = doc;
-            doc.insert(0, fs.readFileSync(filename, { encoding: 'utf8' }), function () {
-                console.log(router.mountpath+": created pad for file "+file+" ("+name+")");
-                res.send({ ok: true, data:{
-                    mode: mode,
-                    name: name
-                }});
-            });
-            // TODO close properly when no longer used
+exports.open = function(file) {
+    return new Promise(function(resolve, reject) {
+        if (docs[file]) {
+            log.debug("opening existing pad for file "+file);
             startSaving(docs[file]);
-        });
-    }
-});
-
-return router;
-
-}; // module.exports
+            resolve({ mode: docs[file].mode, name: docs[file].name });
+        } else {
+            log.debug("creating pad for file "+file);
+            var name = "doc_"+(padNumber++);
+            var mode = modes[file.substr(file.search(/\.[^.]+$/)+1)];
+            docs[file] = {file: file, name: name, mode: mode};
+            client.open(name, 'text',
+                    config.get('server.protocol')+'://localhost:'+config.get('server.port')+mountpath+'/channel',
+                    function(error, doc) {
+                if (error) { reject(error); }
+                docs[file].doc = doc;
+                store.getFile(file).then(function (content) {
+                    doc.insert(0, content, function () {
+                        log.debug("created pad for file "+file+" ("+name+")");
+                        resolve({ mode: mode, name: name });
+                        // TODO close properly when no longer used
+                        startSaving(docs[file]);
+                    });
+                }).catch(function(error) {
+                    reject(error);
+                });
+            });
+        }
+    });
+};

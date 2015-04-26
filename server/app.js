@@ -7,7 +7,7 @@ var express = require('express'),
     yaml = require('js-yaml'),
     config = require('config'),
 
-    sharejs = require('./sharejs')(config),
+    sharejs = require('./sharejs'),
     auth = require('./auth'),
     file = require('./file'),
     store = require('./store');
@@ -25,11 +25,28 @@ app.use(morgan(':remote-addr :method :url HTTP/:http-version :status :res[conten
         return false;
     },
     stream: {
-        write: str => httplog.debug(str.trimRight())
+        write: str => httplog.info(str.trimRight())
     }
 }));
-app.use('/api/sharejs',sharejs);
+
+var shareRoute = express();
+sharejs.init(shareRoute, '/api/sharejs', config);
+app.use('/api/sharejs', shareRoute);
+
 app.use(bodyParser.json());
+
+app.post('/api/sharejs/open', function (req, res) {
+    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+    res.header('Expires', '-1');
+    res.header('Pragma', 'no-cache');
+    var file = req.body.file;
+    sharejs.open(file).then(function(data) {
+        res.send({ok: true, data:data});
+    }).catch(function(error) {
+        applog.warn(error);
+        res.send({ok: false, error: error});
+    });
+});
 
 app.post('/api/login', function (req, res) {
     var token;
