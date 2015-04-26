@@ -18,6 +18,7 @@
     "js-yaml": "^3.2.7",
     "less": "^2.4.0",
     "less-plugin-autoprefix": "^1.4.0",
+    "log4js": "^0.6.24",
     "markdown-it": "^4.2.0",
     "morgan": "^1.5.1",
     "react": "^0.13.1",

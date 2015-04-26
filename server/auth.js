@@ -1,6 +1,9 @@
 var yaml = require('js-yaml'),
     fs = require('fs'),
-    crypto = require('crypto');
+    crypto = require('crypto'),
+    log4js = require('log4js');
+
+var log = log4js.getLogger('auth');
 
 var users;
 exports.init = function (userfiles) {
@@ -16,7 +19,7 @@ exports.login = function (user, password) {
             if (users[user].hash == hash) {
                 var token = crypto.randomBytes(48).toString('hex');
                 sessions[token] = { user: user };
-                console.log('logged in '+user);
+                log.info('logged in '+user);
                 resolve(token);
             } else { reject('wrong credentials'); }
         } else { reject('wrong credentials'); }

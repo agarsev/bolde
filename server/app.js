@@ -1,6 +1,7 @@
 var express = require('express'),
     http = require('http'),
     bodyParser = require('body-parser'),
+    log4js = require('log4js'),
     morgan = require('morgan'),
     fs = require('fs'),
     yaml = require('js-yaml'),
@@ -15,10 +16,14 @@ var server = http.createServer(app);
 
 auth.init(config.get('user_files'));
 
-app.use(morgan('combined', {
+var httplog = log4js.getLogger('http');
+app.use(morgan(':remote-addr :method :url HTTP/:http-version :status :res[content-length] - :response-time ms :referrer :user-agent', {
     skip: function (req, res) {
         // TODO: skip sharejs
         return false;
+    },
+    stream: {
+        write: str => httplog.debug(str.trimRight())
     }
 }));
 app.use('/api/sharejs',sharejs);
