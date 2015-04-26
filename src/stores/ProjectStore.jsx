@@ -8,11 +8,12 @@ class ProjectStore extends EventEmitter {
         super();
 
         this.projects = {};
-        window.Dispatcher.register(a => {
+        this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
                 case 'login':
                     this.projects = a.projects;
                     Object.keys(this.projects).forEach(p => {
+                        if (!this.projects[p]) { this.projects[p] = {} }
                         this.projects[p].user = a.user;
                         this.projects[p].name = p;
                     });
@@ -35,6 +36,9 @@ class ProjectStore extends EventEmitter {
                     var r = /^([^/]+)\/([^/]+)\/(.+)$/.exec(a.filename);
                     delete this.projects[r[2]].files[r[3]];
                     this.emit('changed:'+r[2]);
+                    break;
+                case 'project.open':
+                    this.projects[a.name].files = a.files;
                     break;
                 case 'project.new':
                     this.projects[a.name] = {

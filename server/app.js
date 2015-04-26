@@ -39,9 +39,18 @@ app.post('/api/login', function (req, res) {
         return Promise.all([store.getUserSettings(req.body.user),
                             store.getUserProjects(req.body.user)]);
     }).then(function(results) {
-        res.send({ok: true, token:token, projects: results[1], settings:results[0]});
+        res.send({ok: true, data:{ token:token, projects: results[1], settings:results[0]}});
     }).catch(function(error) {
         applog.warn(error);
+        res.send({ok: false, error:error});
+    });
+});
+
+app.post('/api/project/files', function (req, res) {
+    store.getProjectFiles(req.body.project)
+    .then(function(files) {
+        res.send({ok: true, data:{ files: files }});
+    }).catch(function(error) {
         res.send({ok: false, error:error});
     });
 });
@@ -57,7 +66,7 @@ app.post('/api/file/new/:us/:project/*', function (req, res) {
             var files = projects[req.params.project].files;
             files[req.params[0].substr(1)] = { type: 'javascript' };
             fs.writeFileSync(projfile, yaml.safeDump(projects));
-        res.send({ok: true, files:files});
+        res.send({ok: true, data:{files:files}});
     }).catch(function(error) {
         console.log(error);
         res.send({ok: false, error:error});
@@ -74,7 +83,7 @@ app.post('/api/file/delete/:us/:project/*', function(req, res) {
             var files = projects[req.params.project].files;
             delete files[req.params[0].substr(1)];
             fs.writeFileSync(projfile, yaml.safeDump(projects));
-        res.send({ok: true, files:files});
+        res.send({ok: true, data:{files:files}});
     }).catch(function(error) {
         console.log(error);
         res.send({ok: false, error:error});

@@ -45,10 +45,10 @@ router.use('/open', function (req, res) {
     if (docs[file]) {
         console.log(router.mountpath+": opening existing pad for file "+file);
         startSaving(docs[file]);
-        res.status(200).send({
+        res.send({ ok: true, data:{
             mode: docs[file].mode,
             name: docs[file].name
-        });
+        }});
     } else {
         console.log(router.mountpath+": creating pad for file "+file);
         var name = "doc_"+(padNumber++);
@@ -61,10 +61,10 @@ router.use('/open', function (req, res) {
             docs[file].doc = doc;
             doc.insert(0, fs.readFileSync(filename, { encoding: 'utf8' }), function () {
                 console.log(router.mountpath+": created pad for file "+file+" ("+name+")");
-                res.status(200).send({
+                res.send({ ok: true, data:{
                     mode: mode,
                     name: name
-                });
+                }});
             });
             // TODO close properly when no longer used
             startSaving(docs[file]);

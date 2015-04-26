@@ -1,11 +1,15 @@
 "use strict";
 
-var $ = require('jquery');
+var api = require('./api.jsx');
 
 exports.open = function (name) {
-    window.Dispatcher.dispatch({
-        actionType: 'project.open',
-        name: name
+    api.call('api/project/files', { project: window.UserStore.getUser()+'/'+name })
+    .then(function (data) {
+        window.Dispatcher.dispatch({
+            actionType: 'project.open',
+            name: name,
+            files: data.files
+        });
     });
 };
 
@@ -19,21 +23,14 @@ exports.close = function (name) {
 exports.delete = () => console.log('unimplemented');
 
 exports.new = function (name) {
-    $.ajax({
-        method: 'POST',
-        url: 'api/project/new/'+name,
-        contentType: 'application/json',
-        data: JSON.stringify({token: window.UserStore.getToken()}),
-        success: function(data) {
-            if (data.ok) {
-                window.Dispatcher.dispatch({
-                    actionType: 'project.new',
-                    name
-                });
-            } else {
-                console.log(data.error);
-            }
-        }
+    api.call('api/project/new/'+name, {token: window.UserStore.getToken()})
+    .then(function() {
+        window.Dispatcher.dispatch({
+            actionType: 'project.new',
+            name
+        });
+    }).catch(function(error) {
+        console.log(data.error);
     });
 };
 

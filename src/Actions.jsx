@@ -1,31 +1,22 @@
 "use strict";
 
-var $ = require('jquery');
 var yaml = require('js-yaml');
 
+var api = require('./actions/api');
 exports.project = require('./actions/Project');
 exports.tab = require('./actions/Tab');
 exports.toolbar = require('./actions/Toolbar');
 exports.file = require('./actions/File');
 
 exports.login = function (user, password) {
-    $.ajax({
-        method: 'POST',
-        url: "api/login/",
-        data: JSON.stringify({user:user, password:password}),
-        contentType: 'application/json',
-        success: function(data) {
-            if (data.ok) {
-                window.Dispatcher.dispatch({
-                    actionType: 'login',
-                    user: user,
-                    token: data.token,
-                    projects: data.projects
-                });
-            } else {
-                console.log(data.error);
-            }
-        }
+    api.call('api/login', {user:user, password:password})
+    .then(function(data){
+        window.Dispatcher.dispatch({
+            actionType: 'login',
+            user: user,
+            token: data.token,
+            projects: data.projects
+        });
     });
 };
 

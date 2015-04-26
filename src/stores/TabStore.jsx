@@ -45,6 +45,7 @@ class TabStore extends EventEmitter {
                     this.closeTab('_ProjectList');
                     break;
                 case 'project.open':
+                    window.Dispatcher.waitFor([window.ProjectStore.dispatchToken]);
                     if (this.tabs['projv_'+a.name]) {
                         this.focusTab('projv_'+a.name);
                     } else {
