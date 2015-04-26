@@ -9,13 +9,15 @@ var express = require('express'),
 
     sharejs = require('./sharejs')(config),
     auth = require('./auth'),
-    file = require('./file');
+    file = require('./file'),
+    store = require('./store');
 
 var app = express();
 var server = http.createServer(app);
 
-auth.init(config.get('user_files'));
+store.init(config);
 
+var applog = log4js.getLogger('app');
 var httplog = log4js.getLogger('http');
 app.use(morgan(':remote-addr :method :url HTTP/:http-version :status :res[content-length] - :response-time ms :referrer :user-agent', {
     skip: function (req, res) {
@@ -30,18 +32,16 @@ app.use('/api/sharejs',sharejs);
 app.use(bodyParser.json());
 
 app.post('/api/login', function (req, res) {
+    var token;
     auth.login(req.body.user, req.body.password)
-    .then(function(token) {
-        var path = config.get('user_files')+'/'+req.body.user;
-        fs.readFile(path+'/settings.yml', function(err, data) {
-            var settings;
-            if (!err) { settings = yaml.safeLoad(data); }
-            fs.readFile(path+'/projects.yml', function(error, data) {
-                res.send({ok: true, token:token, projects: yaml.safeLoad(data),
-                         settings:settings});
-            });
-        });
+    .then(function(tok) {
+        token = tok;
+        return Promise.all([store.getUserSettings(req.body.user),
+                            store.getUserProjects(req.body.user)]);
+    }).then(function(results) {
+        res.send({ok: true, token:token, projects: results[1], settings:results[0]});
     }).catch(function(error) {
+        applog.warn(error);
         res.send({ok: false, error:error});
     });
 });
