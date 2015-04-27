@@ -9,17 +9,21 @@ exports.new = function (user, project, path) {
             actionType: 'file.new',
             user: user,
             project: project,
+            path: path,
             files: data.files
         });
     });
 };
 
-exports.delete = function (path) {
-    api.call('api/file/delete/'+path, {token: window.UserStore.getToken()})
+exports.delete = function (user, project, path) {
+    api.call('api/file/delete', {user: user, project: project, path: path})
     .then(function(data) {
         window.Dispatcher.dispatch({
             actionType: 'file.delete',
-            filename: path
+            user: user,
+            project: project,
+            path: path,
+            files: data.files
         });
     });
 };
@@ -55,7 +59,8 @@ var load = function (path) {
 };
 exports.load = load;
 
-exports.open = function (path) {
+exports.open = function (user, project, file) {
+    var path = user + '/' + project + '/' + file;
     load(path).then(() =>
         window.Dispatcher.dispatch({
           actionType: 'file.open',

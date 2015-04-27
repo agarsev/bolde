@@ -97,19 +97,30 @@ exports.newFile = function (user, project, file) {
     });
 };
 
-/*
-exports.delete = function (userpath, filepath) {
+// TODO files in subdirs
+exports.deleteFile = function (user, project, file) {
+    var projectpath = config.get('user_files')+'/'+user+'/'+project;
+    var path = projectpath+'/'+file;
+    var nufiles;
     return new Promise(function(resolve, reject) {
-        var file = userpath+'/'+filepath;
-        if (!fs.existsSync(file)) {
+        if (!fs.existsSync(path)) {
             reject('File does not exist');
         } else {
-            fs.unlinkSync(file);
-            resolve();
+            fs.unlink(path, function (err) {
+                if (err) { reject(err); }
+                else { resolve(); }
+            });
         }
+    }).then(loadYML.bind(null,projectpath+'/files.yml'))
+    .then(function (files) {
+        delete files[file];
+        nufiles = files;
+        return writeYML(projectpath+'/files.yml', files);
+    }).then(function() {
+        log.debug('deleted file '+user+'/'+project+'/'+file);
+        return nufiles;
     });
 };
-*/
 
 // TODO move to file.js
 exports.getFile = function (path) {

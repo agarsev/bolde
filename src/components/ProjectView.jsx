@@ -12,19 +12,19 @@ class ProjectView extends React.Component {
 
     render () {
         var p = window.ProjectStore.get(this.props.project);
-        return (<DirTree files={p.files} path={p.user}
-            openFile={this.openFile}
-            deleteFile={this.deleteFile}
+        return (<DirTree files={p.files} root="true"
+            openFile={this.openFile.bind(this, p.user, p.name)}
+            deleteFile={this.deleteFile.bind(this, p.user, p.name)}
             name={p.name} />
         );
     }
 
-    openFile (name) {
-        Actions.file.open(name);
+    openFile (user, project, file) {
+        Actions.file.open(user, project, file);
     }
 
-    deleteFile (name) {
-        Actions.file.delete(name);
+    deleteFile (user, project, file) {
+        Actions.file.delete(user, project, file);
     }
 
 };

@@ -6,7 +6,12 @@ class DirTree extends React.Component {
 
     constructor (props) {
         super(props);
-        var fullname = this.props.path+'/'+this.props.name;
+        var fullname = '';
+        if (!this.props.root) {
+            fullname = this.props.path+'/'+this.props.name;
+        } else if (this.props.path == '' && !!this.props.name) {
+            fullname = this.props.name;
+        }
         this.state = { open: true, fullname: fullname, selected: this.props.selected };
     }
 
@@ -32,9 +37,11 @@ class DirTree extends React.Component {
         e.preventDefault();
     }
 
-    deleteClick (file) {
+    deleteClick (file, e) {
         // TODO nested deleting
         this.props.deleteFile(file);
+        e.stopPropagation();
+        e.preventDefault();
     }
 
     render () {
@@ -46,11 +53,11 @@ class DirTree extends React.Component {
                 if (file.type=='dir') {
                     return(<li key={filename}>
                            <DirTree openFile={this.props.openFile} path={this.state.fullname}
-                           selected={selected} selectFile={this.clickFile}
+                           selected={selected} selectFile={this.clickFile.bind(this)}
                            name={filename} files={file.files} />
                            </li>);
                 } else {
-                    var fullname = this.state.fullname+'/'+filename;
+                    var fullname = this.props.root?filename:this.state.fullname+'/'+filename;
                     var remove;
                     if (selected == fullname) {
                         remove = <a onClick={this.deleteClick.bind(this, fullname)}>x</a>;
@@ -64,16 +71,20 @@ class DirTree extends React.Component {
             });
             below = <ul>{list}</ul>;
         }
-        return (
-            <div className="DirTree" onClick={this.clickFile.bind(this, '')}>
-                <h3 className={selected==this.state.fullname?'selected':''}>
-                    <a onClick={this.toggleDir}>{this.state.open?'-':'+'}</a>
-                    <span onClick={this.clickFile.bind(this, this.state.fullname)}
-                        onDoubleClick={this.toggleDir}>{this.props.name}</span>
-                </h3>
-                {below}
-            </div>
-        );
+        if (this.props.root) {
+            return <div className="DirTree" >{below}</div>;
+        } else {
+            return (
+                <div className="DirTree">
+                    <h3 className={selected==this.state.fullname?'selected':''}>
+                        <a onClick={this.toggleDir.bind(this)}>{this.state.open?'-':'+'}</a>
+                        <span onClick={this.clickFile.bind(this, this.state.fullname)}
+                            onDoubleClick={this.toggleDir.bind(this)}>{this.props.name}</span>
+                    </h3>
+                    {below}
+                </div>
+            );
+        }
     }
 };
 

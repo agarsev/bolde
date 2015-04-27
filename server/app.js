@@ -93,6 +93,18 @@ app.post('/api/file/new', function (req, res) {
         res.send({ok: false, error:error});
     });
 });
+
+app.post('/api/file/delete', function (req, res) {
+    // TODO permissions
+    store.deleteFile(req.body.user, req.body.project, req.body.path)
+    .then(function (files) {
+        res.send({ok: true, data:{files:files}});
+    }).catch(function(error) {
+        applog.warn(error);
+        res.send({ok: false, error:error});
+    });
+});
+
 /*
 app.post('/api/file/delete/:us/:project/*', function(req, res) {
     // TODO permissions

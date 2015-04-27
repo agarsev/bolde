@@ -32,9 +32,8 @@ class ProjectStore extends EventEmitter {
                     this.emit('changed:'+a.project);
                     break;
                 case 'file.delete':
-                    var r = /^([^/]+)\/([^/]+)\/(.+)$/.exec(a.filename);
-                    delete this.projects[r[2]].files[r[3]];
-                    this.emit('changed:'+r[2]);
+                    this.projects[a.project].files = a.files;
+                    this.emit('changed:'+a.project);
                     break;
                 case 'project.open':
                     this.projects[a.name].files = a.files;
