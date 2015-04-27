@@ -23,7 +23,7 @@ exports.close = function (name) {
 exports.delete = () => console.log('unimplemented');
 
 exports.new = function (name) {
-    api.call('api/project/new/'+name, {token: window.UserStore.getToken()})
+    api.call('api/project/new/', { user: window.UserStore.getUser(), project: name })
     .then(function() {
         window.Dispatcher.dispatch({
             actionType: 'project.new',

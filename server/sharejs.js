@@ -21,8 +21,8 @@ function startSaving(file) {
     file.idleCount= 0;
     file.saver = setInterval(function() {
         if (file.doc.version>file.saved) {
-            console.log("Saving file "+file.file);
-            fs.writeFileSync(config.get('user_files')+file.file, file.doc.snapshot);
+            log.debug("Saving file "+file.file);
+            fs.writeFileSync(config.get('user_files')+'/'+file.file, file.doc.snapshot);
             file.saved = file.doc.version;
             file.idleCount=0;
         } else if (file.idleCount>100) {

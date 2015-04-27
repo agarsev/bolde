@@ -2,12 +2,14 @@
 
 var api = require('./api');
 
-exports.new = function (path) {
-    api.call('api/file/new/'+path, {token: window.UserStore.getToken()})
+exports.new = function (user, project, path) {
+    api.call('api/file/new', {user: user, project: project, path: path })
     .then(function(data) {
         window.Dispatcher.dispatch({
             actionType: 'file.new',
-            filename: path
+            user: user,
+            project: project,
+            files: data.files
         });
     });
 };

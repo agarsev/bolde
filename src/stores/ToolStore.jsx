@@ -33,8 +33,7 @@ class ToolStore extends EventEmitter {
                         {title:'New file',click: function () {
                             var filename = prompt('New file name:');
                             if (!filename || filename.length<1) { return; }
-                            Actions.file.new(window.UserStore.getUser()
-                                             +'/'+a.name+'/'+filename);
+                            Actions.file.new(window.UserStore.getUser(),a.name,filename);
                         }},
                         {title:'Run',click: function() {
                             Actions.run(window.UserStore.getUser()+'/'+a.name);

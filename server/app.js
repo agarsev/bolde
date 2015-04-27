@@ -68,27 +68,32 @@ app.post('/api/project/files', function (req, res) {
     .then(function(files) {
         res.send({ok: true, data:{ files: files }});
     }).catch(function(error) {
+        applog.warn(error);
         res.send({ok: false, error:error});
     });
 });
 
-app.post('/api/file/new/:us/:project/*', function (req, res) {
-    // TODO permissions
-    var userpath = config.get('user_files')+'/'+req.params.us;
-    file.new(userpath, req.params.project+'/'+req.params[0])
-    .then(function(files) {
-            // TODO files in subdirs
-            var projfile = userpath+'/projects.yml';
-            projects = yaml.safeLoad(fs.readFileSync(projfile));
-            var files = projects[req.params.project].files;
-            files[req.params[0].substr(1)] = { type: 'javascript' };
-            fs.writeFileSync(projfile, yaml.safeDump(projects));
-        res.send({ok: true, data:{files:files}});
+app.post('/api/project/new', function (req, res) {
+    store.createProject(req.body.user, req.body.project)
+    .then(function() {
+        res.send({ok: true, data: {}});
     }).catch(function(error) {
-        console.log(error);
+        applog.warn(error);
         res.send({ok: false, error:error});
     });
 });
+
+app.post('/api/file/new', function (req, res) {
+    // TODO permissions
+    store.newFile(req.body.user, req.body.project, req.body.path)
+    .then(function (files) {
+        res.send({ok: true, data:{files:files}});
+    }).catch(function(error) {
+        applog.warn(error);
+        res.send({ok: false, error:error});
+    });
+});
+/*
 app.post('/api/file/delete/:us/:project/*', function(req, res) {
     // TODO permissions
     var userpath = config.get('user_files')+'/'+req.params.us;
@@ -102,10 +107,11 @@ app.post('/api/file/delete/:us/:project/*', function(req, res) {
             fs.writeFileSync(projfile, yaml.safeDump(projects));
         res.send({ok: true, data:{files:files}});
     }).catch(function(error) {
-        console.log(error);
+        applog.warn(error);
         res.send({ok: false, error:error});
     });
 });
+*/
 
 app.use('/', express.static('.'));
 
