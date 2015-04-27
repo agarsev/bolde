@@ -1,21 +1,22 @@
 "use strict";
 
-var $ = require('jquery');
-
 exports.call = function (url, data) {
     return new Promise(function (resolve, reject) {
-        $.ajax({
-            method: 'POST',
-            url: url,
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            success: function (res) {
-                if (res.ok) {
-                    resolve(res.data);
-                } else {
-                    reject(res.error);
-                }
+        var client = new XMLHttpRequest();
+        client.open('POST', url);
+        client.setRequestHeader('Content-type', 'application/json');
+        client.onload = function () {
+            if (this.status == 200) {
+                var res = JSON.parse(this.response);
+                if (res.ok) { resolve(res.data); }
+                else { reject(res.error); }
+            } else {
+                reject('API call to '+url+': response '+this.status);
             }
-        }); // TODO other errors
+        };
+        client.onerror = function () {
+            reject(this.statusText);
+        };
+        client.send(JSON.stringify(data));
     });
 };
