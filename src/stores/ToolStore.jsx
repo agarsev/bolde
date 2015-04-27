@@ -8,6 +8,7 @@ class ToolStore extends EventEmitter {
     constructor () {
         super();
 
+        this.loading = false;
         this.tools = {};
         this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
@@ -43,6 +44,14 @@ class ToolStore extends EventEmitter {
                 case 'project.close':
                     this.removeTool('Proj_'+a.name);
                     break;
+                case 'loading.start':
+                    this.loading = true;
+                    this.emit('changed');
+                    break;
+                case 'loading.end':
+                    this.loading = false;
+                    this.emit('changed');
+                    break;
             }
         });
     }
@@ -73,6 +82,8 @@ class ToolStore extends EventEmitter {
         delete this.tools[id];
         this.emit('changed');
     }
+
+    isLoading () { return this.loading; }
 
 };
 

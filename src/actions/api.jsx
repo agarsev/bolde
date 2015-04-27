@@ -2,6 +2,7 @@
 
 exports.call = function (url, data) {
     return new Promise(function (resolve, reject) {
+        window.Dispatcher.dispatch({ actionType: 'loading.start' });
         var client = new XMLHttpRequest();
         client.open('POST', url);
         client.setRequestHeader('Content-type', 'application/json');
@@ -13,9 +14,11 @@ exports.call = function (url, data) {
             } else {
                 reject('API call to '+url+': response '+this.status);
             }
+            window.Dispatcher.dispatch({ actionType: 'loading.end' });
         };
         client.onerror = function () {
             reject(this.statusText);
+            window.Dispatcher.dispatch({ actionType: 'loading.end' });
         };
         client.send(JSON.stringify(data));
     });
