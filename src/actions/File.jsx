@@ -15,19 +15,6 @@ exports.new = function (user, project, path) {
     });
 };
 
-exports.delete = function (user, project, path) {
-    api.call('api/file/delete', {user: user, project: project, path: path})
-    .then(function(data) {
-        window.Dispatcher.dispatch({
-            actionType: 'file.delete',
-            user: user,
-            project: project,
-            path: path,
-            files: data.files
-        });
-    });
-};
-
 var load = function (path) {
     return new Promise(function (resolve, reject) {
         if (window.FileStore.isLoaded(path)) {
@@ -68,9 +55,25 @@ exports.open = function (user, project, file) {
         }));
 };
 
-exports.close = function (filename) {
+exports.close = function (user, project, file) {
     window.Dispatcher.dispatch({
         actionType: 'file.close',
-        filename: filename
+        user: user,
+        project: project,
+        file: file
+    });
+};
+
+exports.delete = function (user, project, path) {
+    exports.close(user, project, path);
+    api.call('api/file/delete', {user: user, project: project, path: path})
+    .then(function(data) {
+        window.Dispatcher.dispatch({
+            actionType: 'file.delete',
+            user: user,
+            project: project,
+            path: path,
+            files: data.files
+        });
     });
 };

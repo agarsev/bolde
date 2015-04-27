@@ -9,7 +9,6 @@ var express = require('express'),
 
     sharejs = require('./sharejs'),
     auth = require('./auth'),
-    file = require('./file'),
     store = require('./store');
 
 var app = express();
@@ -83,6 +82,16 @@ app.post('/api/project/new', function (req, res) {
     });
 });
 
+app.post('/api/project/delete', function (req, res) {
+    store.deleteProject(req.body.user, req.body.project)
+    .then(function() {
+        res.send({ok: true, data: {}});
+    }).catch(function(error) {
+        applog.warn(error);
+        res.send({ok: false, error:error});
+    });
+});
+
 app.post('/api/file/new', function (req, res) {
     // TODO permissions
     store.newFile(req.body.user, req.body.project, req.body.path)
@@ -104,26 +113,6 @@ app.post('/api/file/delete', function (req, res) {
         res.send({ok: false, error:error});
     });
 });
-
-/*
-app.post('/api/file/delete/:us/:project/*', function(req, res) {
-    // TODO permissions
-    var userpath = config.get('user_files')+'/'+req.params.us;
-    file.delete(config.get('user_files')+'/'+req.params.us, req.params.project+'/'+req.params[0])
-    .then(function(files) {
-            // TODO files in subdirs
-            var projfile = userpath+'/projects.yml';
-            projects = yaml.safeLoad(fs.readFileSync(projfile));
-            var files = projects[req.params.project].files;
-            delete files[req.params[0].substr(1)];
-            fs.writeFileSync(projfile, yaml.safeDump(projects));
-        res.send({ok: true, data:{files:files}});
-    }).catch(function(error) {
-        applog.warn(error);
-        res.send({ok: false, error:error});
-    });
-});
-*/
 
 app.use('/', express.static('.'));
 

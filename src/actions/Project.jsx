@@ -20,10 +20,21 @@ exports.close = function (name) {
     });
 };
 
-exports.delete = () => console.log('unimplemented');
+exports.delete = function (name) {
+    exports.close(name);
+    api.call('api/project/delete', { user: window.UserStore.getUser(), project: name })
+    .then(function() {
+        window.Dispatcher.dispatch({
+            actionType: 'project.delete',
+            name
+        });
+    }).catch(function(error) {
+        console.log(data.error);
+    });
+};
 
 exports.new = function (name) {
-    api.call('api/project/new/', { user: window.UserStore.getUser(), project: name })
+    api.call('api/project/new', { user: window.UserStore.getUser(), project: name })
     .then(function() {
         window.Dispatcher.dispatch({
             actionType: 'project.new',

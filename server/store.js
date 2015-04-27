@@ -1,6 +1,7 @@
 // TODO split
 var fs = require('fs'),
     yaml = require('js-yaml'),
+    rimraf = require('rimraf'),
     log4js = require('log4js');
 
 var log = log4js.getLogger('store');
@@ -54,8 +55,8 @@ exports.createProject = function (user, project) {
     var userpath = config.get('user_files')+'/'+user;
     return new Promise(function (resolve, reject) {
         fs.mkdir(userpath+'/'+project, function (err) {
-            if (err) { reject(err);
-            } else { resolve(); }
+            if (err) { reject(err); }
+            else { resolve(); }
         });
     }).then(function () {
         return fs.writeFile(userpath+'/'+project+'/files.yml', '{}', function (err) {
@@ -68,6 +69,23 @@ exports.createProject = function (user, project) {
         return writeYML(userpath+'/projects.yml', projects);
     }).then(function() {
         log.info('created project '+user+'/'+project);
+        return;
+    });
+};
+
+exports.deleteProject = function (user, project) {
+    var userpath = config.get('user_files')+'/'+user;
+    return new Promise(function (resolve, reject) {
+        rimraf(userpath+'/'+project, function (err) {
+            if (err) { reject(err); }
+            else { resolve(); }
+        });
+    }).then(loadYML.bind(null,userpath+'/projects.yml'))
+    .then(function(projects) {
+        delete projects[project];
+        return writeYML(userpath+'/projects.yml', projects);
+    }).then(function () {
+        log.info('deleted project '+user+'/'+project);
         return;
     });
 };
