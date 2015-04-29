@@ -62,6 +62,16 @@ app.post('/api/login', function (req, res) {
     });
 });
 
+app.post('/api/settings/update', function (req, res) {
+    store.updateUserSettings(req.body.user, req.body.settings)
+    .then(function(settings) {
+        res.send({ok: true, data: {settings: settings}});
+    }).catch(function (error) {
+        applog.warn(error);
+        res.send({ok: false, error:error});
+    });
+});
+
 app.post('/api/project/files', function (req, res) {
     store.getProjectFiles(req.body.project)
     .then(function(files) {

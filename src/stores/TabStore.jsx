@@ -44,6 +44,7 @@ class TabStore extends EventEmitter {
                     window.ProjectStore.getAll()
                         .forEach(name => this.closeProjectView(name));
                     this.closeTab('_ProjectList');
+                    this.closeTab('_settings');
                     break;
                 case 'project.open':
                     window.Dispatcher.waitFor([window.ProjectStore.dispatchToken]);

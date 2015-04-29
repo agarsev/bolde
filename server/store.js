@@ -40,6 +40,10 @@ exports.getUserProjects = function (user) {
     return loadYML(config.get('user_files')+'/'+user+'/projects.yml');
 };
 
+exports.updateUserSettings = function (user, settings) {
+    return writeYML(config.get('user_files')+'/'+user+'/settings.yml', settings);
+};
+
 exports.getUser = function (user) {
     return new Promise(function (resolve, reject) {
         if (users[user]) { resolve(users[user]); }

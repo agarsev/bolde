@@ -28,9 +28,12 @@ exports.logout = function () {
 };
 
 exports.changeSettings = function (settings) {
-    window.Dispatcher.dispatch({
-        actionType: 'changeSettings',
-        settings
+    api.call('api/settings/update', {user:window.UserStore.getUser(), settings})
+    .then(function(data) {
+        window.Dispatcher.dispatch({
+            actionType: 'changeSettings',
+            settings
+        });
     });
 };
 
