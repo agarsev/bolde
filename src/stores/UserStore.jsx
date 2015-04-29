@@ -12,6 +12,7 @@ class UserStore extends EventEmitter {
             if (a.actionType == 'login') {
                 this.user = a.user;
                 this.token = a.token;
+                this.settings = a.settings;
                 this.emit('changed');
             } else if (a.actionType == 'logout') {
                 this.user = null;
@@ -31,6 +32,10 @@ class UserStore extends EventEmitter {
 
     getToken () {
         return this.token;
+    }
+
+    getSettings () {
+        return this.settings;
     }
 };
 

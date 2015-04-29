@@ -15,7 +15,8 @@ exports.login = function (user, password) {
             actionType: 'login',
             user: user,
             token: data.token,
-            projects: data.projects
+            projects: data.projects,
+            settings: data.settings
         });
     });
 };

@@ -15,7 +15,10 @@ class Editor extends React.Component {
 
     init (editor) {
         editor.getSession().setUseWrapMode(true);
-        editor.setKeyboardHandler("ace/keyboard/vim");
+        var settings = window.UserStore.getSettings();
+        if (!!settings.editor && settings.editor != "default") {
+            editor.setKeyboardHandler("ace/keyboard/"+settings.editor);
+        }
         editor.focus();
     }
 
