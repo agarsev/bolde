@@ -39,3 +39,9 @@ exports.focus = function (tabid) {
         id: tabid
     });
 };
+
+exports.openSettings = function () {
+    window.Dispatcher.dispatch({
+        actionType: 'tab.openSettings'
+    });
+};

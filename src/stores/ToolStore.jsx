@@ -13,7 +13,7 @@ class ToolStore extends EventEmitter {
         this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
                 case 'login':
-                    this.addTool('_settings', 'Settings', () => false, true);
+                    this.addTool('_settings', 'Settings', () => Actions.tab.openSettings(), true);
                     break;
                 case 'logout':
                     window.ProjectStore.getAll()

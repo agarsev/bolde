@@ -2,6 +2,8 @@
 
 var EventEmitter = require('events').EventEmitter;
 
+var t = require('tcomb-form');
+
 class UserStore extends EventEmitter {
 
     constructor () {
@@ -9,15 +11,21 @@ class UserStore extends EventEmitter {
 
         this.user = null;
         window.Dispatcher.register(a => {
-            if (a.actionType == 'login') {
+            switch (a.actionType) {
+            case 'login':
                 this.user = a.user;
                 this.token = a.token;
                 this.settings = a.settings;
                 this.emit('changed');
-            } else if (a.actionType == 'logout') {
+                break;
+            case 'logout':
                 this.user = null;
                 this.token = null;
                 this.emit('changed');
+                break;
+            case 'changeSettings':
+                this.settings = a.settings;
+                break;
             }
         });
     }
@@ -37,6 +45,28 @@ class UserStore extends EventEmitter {
     getSettings () {
         return this.settings;
     }
+
+    getSettingsForm () {
+        var model = t.struct({
+            editor: t.enums({
+                'default': 'default',
+                'vim': 'vim',
+                'emacs': 'emacs'
+            })
+        })
+        var options = {
+            fields: {
+                editor: {
+                    nullOption: false
+                }
+            }
+        };
+        var value = {
+            editor: this.settings.editor
+        };
+        return { model, options, value };
+    }
+
 };
 
 module.exports = UserStore;

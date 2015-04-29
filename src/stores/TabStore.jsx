@@ -10,6 +10,7 @@ var ProjectView = require('../components/ProjectView');
 var ProjectList = require('../components/ProjectList');
 var Editor = require('../components/Editor');
 var AVM = require('../components/AVM');
+var Form = require('../components/TForm');
 
 class TabStore extends EventEmitter {
 
@@ -77,6 +78,9 @@ class TabStore extends EventEmitter {
                                 <div className="Tab"><AVM data={a.data} /></div>:
                                 <MDText text={a.data} />,
                                 2);
+                    break;
+                case 'tab.openSettings':
+                    this.addTab('_settings', 'Settings', <Form onChange={Actions.changeSettings} getData={window.UserStore.getSettingsForm.bind(window.UserStore)} />);
                     break;
             }
         });

@@ -27,6 +27,13 @@ exports.logout = function () {
     });
 };
 
+exports.changeSettings = function (settings) {
+    window.Dispatcher.dispatch({
+        actionType: 'changeSettings',
+        settings
+    });
+};
+
 exports.run = function (project) {
     var load = exports.file.load;
     load(project+'/run.yml')
