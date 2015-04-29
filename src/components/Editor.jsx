@@ -3,6 +3,7 @@
 var React = require('react');
 
 require('../../bower_components/ace-builds/src-min-noconflict/ace.js');
+require('../../bower_components/ace-builds/src-min-noconflict/ext-settings_menu.js');
 ace.config.set("basePath", "bower_components/ace-builds/src-min-noconflict");
 
 class Editor extends React.Component {
@@ -14,6 +15,15 @@ class Editor extends React.Component {
     }
 
     init (editor) {
+        ace.require('ace/ext/settings_menu').init(editor);
+        editor.commands.addCommands([{
+            name: "showSettingsMenu",
+            bindKey: { win: "Ctrl-k", mac: "Command-k"},
+            exec: function(editor) {
+                editor.showSettingsMenu();
+            },
+            readOnly: true
+        }]);
         editor.getSession().setUseWrapMode(true);
         var settings = window.UserStore.getSettings();
         if (!!settings.editor && settings.editor != "default") {
