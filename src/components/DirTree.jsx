@@ -8,9 +8,11 @@ class DirTree extends React.Component {
         super(props);
         var fullname = '';
         if (!this.props.root) {
-            fullname = this.props.path+'/'+this.props.name;
-        } else if (this.props.path == '' && !!this.props.name) {
-            fullname = this.props.name;
+            if (this.props.path == '' && !!this.props.name) {
+                fullname = this.props.name;
+            } else {
+                fullname = this.props.path+'/'+this.props.name;
+            }
         }
         this.state = { open: true, fullname: fullname, selected: this.props.selected };
     }
@@ -19,11 +21,14 @@ class DirTree extends React.Component {
         this.setState({open: !this.state.open});
     }
 
-    clickFile (file, e) {
-        if (this.props.selectFile) {
-            this.props.selectFile(file);
+    clickFile (file, isdir, e) {
+        if (this.props.clickFile) {
+            this.props.clickFile(file, isdir);
         } else {
             this.setState({selected: file});
+            if (this.props.selectFile) {
+                this.props.selectFile(file, isdir);
+            }
         }
         if (e) {
             e.stopPropagation();
@@ -40,8 +45,10 @@ class DirTree extends React.Component {
     deleteClick (file, e) {
         // TODO nested deleting
         this.props.deleteFile(file);
-        e.stopPropagation();
-        e.preventDefault();
+        if (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
     }
 
     render () {
@@ -53,7 +60,8 @@ class DirTree extends React.Component {
                 if (file.type=='dir') {
                     return(<li key={filename}>
                            <DirTree openFile={this.props.openFile} path={this.state.fullname}
-                           selected={selected} selectFile={this.clickFile.bind(this)}
+                           selected={selected} clickFile={this.clickFile.bind(this)}
+                           deleteFile={this.deleteClick.bind(this)}
                            name={filename} files={file.files} />
                            </li>);
                 } else {
@@ -63,7 +71,7 @@ class DirTree extends React.Component {
                         remove = <a onClick={this.deleteClick.bind(this, fullname)}>x</a>;
                     }
                     return(<li key={filename} className={selected==fullname?'selected':''}
-                           onClick={this.clickFile.bind(this, fullname)}
+                           onClick={this.clickFile.bind(this, fullname, false)}
                            onDoubleClick={this.dblClickFile.bind(this, fullname)}>
                            <a>{filename}</a>{remove}
                            </li>);
@@ -78,7 +86,7 @@ class DirTree extends React.Component {
                 <div className="DirTree">
                     <h3 className={selected==this.state.fullname?'selected':''}>
                         <a onClick={this.toggleDir.bind(this)}>{this.state.open?'-':'+'}</a>
-                        <span onClick={this.clickFile.bind(this, this.state.fullname)}
+                        <span onClick={this.clickFile.bind(this, this.state.fullname, true)}
                             onDoubleClick={this.toggleDir.bind(this)}>{this.props.name}</span>
                     </h3>
                     {below}

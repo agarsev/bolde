@@ -70,7 +70,7 @@ class TabStore extends EventEmitter {
                     }
                     break;
                 case 'file.close':
-                    this.closeTab('file_'+a.user+'/'+a.project+'/'+a.path);
+                    this.closeTab('file_'+a.user+'/'+a.project+'/'+a.file);
                     break;
                 case 'run':
                     var project = a.project.substr(a.project.search(/\/[^\/]+$/)+1);

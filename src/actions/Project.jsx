@@ -51,3 +51,17 @@ exports.update_description = function (name, desc) {
         name, desc
     });
 };
+
+exports.select_dir = function (user, project, path) {
+    window.Dispatcher.dispatch({
+        actionType: 'project.select_dir',
+        user, project, path
+    });
+};
+
+exports.select_file = function (user, project, path) {
+    window.Dispatcher.dispatch({
+        actionType: 'project.select_file',
+        user, project, path
+    });
+};

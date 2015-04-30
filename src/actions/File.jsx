@@ -2,19 +2,6 @@
 
 var api = require('./api');
 
-exports.new = function (user, project, path) {
-    api.call('api/file/new', {user: user, project: project, path: path })
-    .then(function(data) {
-        window.Dispatcher.dispatch({
-            actionType: 'file.new',
-            user: user,
-            project: project,
-            path: path,
-            files: data.files
-        });
-    });
-};
-
 var load = function (path) {
     return new Promise(function (resolve, reject) {
         if (window.FileStore.isLoaded(path)) {
@@ -62,6 +49,26 @@ exports.close = function (user, project, file) {
         project: project,
         file: file
     });
+};
+
+exports.new = function (user, project, path) {
+    api.call('api/file/new', {user: user, project: project, path: path })
+    .then(function(data) {
+        window.Dispatcher.dispatch({
+            actionType: 'file.new',
+            user: user,
+            project: project,
+            path: path,
+            files: data.files
+        });
+    });
+};
+
+exports.new_at_selected = function (user, project, filename) {
+    var dir = window.ProjectStore.get(project).cwd;
+    if (!dir) { dir = ''; }
+    else { dir += '/'; }
+    exports.new(user, project, dir+filename);
 };
 
 exports.delete = function (user, project, path) {

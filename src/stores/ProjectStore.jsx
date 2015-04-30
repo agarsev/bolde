@@ -53,6 +53,13 @@ class ProjectStore extends EventEmitter {
                     this.projects[a.name].desc = a.desc;
                     this.emit('changed:'+[a.name]);
                     break;
+                case 'project.select_dir':
+                    this.projects[a.project].cwd = a.path;
+                    break;
+                case 'project.select_file':
+                    // TODO maybe select parent
+                    this.projects[a.project].cwd = null;
+                    break;
             }
         });
     }

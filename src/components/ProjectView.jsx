@@ -13,6 +13,7 @@ class ProjectView extends React.Component {
     render () {
         var p = window.ProjectStore.get(this.props.project);
         return (<DirTree files={p.files} root="true"
+            selectFile={this.selectFile.bind(this, p.user, p.name)}
             openFile={this.openFile.bind(this, p.user, p.name)}
             deleteFile={this.deleteFile.bind(this, p.user, p.name)}
             name={p.name} />
@@ -25,6 +26,14 @@ class ProjectView extends React.Component {
 
     deleteFile (user, project, file) {
         Actions.file.delete(user, project, file);
+    }
+
+    selectFile (user, project, file, isdir) {
+        if (isdir) {
+            Actions.project.select_dir(user, project, file);
+        } else {
+            Actions.project.select_file(user, project, file);
+        }
     }
 
 };

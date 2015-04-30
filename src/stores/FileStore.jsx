@@ -19,8 +19,10 @@ class FileStore extends EventEmitter {
                     break;
                 case 'file.close':
                     var path = a.user+'/'+a.project+'/'+a.path;
-                    this.files[path].doc.close();
-                    delete this.files[path];
+                    if (this.files[path]) {
+                        this.files[path].doc.close();
+                        delete this.files[path];
+                    }
                     break;
             }
         });

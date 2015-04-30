@@ -94,7 +94,6 @@ exports.deleteProject = function (user, project) {
     });
 };
 
-// TODO files in subdirs
 exports.newFile = function (user, project, file) {
     var projectpath = config.get('user_files')+'/'+user+'/'+project;
     var path = projectpath+'/'+file;
@@ -111,15 +110,20 @@ exports.newFile = function (user, project, file) {
     }).then(loadYML.bind(null,projectpath+'/files.yml'))
     .then(function (files) {
         nufiles = files;
-        files[file] = { type: 'javascript' };
-        return writeYML(projectpath+'/files.yml', files);
+        var res, name = file;
+        while (res = /^([^\/]+)\/(.+)$/.exec(name)) {
+            files = files[res[1]].files;
+            name = res[2];
+        }
+        // TODO mode detection
+        files[name] = { type: 'javascript' };
+        return writeYML(projectpath+'/files.yml', nufiles);
     }).then(function() {
         log.debug('new file '+user+'/'+project+'/'+file);
         return nufiles;
     });
 };
 
-// TODO files in subdirs
 exports.deleteFile = function (user, project, file) {
     var projectpath = config.get('user_files')+'/'+user+'/'+project;
     var path = projectpath+'/'+file;
@@ -135,9 +139,14 @@ exports.deleteFile = function (user, project, file) {
         }
     }).then(loadYML.bind(null,projectpath+'/files.yml'))
     .then(function (files) {
-        delete files[file];
         nufiles = files;
-        return writeYML(projectpath+'/files.yml', files);
+        var res, name = file;
+        while (res = /^([^\/]+)\/(.+)$/.exec(name)) {
+            files = files[res[1]].files;
+            name = res[2];
+        }
+        delete files[name];
+        return writeYML(projectpath+'/files.yml', nufiles);
     }).then(function() {
         log.debug('deleted file '+user+'/'+project+'/'+file);
         return nufiles;
