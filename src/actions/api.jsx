@@ -1,8 +1,13 @@
 "use strict";
 
+function loading (yes) {
+    window.Dispatcher.dispatch({ actionType: 'loading.'+(yes?'start':'end') });
+};
+exports.loading = loading;
+
 exports.call = function (url, data) {
+    loading(true);
     return new Promise(function (resolve, reject) {
-        window.Dispatcher.dispatch({ actionType: 'loading.start' });
         var client = new XMLHttpRequest();
         client.open('POST', url);
         client.setRequestHeader('Content-type', 'application/json');
@@ -14,11 +19,11 @@ exports.call = function (url, data) {
             } else {
                 reject('API call to '+url+': response '+this.status);
             }
-            window.Dispatcher.dispatch({ actionType: 'loading.end' });
+            loading(false);
         };
         client.onerror = function () {
             reject(this.statusText);
-            window.Dispatcher.dispatch({ actionType: 'loading.end' });
+            loading(false);
         };
         client.send(JSON.stringify(data));
     });

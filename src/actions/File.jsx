@@ -9,6 +9,7 @@ var load = function (path) {
         } else {
             api.call('api/sharejs/open/', {file: path})
             .then(function(data) {
+                api.loading(true);
                 window.BCSocket = require("share/node_modules/browserchannel/dist/bcsocket.js").BCSocket;
                 require("share/webclient/share.js");
                 require("share/webclient/ace.js");
@@ -26,6 +27,7 @@ var load = function (path) {
                                      });
                                      resolve();
                                  }
+                                 api.loading(false);
                              });
             });
         }

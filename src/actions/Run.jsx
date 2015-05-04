@@ -3,12 +3,14 @@
 var yaml = require('js-yaml');
 
 var load = require('./File').load;
+var loading = require('./api').loading;
 
 window.URL = window.URL || window.webkitURL;
 
 module.exports = function (project) {
     load(project+'/run.yml')
     .then (function () {
+        loading(true);
         var conf = yaml.safeLoad(window.FileStore.getContents(project+'/run.yml'));
         if (!!conf.engine) {
             var worker = new Worker('build/'+conf.engine+'.js');
@@ -26,6 +28,7 @@ module.exports = function (project) {
                 };
                 worker.postMessage({ channel: 'grammar', grammar });
                 worker.postMessage({ channel: 'input', input });
+                loading(false);
             });
         } else {
             var allfiles = conf.deps.map(file => load(project+'/'+file));
@@ -46,10 +49,12 @@ module.exports = function (project) {
                     });
                 };
                 worker.postMessage(input);
+                loading(false);
             });
         }
     })
     .catch (function (error) {
+        loading(false);
         console.log(error);
     });
 };
