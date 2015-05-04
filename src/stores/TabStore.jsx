@@ -10,6 +10,7 @@ var ProjectView = require('../components/ProjectView');
 var ProjectList = require('../components/ProjectList');
 var Editor = require('../components/Editor');
 var AVM = require('../components/AVM');
+var BorjesTree = require('../components/BorjesTree');
 var Form = require('../components/TForm');
 
 class TabStore extends EventEmitter {
@@ -75,9 +76,12 @@ class TabStore extends EventEmitter {
                 case 'run':
                     var project = a.project.substr(a.project.search(/\/[^\/]+$/)+1);
                     this.addTab('run_'+a.project,project+' results',
+                                <div className="Tab"><BorjesTree tree={a.data} /></div>,
+                                /*
                                 a.type=='avm'?
                                 <div className="Tab"><AVM data={a.data} /></div>:
                                 <MDText text={a.data} />,
+                                */
                                 2);
                     break;
                 case 'tab.openSettings':
