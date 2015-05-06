@@ -20,10 +20,10 @@ module.exports = function (project) {
                 var input = window.FileStore.getContents(project+'/'+conf.input);
                 worker.onmessage = function (msg) {
                     window.Dispatcher.dispatch({
-                        actionType: 'run',
-                        project: project,
-                        type: conf.output,
-                        data: msg.data
+                        actionType: 'log.new',
+                        name: project,
+                        msg: msg.data.msg,
+                        detail: msg.data.detail
                     });
                 };
                 worker.postMessage({ channel: 'grammar', grammar });

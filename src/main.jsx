@@ -9,6 +9,7 @@ var ToolStore = require('./stores/ToolStore');
 var ToolBar = require('./components/ToolBar');
 var ProjectStore = require('./stores/ProjectStore');
 var FileStore = require('./stores/FileStore');
+var LogStore = require('./stores/LogStore');
 
 var Actions = require('./Actions');
 
@@ -21,6 +22,7 @@ window.TabStore = new TabStore();
 window.ToolStore = new ToolStore();
 window.ProjectStore = new ProjectStore();
 window.FileStore = new FileStore();
+window.LogStore = new LogStore();
 
 this.node = React.render(<TabPanel />, document.getElementById('TabPanel'));
 this.node = React.render(<ToolBar />, document.getElementById('NavBar'));

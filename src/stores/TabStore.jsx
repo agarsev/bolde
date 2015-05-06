@@ -12,6 +12,7 @@ var Editor = require('../components/Editor');
 var AVM = require('../components/AVM');
 var BorjesTree = require('../components/BorjesTree');
 var Form = require('../components/TForm');
+var LogView = require('../components/LogView');
 
 class TabStore extends EventEmitter {
 
@@ -73,16 +74,24 @@ class TabStore extends EventEmitter {
                 case 'file.close':
                     this.closeTab('file_'+a.user+'/'+a.project+'/'+a.file);
                     break;
+                /*
                 case 'run':
                     var project = a.project.substr(a.project.search(/\/[^\/]+$/)+1);
                     this.addTab('run_'+a.project,project+' results',
                                 <div className="Tab"><BorjesTree tree={a.data} /></div>,
-                                /*
                                 a.type=='avm'?
                                 <div className="Tab"><AVM data={a.data} /></div>:
                                 <MDText text={a.data} />,
-                                */
                                 2);
+                    break;
+                */
+                case 'log.new':
+                    window.Dispatcher.waitFor([window.LogStore.dispatchToken]);
+                    if (this.tabs['log_'+a.name]) {
+                        this.focusTab('log_'+a.name);
+                    } else {
+                        this.addTab('log_'+a.name, a.name, <LogView filter={a.name} />, 2);
+                    }
                     break;
                 case 'tab.openSettings':
                     this.addTab('_settings', 'Settings', <Form onChange={Actions.changeSettings} getData={window.UserStore.getSettingsForm.bind(window.UserStore)} />);
