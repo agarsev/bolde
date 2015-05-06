@@ -1,28 +1,23 @@
-SRC:=$(wildcard src/**/*.less)
+STYLES:=$(patsubst src/styles/%.less, build/%.css, $(wildcard src/styles/*))
+ENGINES:=$(patsubst src/%.jsx, build/%.js, $(wildcard src/engines/*))
 
-OUT:=$(notdir $(SRC))
-OUT:=$(patsubst %.less, %.css, $(OUT))
-OUT:=$(addprefix build/, $(OUT))
-
-WORKERS:=build/example.js
-
-VPATH:=src/styles src/workers
-
-all: $(OUT) build/bundle.js $(WORKERS)
+all: $(STYLES) build/bundle.js $(ENGINES)
 
 build/bundle.js: $(wildcard src/*.jsx) $(wildcard src/**/*.jsx)
+	mkdir -p build
 	browserifyinc -v --extension=.jsx -t [ reactify --es6 ] src/main.jsx -o build/bundle.js
 
-$(WORKERS): build/%.js: %.jsx
+$(ENGINES): build/%.js: src/%.jsx
+	mkdir -p build/engines
 	browserifyinc -v --extension=.jsx -t [ reactify --es6 ] $< -o $@
 
-build/%.css: %.less
+$(STYLES): build/%.css: src/styles/%.less
+	mkdir -p build
 	lessc $< --autoprefix="last 3 versions" >$@
 
 update:
 	npm install
 	bower install
-	mkdir -p build
 
 clean:
 	rm -rf build/*

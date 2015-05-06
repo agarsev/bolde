@@ -6,7 +6,7 @@ exports.project = require('./actions/Project');
 exports.tab = require('./actions/Tab');
 exports.toolbar = require('./actions/Toolbar');
 exports.file = require('./actions/File');
-exports.run = require('./actions/Run');
+exports.engine = require('./actions/Engine');
 
 exports.login = function (user, password) {
     api.call('api/login', {user:user, password:password})

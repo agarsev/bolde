@@ -5,10 +5,12 @@ var util = require('util');
 var Parser = require('borjes/parser');
 var Read = require('borjes/reader');
 
+// TODO multiple parsers, names
 var parser;
+var name;
 
 function output (msg, detail) {
-    postMessage({ msg, detail });
+    postMessage({ event: 'output', name, data: { msg, detail }});
 }
 
 var sentences;
@@ -23,19 +25,22 @@ function test(i) {
     }
 }
 
-self.onmessage = function ( msg ) {
-    switch (msg.data.channel) {
-        case 'grammar':
-            var grammar = Read.CFG(yaml.safeLoad(msg.data.grammar));
+self.onmessage = function ( e ) {
+    var msg = e.data;
+    switch (msg.event) {
+        case 'config':
+            name = msg.name;
+            var grammar = Read.CFG(yaml.safeLoad(msg.data.files.grammar));
             output("[OK] loaded grammar");
             parser = new Parser(grammar);
             output("[OK] built parser");
             break;
         case 'input':
-            sentences = msg.data.input.split('\n');
+            sentences = msg.data.split('\n');
             for (var i=0; i<sentences.length; i++) {
                 test(i);
             }
+            postMessage({ event: 'finish', name });
             break;
     }
 };
