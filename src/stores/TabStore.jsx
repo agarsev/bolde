@@ -1,18 +1,8 @@
 "use strict";
 
 var EventEmitter = require('events').EventEmitter;
-var React = require('react');
-
 var Actions = require('../Actions');
-
-var MDText = require('../components/MDText');
-var ProjectView = require('../components/ProjectView');
-var ProjectList = require('../components/ProjectList');
-var Editor = require('../components/Editor');
-var AVM = require('../components/AVM');
-var BorjesTree = require('../components/BorjesTree');
-var Form = require('../components/TForm');
-var LogView = require('../components/LogView');
+var Components = require('../Components');
 
 class TabStore extends EventEmitter {
 
@@ -40,7 +30,7 @@ class TabStore extends EventEmitter {
                     this.focusTab(a.id);
                     break;
                 case 'login':
-                    this.addTab('_ProjectList', 'Projects', <ProjectList />, 1);
+                    this.addTab('_ProjectList', 'Projects', Components.ProjectList(), 1);
                     break;
                 case 'logout':
                     window.ProjectStore.getAll()
@@ -53,7 +43,7 @@ class TabStore extends EventEmitter {
                     if (this.tabs['projv_'+a.name]) {
                         this.focusTab('projv_'+a.name);
                     } else {
-                        this.addTab('projv_'+a.name, a.name, <ProjectView project={a.name} />, 0,
+                        this.addTab('projv_'+a.name, a.name, Components.ProjectView(a.name), 0,
                                     () => { Actions.project.close(a.name); return false; }
                         );
                     }
@@ -67,41 +57,32 @@ class TabStore extends EventEmitter {
                     } else {
                         this.addTab('file_'+a.filename,
                              a.filename.substr(a.filename.search(/\/[^\/]+$/)+1),
-                             <Editor filename={a.filename} />
+                             Components.Editor(a.filename)
                         );
                     }
                     break;
                 case 'file.close':
                     this.closeTab('file_'+a.user+'/'+a.project+'/'+a.file);
                     break;
-                /*
-                case 'run':
-                    var project = a.project.substr(a.project.search(/\/[^\/]+$/)+1);
-                    this.addTab('run_'+a.project,project+' results',
-                                <div className="Tab"><BorjesTree tree={a.data} /></div>,
-                                a.type=='avm'?
-                                <div className="Tab"><AVM data={a.data} /></div>:
-                                <MDText text={a.data} />,
-                                2);
-                    break;
-                */
                 case 'log.new':
+                    var project = a.name.substr(a.name.search(/\/[^\/]+$/)+1);
                     window.Dispatcher.waitFor([window.LogStore.dispatchToken]);
                     if (this.tabs['log_'+a.name]) {
                         this.focusTab('log_'+a.name);
                     } else {
-                        this.addTab('log_'+a.name, a.name, <LogView filter={a.name} />, 2);
+                        this.addTab('log_'+a.name, project+" log", Components.LogView(a.name), 2);
                     }
                     break;
                 case 'tab.openSettings':
-                    this.addTab('_settings', 'Settings', <Form onChange={Actions.changeSettings} getData={window.UserStore.getSettingsForm.bind(window.UserStore)} />);
+                    this.addTab('_settings', 'Settings',
+                        Components.Form(Actions.changeSettings, window.UserStore.getSettingsForm.bind(window.UserStore)));
                     break;
             }
         });
     }
 
     openMessage (title, text, links) {
-        this.addTab('message_'+title, title, { node: <MDText text={text} links={links} /> });
+        this.addTab('message_'+title, title, { node: Components.MDText(text, links) });
     }
 
     addTab (id, title, node, panel, closeCallback) {

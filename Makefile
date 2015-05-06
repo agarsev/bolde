@@ -10,7 +10,7 @@ VPATH:=src/styles src/workers
 
 all: $(OUT) build/bundle.js $(WORKERS)
 
-build/bundle.js: $(wildcard src/**/*.jsx)
+build/bundle.js: $(wildcard src/*.jsx) $(wildcard src/**/*.jsx)
 	browserifyinc -v --extension=.jsx -t [ reactify --es6 ] src/main.jsx -o build/bundle.js
 
 $(WORKERS): build/%.js: %.jsx

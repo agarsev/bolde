@@ -1,8 +1,7 @@
 "use strict";
 
-var React = require('react');
 var EventEmitter = require('events').EventEmitter;
-var MsgDetail = require('../components/MsgDetail');
+var Components = require('../Components');
 
 class LogStore extends EventEmitter {
 
@@ -14,7 +13,7 @@ class LogStore extends EventEmitter {
             switch (a.actionType) {
                 case 'log.new':
                     if (!this.logs[a.name]) { this.logs[a.name] = []; }
-                    this.logs[a.name].push(<MsgDetail name={a.name+' '+this.logs[a.name].length} msg={a.msg} detail={a.detail} />);
+                    this.logs[a.name].push(Components.MsgDetail(a.name+' ('+this.logs[a.name].length+')', a.msg, a.detail));
                     this.emit('changed');
                     break;
             }
