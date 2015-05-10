@@ -32,7 +32,17 @@ class BorjesTree extends React.Component {
                 {o.map(t => <BorjesTree tree={t} />)}
             </div>);
         }
-        var text = o.node.asString || o.node+'';
+        var text;
+        if (o.node.borjes === 'literal') {
+            text = o.node.s;
+        } else if (o.node.borjes == 'fstruct') {
+            text = types.FStruct.get(o.node, 'symbol').s+' ('+
+                   (types.FStruct.get(o.node, 'lex') || types.FStruct.get(o.node, 'prob').toFixed(2))
+            +')';
+        } else {
+            text = o.node+'';
+        }
+
         var oneStyle = {
             textAlign: "center"
         };
