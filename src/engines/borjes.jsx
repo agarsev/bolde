@@ -4,6 +4,7 @@ var yaml = require('js-yaml');
 var util = require('util');
 var Parser = require('borjes/parser');
 var Read = require('borjes/reader');
+var Nothing = require('borjes/common').Nothing;
 
 // TODO multiple parsers, names
 var parser;
@@ -18,10 +19,11 @@ function test(i) {
     if (sentences[i] === '') { return; }
     var sentence = sentences[i].split(' ');
     var parse = parser.parse(sentence);
-    if (!parse[0]) {
-        output("[ERROR] Wrong parse for '"+sentences[i]+"'", util.inspect(parser.table, { depth: null }));
+    if (parse === Nothing ) {
+        output("[ERROR] Wrong parse for '"+sentences[i]+"'");
+        //output("[ERROR] Wrong parse for '"+sentences[i]+"'", util.inspect(parser.table, { depth: null }));
     } else {
-        output("[OK] "+sentences[i], parse[0]);
+        output("[OK] "+sentences[i], parse);
     }
 }
 

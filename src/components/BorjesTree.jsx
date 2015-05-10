@@ -27,6 +27,11 @@ class BorjesTree extends React.Component {
 
     render () {
         var o = this.props.tree;
+        if (o.length) {
+            return (<div>
+                {o.map(t => <BorjesTree tree={t} />)}
+            </div>);
+        }
         var text = o.node.asString || o.node+'';
         var oneStyle = {
             textAlign: "center"
