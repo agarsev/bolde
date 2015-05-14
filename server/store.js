@@ -77,6 +77,15 @@ exports.createProject = function (user, project) {
     });
 };
 
+exports.updateProject = function (user, project, desc) {
+    var userpath = config.get('user_files')+'/'+user;
+    return loadYML(userpath+'/projects.yml')
+    .then(function (projects) {
+        projects[project].desc = desc;
+        return writeYML(userpath+'/projects.yml', projects);
+    });
+};
+
 exports.deleteProject = function (user, project) {
     var userpath = config.get('user_files')+'/'+user;
     return new Promise(function (resolve, reject) {

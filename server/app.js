@@ -92,6 +92,16 @@ app.post('/api/project/new', function (req, res) {
     });
 });
 
+app.post('/api/project/update', function (req, res) {
+    store.updateProject(req.body.user, req.body.project, req.body.desc)
+    .then(function() {
+        res.send({ok: true, data: {}});
+    }).catch(function(error) {
+        applog.warn(error);
+        res.send({ok: false, error:error});
+    });
+});
+
 app.post('/api/project/delete', function (req, res) {
     store.deleteProject(req.body.user, req.body.project)
     .then(function() {

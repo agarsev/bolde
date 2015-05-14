@@ -46,9 +46,14 @@ exports.new = function (name) {
 };
 
 exports.update_description = function (name, desc) {
-    window.Dispatcher.dispatch({
-        actionType: 'project.update_description',
-        name, desc
+    api.call('api/project/update', { user: window.UserStore.getUser(), project: name, desc })
+    .then(function () {
+        window.Dispatcher.dispatch({
+            actionType: 'project.update_description',
+            name, desc
+        });
+    }).catch(function(error) {
+        console.log(data.error);
     });
 };
 
