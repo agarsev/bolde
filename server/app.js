@@ -2,7 +2,6 @@ var express = require('express'),
     http = require('http'),
     bodyParser = require('body-parser'),
     log4js = require('log4js'),
-    morgan = require('morgan'),
     yaml = require('js-yaml'),
     config = require('config'),
 
@@ -15,17 +14,15 @@ var server = http.createServer(app);
 
 store.init(config);
 
-var applog = log4js.getLogger('app');
+log4js.configure(config.log);
 var httplog = log4js.getLogger('http');
-app.use(morgan(':remote-addr :method :url HTTP/:http-version :status :res[content-length] - :response-time ms :referrer :user-agent', {
-    skip: function (req, res) {
-        // TODO: skip sharejs
-        return false;
-    },
-    stream: {
-        write: str => httplog.debug(str.trimRight())
-    }
+app.use(log4js.connectLogger(httplog, {
+    level: 'auto',
+    format: ':remote-addr :method :url HTTP/:http-version :status :res[content-length] - :response-time ms :referrer :user-agent',
+    nolog: /^\/api\/sharejs\/channel/
 }));
+
+var applog = log4js.getLogger('app');
 
 var shareRoute = express();
 sharejs.init(shareRoute, '/api/sharejs', config);

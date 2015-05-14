@@ -6,3 +6,12 @@ server:
     hostname: localhost
     port: 3000
     path: ''
+log:
+    appenders:
+        - type: console
+        - type: file
+          filename: logs/tfm.log
+          maxLogSize: 100000
+          backups: 5
+    levels:
+        '[all]': 'TRACE'
