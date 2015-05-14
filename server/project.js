@@ -51,7 +51,7 @@ Router.post('/update', function (req, res) {
 Router.post('/delete', function (req, res) {
     var user = req.body.user,
         project = req.body.project;
-    store.deleteProject(user, project)
+    store.deleteFolder(user+'/'+project)
     .then(function() {
         return store.load(user, 'projects');
     }).then(function(projects) {

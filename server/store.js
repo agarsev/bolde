@@ -1,4 +1,3 @@
-// TODO split
 var fs = require('fs-promise'),
     yaml = require('js-yaml'),
     log4js = require('log4js');
@@ -6,21 +5,10 @@ var fs = require('fs-promise'),
 var log = log4js.getLogger('store');
 
 var config;
-var users;
 
 exports.init = function (conf) {
     config = conf;
-    users = yaml.safeLoad(fs.readFileSync(conf.get('user_files')+'/users.yml', 'utf8'));
 };
-
-function loadYML (file) {
-    return fs.readFile(file, {encoding: 'utf8'})
-    .then(function(data) { return yaml.safeLoad(data); });
-}
-
-function writeYML (file, data) {
-    return fs.writeFile(file, yaml.safeDump(data));
-}
 
 exports.load = function() {
     var resource = Array.prototype.slice.call(arguments).join('/');
@@ -33,37 +21,22 @@ exports.write = function (data) {
     return fs.outputFile(config.get('user_files')+'/'+resource+'.yml', yaml.safeDump(data));
 }
 
-exports.getUserSettings = function (user) {
-    return loadYML(config.get('user_files')+'/'+user+'/settings.yml');
+exports.deleteFolder = function (path) {
+    return fs.remove(config.get('user_files')+'/'+path);
 };
 
-exports.getUserProjects = function (user) {
-    return loadYML(config.get('user_files')+'/'+user+'/projects.yml');
+exports.newFile = function (path) {
+    return fs.ensureFile(config.get('user_files')+'/'+path);
 };
 
-exports.updateUserSettings = function (user, settings) {
-    return writeYML(config.get('user_files')+'/'+user+'/settings.yml', settings);
+exports.deleteFile = function (path) {
+    return fs.remove(config.get('user_files')+'/'+path);
 };
 
-exports.getUser = function (user) {
-    return new Promise(function (resolve, reject) {
-        if (users[user]) { resolve(users[user]); }
-        else { reject("No such user"); }
-    });
-};
-
-exports.deleteProject = function (user, project) {
-    return fs.remove(config.get('user_files')+'/'+user+'/'+project);
-};
-
-exports.newFile = function (user, project, file) {
-    return fs.ensureFile(config.get('user_files')+'/'+user+'/'+project+'/'+file);
-};
-
-exports.deleteFile = function (user, project, file) {
-    return fs.remove(config.get('user_files')+'/'+user+'/'+project+'/'+file);
-};
-
-exports.getFile = function (path) {
+exports.readFile = function (path) {
     return fs.readFile(config.get('user_files')+'/'+path, {encoding: 'utf8'});
+};
+
+exports.writeFile = function (path, data) {
+    return fs.outputFile(config.get('user_files')+'/'+path, data);
 };

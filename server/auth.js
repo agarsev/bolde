@@ -4,22 +4,25 @@ var crypto = require('crypto'),
 
 var log = log4js.getLogger('auth');
 
+var users;
+store.load('users').then(function(x) { users = x; });
+
 var sessions = {};
 
 exports.login = function (username, password) {
-    return store.getUser(username)
-    .then(function(user) {
+    var user = users[username];
+    if (!user) {
+        return Promise.reject("Invalid username or password");
+    } else {
         var salted = password+user.salt;
         var hash = crypto.createHash('md5').update(salted).digest('hex');
         if (user.hash == hash) {
             var token = crypto.randomBytes(48).toString('hex');
             sessions[token] = { user: username };
             log.info('logged in '+username);
-            return token;
+            return Promise.resolve(token);
         } else {
-            throw new Error("Invalid username or password");
+            return Promise.reject("Invalid username or password");
         }
-    }, function(error) {
-        throw new Error("Invalid username or password");
-    });
+    }
 };

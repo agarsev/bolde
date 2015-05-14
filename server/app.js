@@ -48,20 +48,20 @@ app.post('/api/login', function (req, res) {
     auth.login(req.body.user, req.body.password)
     .then(function(tok) {
         token = tok;
-        return Promise.all([store.getUserSettings(req.body.user),
-                            store.getUserProjects(req.body.user)]);
+        return Promise.all([store.load(req.body.user, 'settings'),
+                            store.load(req.body.user, 'projects')]);
     }).then(function(results) {
         res.send({ok: true, data:{ token:token, projects: results[1], settings:results[0]}});
     }).catch(function(error) {
         applog.warn(error);
-        res.send({ok: false, error:error.message});
+        res.send({ok: false, error:error});
     });
 });
 
 app.post('/api/settings/update', function (req, res) {
-    store.updateUserSettings(req.body.user, req.body.settings)
-    .then(function(settings) {
-        res.send({ok: true, data: {settings: settings}});
+    store.write(req.body.settings, req.body.user, 'settings')
+    .then(function() {
+        res.send({ok: true, data: {}});
     }).catch(function (error) {
         applog.warn(error);
         res.send({ok: false, error:error});
