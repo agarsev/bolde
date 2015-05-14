@@ -1,7 +1,6 @@
 // TODO split
 var fs = require('fs-promise'),
     yaml = require('js-yaml'),
-    rimraf = require('rimraf'),
     log4js = require('log4js');
 
 var log = log4js.getLogger('store');
@@ -58,73 +57,13 @@ exports.deleteProject = function (user, project) {
 };
 
 exports.newFile = function (user, project, file) {
-    var projectpath = config.get('user_files')+'/'+user+'/'+project;
-    var path = projectpath+'/'+file;
-    var nufiles;
-    return new Promise(function(resolve, reject) {
-        if (fs.existsSync(path)) {
-            reject('File already exists');
-        } else {
-            fs.writeFile(path,'', function (err) {
-                if (err) { reject(err); }
-                else { resolve(); }
-            });
-        }
-    }).then(loadYML.bind(null,projectpath+'/files.yml'))
-    .then(function (files) {
-        nufiles = files;
-        var res, name = file;
-        while (res = /^([^\/]+)\/(.+)$/.exec(name)) {
-            files = files[res[1]].files;
-            name = res[2];
-        }
-        // TODO mode detection
-        files[name] = { type: 'javascript' };
-        return writeYML(projectpath+'/files.yml', nufiles);
-    }).then(function() {
-        log.debug('new file '+user+'/'+project+'/'+file);
-        return nufiles;
-    });
+    return fs.ensureFile(config.get('user_files')+'/'+user+'/'+project+'/'+file);
 };
 
 exports.deleteFile = function (user, project, file) {
-    var projectpath = config.get('user_files')+'/'+user+'/'+project;
-    var path = projectpath+'/'+file;
-    var nufiles;
-    return new Promise(function(resolve, reject) {
-        if (!fs.existsSync(path)) {
-            reject('File does not exist');
-        } else {
-            fs.unlink(path, function (err) {
-                if (err) { reject(err); }
-                else { resolve(); }
-            });
-        }
-    }).then(loadYML.bind(null,projectpath+'/files.yml'))
-    .then(function (files) {
-        nufiles = files;
-        var res, name = file;
-        while (res = /^([^\/]+)\/(.+)$/.exec(name)) {
-            files = files[res[1]].files;
-            name = res[2];
-        }
-        delete files[name];
-        return writeYML(projectpath+'/files.yml', nufiles);
-    }).then(function() {
-        log.debug('deleted file '+user+'/'+project+'/'+file);
-        return nufiles;
-    });
+    return fs.remove(config.get('user_files')+'/'+user+'/'+project+'/'+file);
 };
 
-// TODO move to file.js
 exports.getFile = function (path) {
-    return new Promise(function (resolve, reject) {
-        fs.readFile(config.get('user_files')+'/'+path, { encoding: 'utf8'}, function (err, data) {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(data);
-            }
-        });
-    });
+    return fs.readFile(config.get('user_files')+'/'+path, {encoding: 'utf8'});
 };
