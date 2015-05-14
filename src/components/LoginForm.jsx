@@ -7,7 +7,9 @@ var Actions = require('../Actions');
 class LoginForm extends React.Component {
 
     render () {
+        var error = window.UserStore.getLoginError();
         return (<form action="#" onSubmit={this.submitLogin.bind(this)}>
+                    {error?<span style={{fontSize: "80%", color:"red", fontStyle: 'oblique', paddingRight: '0.6em'}}>{error}</span>:null}
                     <input ref="user" placeholder="username" name="user" type="text" />
                     <input ref="password" placeholder="password" name="password" type="password" />
                     <button formAction="submit">Login</button>

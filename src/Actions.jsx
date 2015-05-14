@@ -18,6 +18,12 @@ exports.login = function (user, password) {
             projects: data.projects,
             settings: data.settings
         });
+    }).catch(function(error){
+        console.log(error);
+        window.Dispatcher.dispatch({
+            actionType: 'loginFail',
+            error
+        });
     });
 };
 

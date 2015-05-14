@@ -58,7 +58,7 @@ app.post('/api/login', function (req, res) {
         res.send({ok: true, data:{ token:token, projects: results[1], settings:results[0]}});
     }).catch(function(error) {
         applog.warn(error);
-        res.send({ok: false, error:error});
+        res.send({ok: false, error:error.message});
     });
 });
 

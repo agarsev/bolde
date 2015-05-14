@@ -21,10 +21,15 @@ class UserStore extends EventEmitter {
             case 'logout':
                 this.user = null;
                 this.token = null;
+                this.loginError = null;
                 this.emit('changed');
                 break;
             case 'changeSettings':
                 this.settings = a.settings;
+                break;
+            case 'loginFail':
+                this.loginError = a.error;
+                this.emit('changed');
                 break;
             }
         });
@@ -44,6 +49,10 @@ class UserStore extends EventEmitter {
 
     getSettings () {
         return this.settings;
+    }
+
+    getLoginError () {
+        return this.loginError;
     }
 
     getSettingsForm () {

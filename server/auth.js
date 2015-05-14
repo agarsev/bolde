@@ -17,9 +17,9 @@ exports.login = function (username, password) {
             log.info('logged in '+username);
             return token;
         } else {
-            throw new Error("wrong credentials");
+            throw new Error("Invalid username or password");
         }
     }, function(error) {
-        throw new Error("wrong credentials");
+        throw new Error("Invalid username or password");
     });
 };
