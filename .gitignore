@@ -3,6 +3,7 @@ node_modules/*
 bower_components/*
 user_files/*
 logs/*
+static/*
 welcome.md
 config/local.yml
 browserify-cache.json

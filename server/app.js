@@ -60,6 +60,8 @@ app.use('/api/project', require('./project'));
 // TODO permissions
 app.use('/api/file', require('./file'));
 
-app.use('/', express.static('.'));
+app.use(express.static('build'));
+app.use(express.static('static'));
+app.use('/bower_components', express.static('bower_components'));
 
 server.listen(config.get('server.port'), config.get('server.hostname'));
