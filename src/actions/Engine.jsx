@@ -11,7 +11,7 @@ var workers = {};
 
 function start (engine) {
     if (workers[engine] === undefined) {
-        var w = new Worker('build/engines/'+engine+'.js');
+        var w = new Worker('engines/'+engine+'.js');
         w.onmessage = function (e) {
             var msg = e.data;
             if (msg.event === 'output') {
