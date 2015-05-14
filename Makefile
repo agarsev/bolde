@@ -5,7 +5,7 @@ all: $(STYLES) build/bundle.js $(ENGINES)
 
 build/bundle.js: $(wildcard src/*.jsx) $(wildcard src/**/*.jsx)
 	mkdir -p build
-	browserifyinc -v --extension=.jsx -t [ reactify --es6 ] src/main.jsx -o build/bundle.js
+	browserifyinc -v --extension=.jsx -t [ reactify --es6 ] -t brfs src/main.jsx -o build/bundle.js
 
 $(ENGINES): build/%.js: src/%.jsx
 	mkdir -p build/engines

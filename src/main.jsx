@@ -1,5 +1,7 @@
 "use strict";
 
+var fs = require('fs');
+
 var React = require('react');
 
 var UserStore = require('./stores/UserStore');
@@ -27,12 +29,6 @@ window.LogStore = new LogStore();
 this.node = React.render(<TabPanel />, document.getElementById('TabPanel'));
 this.node = React.render(<ToolBar />, document.getElementById('NavBar'));
 
-var welcome = "# Collaborative Platform for the Development of Empirical Grammars\n" +
-    "Work in progress online system\n\n" +
-    "## Testing\n"+
-    "- Login (upper right corner), user 'test' with the same password\n"+
-    "- Open a file for editing\n\n"+
-    "## Features\n"+
-    "- Real-time collaborative editing\n";
+var welcome = fs.readFileSync('welcome.md', 'utf8');
 
 Actions.tab.new_msg('Welcome', welcome);
