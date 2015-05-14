@@ -3,16 +3,16 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     log4js = require('log4js'),
     yaml = require('js-yaml'),
-    config = require('config'),
+    config = require('config');
 
-    sharejs = require('./sharejs'),
-    auth = require('./auth'),
-    store = require('./store');
+var store = require('./store');
+store.init(config);
+
+var sharejs = require('./sharejs'),
+    auth = require('./auth');
 
 var app = express();
 var server = http.createServer(app);
-
-store.init(config);
 
 log4js.configure(config.log);
 var httplog = log4js.getLogger('http');
@@ -29,19 +29,6 @@ sharejs.init(shareRoute, '/api/sharejs', config);
 app.use('/api/sharejs', shareRoute);
 
 app.use(bodyParser.json());
-
-app.post('/api/sharejs/open', function (req, res) {
-    res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
-    res.header('Expires', '-1');
-    res.header('Pragma', 'no-cache');
-    var file = req.body.file;
-    sharejs.open(file).then(function(data) {
-        res.send({ok: true, data:data});
-    }).catch(function(error) {
-        applog.warn(error);
-        res.send({ok: false, error: error});
-    });
-});
 
 app.post('/api/login', function (req, res) {
     var token;
