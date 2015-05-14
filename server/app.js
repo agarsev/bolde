@@ -3,7 +3,6 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     log4js = require('log4js'),
     morgan = require('morgan'),
-    fs = require('fs'),
     yaml = require('js-yaml'),
     config = require('config'),
 
@@ -24,7 +23,7 @@ app.use(morgan(':remote-addr :method :url HTTP/:http-version :status :res[conten
         return false;
     },
     stream: {
-        write: str => httplog.info(str.trimRight())
+        write: str => httplog.debug(str.trimRight())
     }
 }));
 
@@ -72,45 +71,7 @@ app.post('/api/settings/update', function (req, res) {
     });
 });
 
-app.post('/api/project/files', function (req, res) {
-    store.getProjectFiles(req.body.project)
-    .then(function(files) {
-        res.send({ok: true, data:{ files: files }});
-    }).catch(function(error) {
-        applog.warn(error);
-        res.send({ok: false, error:error});
-    });
-});
-
-app.post('/api/project/new', function (req, res) {
-    store.createProject(req.body.user, req.body.project)
-    .then(function() {
-        res.send({ok: true, data: {}});
-    }).catch(function(error) {
-        applog.warn(error);
-        res.send({ok: false, error:error});
-    });
-});
-
-app.post('/api/project/update', function (req, res) {
-    store.updateProject(req.body.user, req.body.project, req.body.desc)
-    .then(function() {
-        res.send({ok: true, data: {}});
-    }).catch(function(error) {
-        applog.warn(error);
-        res.send({ok: false, error:error});
-    });
-});
-
-app.post('/api/project/delete', function (req, res) {
-    store.deleteProject(req.body.user, req.body.project)
-    .then(function() {
-        res.send({ok: true, data: {}});
-    }).catch(function(error) {
-        applog.warn(error);
-        res.send({ok: false, error:error});
-    });
-});
+app.use('/api/project', require('./project'));
 
 app.post('/api/file/new', function (req, res) {
     // TODO permissions

@@ -1,5 +1,5 @@
 // TODO split
-var fs = require('fs'),
+var fs = require('fs-promise'),
     yaml = require('js-yaml'),
     rimraf = require('rimraf'),
     log4js = require('log4js');
@@ -15,21 +15,23 @@ exports.init = function (conf) {
 };
 
 function loadYML (file) {
-    return new Promise(function (resolve, reject) {
-        fs.readFile(file, { encoding: 'utf8'}, function (err, data) {
-            if (err) { reject(err);
-            } else { resolve(yaml.safeLoad(data)); }
-        });
-    });
+    return fs.readFile(file, {encoding: 'utf8'})
+    .then(function(data) { return yaml.safeLoad(data); });
 }
 
 function writeYML (file, data) {
-    return new Promise(function (resolve, reject) {
-        fs.writeFile(file, yaml.safeDump(data), function (err, data) {
-            if (err) { reject(err);
-            } else { resolve(); }
-        });
-    });
+    return fs.writeFile(file, yaml.safeDump(data));
+}
+
+exports.load = function() {
+    var resource = Array.prototype.slice.call(arguments).join('/');
+    return fs.readFile(config.get('user_files')+'/'+resource+'.yml', {encoding: 'utf8'})
+    .then(function(data) { return yaml.safeLoad(data); });
+}
+
+exports.write = function (data) {
+    var resource = Array.prototype.slice.call(arguments, 1).join('/');
+    return fs.outputFile(config.get('user_files')+'/'+resource+'.yml', yaml.safeDump(data));
 }
 
 exports.getUserSettings = function (user) {
@@ -51,56 +53,8 @@ exports.getUser = function (user) {
     });
 };
 
-exports.getProjectFiles = function (project) {
-    return loadYML(config.get('user_files')+'/'+project+'/files.yml');
-};
-
-exports.createProject = function (user, project) {
-    var userpath = config.get('user_files')+'/'+user;
-    return new Promise(function (resolve, reject) {
-        fs.mkdir(userpath+'/'+project, function (err) {
-            if (err) { reject(err); }
-            else { resolve(); }
-        });
-    }).then(function () {
-        return fs.writeFile(userpath+'/'+project+'/files.yml', '{}', function (err) {
-            if (err) { throw err; }
-            else { return; }
-        });
-    }).then(loadYML.bind(null,userpath+'/projects.yml'))
-    .then(function(projects) {
-        projects[project] = { desc: '' };
-        return writeYML(userpath+'/projects.yml', projects);
-    }).then(function() {
-        log.info('created project '+user+'/'+project);
-        return;
-    });
-};
-
-exports.updateProject = function (user, project, desc) {
-    var userpath = config.get('user_files')+'/'+user;
-    return loadYML(userpath+'/projects.yml')
-    .then(function (projects) {
-        projects[project].desc = desc;
-        return writeYML(userpath+'/projects.yml', projects);
-    });
-};
-
 exports.deleteProject = function (user, project) {
-    var userpath = config.get('user_files')+'/'+user;
-    return new Promise(function (resolve, reject) {
-        rimraf(userpath+'/'+project, function (err) {
-            if (err) { reject(err); }
-            else { resolve(); }
-        });
-    }).then(loadYML.bind(null,userpath+'/projects.yml'))
-    .then(function(projects) {
-        delete projects[project];
-        return writeYML(userpath+'/projects.yml', projects);
-    }).then(function () {
-        log.info('deleted project '+user+'/'+project);
-        return;
-    });
+    return fs.remove(config.get('user_files')+'/'+user+'/'+project);
 };
 
 exports.newFile = function (user, project, file) {
