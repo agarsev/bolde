@@ -3,7 +3,7 @@ ENGINES:=$(patsubst src/%.jsx, build/%.js, $(wildcard src/engines/*))
 
 all: $(STYLES) build/bundle.js $(ENGINES)
 
-build/bundle.js: $(wildcard src/*.jsx) $(wildcard src/**/*.jsx)
+build/bundle.js: $(wildcard src/*.jsx) $(wildcard src/**/*.jsx) welcome.md
 	mkdir -p build
 	browserifyinc -v --extension=.jsx -t [ reactify --es6 ] -t brfs src/main.jsx -o build/bundle.js
 
