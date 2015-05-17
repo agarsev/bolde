@@ -2,6 +2,7 @@
 
 var React = require('react');
 var types = require('borjes/src/types');
+var fmt = require('borjes/src/formatter');
 
 var branch= '<svg xmlns="http://www.w3.org/2000/svg"'
            +' xmlns:xlink="http://www.w3.org/1999/xlink"'
@@ -33,16 +34,7 @@ class BorjesTree extends React.Component {
                 {o.map(t => <BorjesTree tree={t} />)}
             </div>);
         }
-        var text;
-        if (o.node.borjes === 'literal') {
-            text = o.node.s;
-        } else if (o.node.borjes == 'fstruct') {
-            text = types.FStruct.get(o.node, 'symbol').s+' ('+
-                   (types.FStruct.get(o.node, 'lex') || types.FStruct.get(o.node, 'prob').toFixed(2))
-            +')';
-        } else {
-            text = o.node+'';
-        }
+        var text = fmt.flist(o.node, 'symbol');
 
         var oneStyle = {
             textAlign: "center"

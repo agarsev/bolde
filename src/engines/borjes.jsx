@@ -1,6 +1,5 @@
 "use strict";
 
-var yaml = require('js-yaml');
 var util = require('util');
 
 var Parser = require('borjes/src/parser');
@@ -33,7 +32,7 @@ self.onmessage = function ( e ) {
     switch (msg.event) {
         case 'config':
             name = msg.name;
-            var grammar = Read[msg.data.format](yaml.safeLoad(msg.data.files.grammar));
+            var grammar = Read[msg.data.format](msg.data.files.grammar);
             output("[OK] loaded grammar");
             parser = Parser(grammar);
             output("[OK] built parser");
