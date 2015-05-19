@@ -13,7 +13,7 @@ class LogStore extends EventEmitter {
             switch (a.actionType) {
                 case 'log.new':
                     if (!this.logs[a.name]) { this.logs[a.name] = []; }
-                    this.logs[a.name].push(Components.MsgDetail(a.name+' ('+this.logs[a.name].length+')', a.msg, a.detail));
+                    this.logs[a.name].push({ level: a.level, message: a.message });
                     this.emit('changed');
                     break;
             }

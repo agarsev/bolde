@@ -10,8 +10,20 @@ class LogView extends React.Component {
 
     render () {
         var logs = window.LogStore.getAll(this.props.filter);
+        var styles = {
+            DEBUG: {
+                color: '#99e0f0'
+            },
+            INFO: {
+                color: 'green'
+            },
+            ERROR: {
+                color: 'red',
+                fontWeight: 'bold'
+            }
+        };
         return (<div>{logs.map((l, i) =>
-            <div key={i}>{l}</div>
+            <div style={styles[l.level]} key={i}>{"["+l.level+"]: "+l.message}</div>
         )}</div>);
     }
 

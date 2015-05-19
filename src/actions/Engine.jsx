@@ -7,30 +7,49 @@ var loading = require('./api').loading;
 
 window.URL = window.URL || window.webkitURL;
 
-var workers = {};
+var engines = {};
 
 function start (engine) {
-    if (workers[engine] === undefined) {
+    if (engines[engine] === undefined) {
         var w = new Worker('engines/'+engine+'.js');
+        var eng = { w, feed: {} };
         w.onmessage = function (e) {
-            var msg = e.data;
-            if (msg.event === 'output') {
-                // TODO use conf.output to know what to do with this
+            var m = e.data;
+            switch (m.event) {
+            case 'input':
+                eng.feed[m.name](m.counter).then(function (data) {
+                    w.postMessage({ event: 'input', name: m.name, counter: m.counter, data });
+                }).catch(function () {
+                    w.postMessage({ event: 'end', name: m.name, counter: m.counter });
+                });
+                break;
+            case 'output':
+                // TODO
+                break;
+            case 'log':
                 window.Dispatcher.dispatch({
                     actionType: 'log.new',
-                    name: msg.name,
-                    msg: msg.data.msg,
-                    detail: msg.data.detail
+                    name: m.name,
+                    level: m.level,
+                    message: m.message,
                 });
-            } else if (msg.event === 'finish') {
-                // TODO improve knowing who's running
+                break;
+            case 'finish':
+                // TODO
                 loading(false);
-            }
+                break;
+            };
         };
-        workers[engine] = w;
+        engines[engine] = eng;
     }
 }
-exports.start = start;
+
+function newWorker (engine, name, config, feed) {
+    engines[engine].feed[name] = feed;
+    engines[engine].w.postMessage({
+        event: 'new', name, config
+    });
+}
 
 exports.run = function (project) {
     var conf;
@@ -58,9 +77,14 @@ exports.run = function (project) {
                 files[name] = window.FileStore.getContents(project+'/'+files[name]);
             });
         }
-        var w = workers[conf.engine];
-        w.postMessage({ event: 'config', name: project, data: conf.config });
-        w.postMessage({ event: 'input', name: project, data: window.FileStore.getContents(project+'/'+conf.input) });
+        var lines = window.FileStore.getContents(project+'/'+conf.input).split('\n');
+        newWorker(conf.engine, project, conf.config, function (i) {
+            if (i>lines.length) {
+                return Promise.reject();
+            } else {
+                return Promise.resolve(lines[i]);
+            }
+        });
     }).catch (function (error) {
         loading(false);
         console.log(error);

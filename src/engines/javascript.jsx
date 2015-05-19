@@ -1,22 +1,11 @@
 "use strict";
 
-// TODO multiple runners, names
-var name;
-var runner;
+var Worker = require('../engine_api');
 
-self.onmessage = function ( e ) {
-    var msg = e.data;
-    switch (msg.event) {
-        case 'config':
-            name = msg.name;
-            var body = msg.data.files.reduce((body, code) => body + ';' + code, '');
-            runner = new Function('input', 'output', body);
-            break;
-        case 'input':
-            runner(msg.data, function (text, detail) {
-                postMessage({ event: 'output', name: msg.name, data: {msg:text, detail}});
-            });
-            postMessage({ event: 'finish', name: msg.name });
-            break;
-    }
+Worker.prototype.init = function (config) {
+    var body = config.files.reduce((body, code) => body + ';' + code, '');
+    var runner = new Function('input', 'log', 'output', body);
+    this.input()
+    .then(data => runner(data, this.log.bind(this), this.output.bind(this)))
+    .catch(this.finish.bind(this));
 };
