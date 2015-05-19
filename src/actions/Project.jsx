@@ -1,6 +1,11 @@
 "use strict";
 
-var api = require('./api.jsx');
+var yaml = require('js-yaml');
+
+var api = require('./api');
+
+var load = require('./File').load;
+var Pipeline = require('./Pipeline');
 
 exports.open = function (name) {
     api.call('api/project/files', { project: window.UserStore.getUser()+'/'+name })
@@ -68,5 +73,27 @@ exports.select_file = function (user, project, path) {
     window.Dispatcher.dispatch({
         actionType: 'project.select_file',
         user, project, path
+    });
+};
+
+exports.run = function (project) {
+    var conf;
+    api.loading(true);
+    load(project+'/run.yml')
+    .then (function () {
+        conf = yaml.safeLoad(window.FileStore.getContents(project+'/run.yml'));
+        conf.pipeline.forEach(element => {
+            if (element.files !== undefined) {
+                Object.keys(element.files).forEach(name => {
+                    element.files[name] = project+'/'+element.files[name];
+                });
+            }
+        });
+        return Pipeline.run(project, conf.pipeline);
+    }).then (function () {
+        api.loading(false);
+    }).catch (function (error) {
+        api.loading(false);
+        console.log(error);
     });
 };

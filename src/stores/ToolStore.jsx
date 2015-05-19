@@ -37,7 +37,7 @@ class ToolStore extends EventEmitter {
                             Actions.file.new_at_selected(window.UserStore.getUser(),a.name,filename);
                         }},
                         {title:'Run',click: function() {
-                            Actions.engine.run(window.UserStore.getUser()+'/'+a.name);
+                            Actions.project.run(window.UserStore.getUser()+'/'+a.name);
                         }}
                     ]);
                     break;

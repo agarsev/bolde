@@ -2,11 +2,6 @@
 
 var React = require('react');
 
-var MD = require('./components/MsgDetail');
-exports.MsgDetail = function (name, msg, detail) {
-    return <MD name={name} msg={msg} detail={detail} />;
-};
-
 var MDT = require('./components/MDText');
 exports.MDText = function (text, links) {
     return <MDT text={text} links={links} />;
