@@ -52,17 +52,28 @@ class Pipe {
 }
 
 class FileSource {
-    constructor (filename) {
+    constructor (filenames) {
         this.pipe = new Pipe();
-        File.load(filename).then(() => {
-            var lines = window.FileStore.getContents(filename).split('\n');
-            for (var i = 0; i<lines.length; i++) {
-                this.pipe.put(lines[i]);
-            }
-        });
+        this.files = filenames;
+        this.i = 0;
+        this.loadnext();
     }
     get () {
         return this.pipe.get();
+    }
+    loadnext () {
+        if (this.i<this.files.length) {
+            File.load(this.files[this.i])
+            .then(this.pumplines.bind(this));
+        }
+    }
+    pumplines () {
+        var lines = window.FileStore.getContents(this.files[this.i]).split('\n');
+        for (var i = 0; i<lines.length; i++) {
+            this.pipe.put(lines[i]);
+        }
+        this.i++;
+        this.loadnext();
     }
 }
 
@@ -76,8 +87,7 @@ exports.run = function (project, pipeline) {
             if (el.config === undefined) { el.config = {}; }
             var nup;
             if (el.engine === 'file') {
-                // TODO if many files, one after the other
-                nup = new FileSource(el.files[0]);
+                nup = new FileSource(el.files);
             } else {
                 nup = new Pipe();
                 runElement(el, project, pipe, nup);
