@@ -2,6 +2,7 @@
  *
  * ## Per engine
  * -> new (name, config)
+ * -> delete (name)
  *
  * ## Per worker
  * input (name, counter) -> input (name, counter, data)
@@ -34,6 +35,9 @@ self.onmessage = function (e) {
         case 'end':
             var reject = w.w_promises[m.counter][1];
             reject();
+            break;
+        case 'delete':
+            delete workers[m.name];
             break;
         }
     }

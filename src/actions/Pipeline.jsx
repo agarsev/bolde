@@ -3,8 +3,8 @@
 var File = require('./File');
 var Engine = require('./Engine');
 
-function runElement ( element, name, pipein, pipeout ) {
-    return Promise.all(Object.keys(element.files).map(name => File.load(element.files[name])))
+function runElement ( element, title, pipein, pipeout ) {
+    return Promise.all(Object.keys(element.files).map(file => File.load(element.files[file])))
     .then(function () {
         Engine.start(element.engine);
         if (element.files !== undefined) {
@@ -13,7 +13,7 @@ function runElement ( element, name, pipein, pipeout ) {
                 element.config.files[file] = window.FileStore.getContents(element.files[file]);
             });
         }
-        Engine.run(element.engine, name, element.config, pipein, pipeout);
+        Engine.run(element.engine, title, element.config, pipein, pipeout);
     });
 }
 
@@ -66,7 +66,7 @@ class FileSource {
     }
 }
 
-exports.run = function (name, pipeline) {
+exports.run = function (project, pipeline) {
     return new Promise(function (resolve, reject) {
         var pipe = { get: function () {
             throw "Reading from the beginning of the pipeline";
@@ -80,7 +80,7 @@ exports.run = function (name, pipeline) {
                 nup = new FileSource(el.files[0]);
             } else {
                 nup = new Pipe();
-                runElement(el, name+'['+i+']', pipe, nup);
+                runElement(el, project, pipe, nup);
             }
             pipe = nup;
         }
