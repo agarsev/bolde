@@ -1,16 +1,13 @@
 "use strict";
 
-var Worker = require('../engine_api');
+var Worker = require('../utils/EngineWorker');
 
 function run () {
     this.input()
     .then(data => {
         this.runner(data, this.log.bind(this), this.output.bind(this), this.state);
         run.call(this);
-    })
-    .catch(function () {
-        this.finish.bind(this)
-    });
+    }).catch(this.finish.bind(this));
 }
 
 Worker.prototype.init = function (config) {

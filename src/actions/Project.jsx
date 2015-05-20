@@ -89,9 +89,7 @@ exports.run = function (project) {
                 });
             }
         });
-        return Pipeline.run(project, conf.pipeline);
-    }).then (function () {
-        api.loading(false);
+        Pipeline.run(project, conf.pipeline);
     }).catch (function (error) {
         api.loading(false);
         console.log(error);

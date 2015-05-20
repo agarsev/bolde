@@ -2,97 +2,43 @@
 
 var File = require('./File');
 var Engine = require('./Engine');
+var pipes = require('../utils/pipes');
 
 function runElement ( element, title, pipein, pipeout ) {
     return Promise.all(Object.keys(element.files).map(file => File.load(element.files[file])))
     .then(function () {
-        Engine.start(element.engine);
+        Engine.start(element.type);
         if (element.files !== undefined) {
             element.config.files = {};
             Object.keys(element.files).forEach(file => {
                 element.config.files[file] = window.FileStore.getContents(element.files[file]);
             });
         }
-        Engine.run(element.engine, title, element.config, pipein, pipeout);
+        Engine.run(element.type, title, element.config, pipein, pipeout);
     });
-}
-
-class Pipe {
-    constructor () {
-        this.queue = [];
-        this.waiters = [];
-    }
-    put (x) {
-        if (this.waiters.length>0) {
-            var w = this.waiters.shift();
-            w[0](x);
-        } else {
-            this.queue.push(x);
-        }
-    }
-    get () {
-        if (this.queue.length>0) {
-            return Promise.resolve(this.queue.shift());
-        } else if (this.closed) {
-            return Promise.reject();
-        } else {
-            return new Promise(function (resolve, reject) {
-                this.waiters.push([resolve, reject]);
-            });
-        }
-    }
-    close () {
-        this.closed = true;
-        if (this.waiters.length > 0) {
-            for (var i=0; i<this.waiters.length; i++) {
-                this.waiters[i][1]();
-            }
-        }
-    }
-}
-
-class FileSource {
-    constructor (filenames) {
-        this.pipe = new Pipe();
-        this.files = filenames;
-        this.i = 0;
-        this.loadnext();
-    }
-    get () {
-        return this.pipe.get();
-    }
-    loadnext () {
-        if (this.i<this.files.length) {
-            File.load(this.files[this.i])
-            .then(this.pumplines.bind(this));
-        }
-    }
-    pumplines () {
-        var lines = window.FileStore.getContents(this.files[this.i]).split('\n');
-        for (var i = 0; i<lines.length; i++) {
-            this.pipe.put(lines[i]);
-        }
-        this.i++;
-        this.loadnext();
-    }
 }
 
 exports.run = function (project, pipeline) {
-    return new Promise(function (resolve, reject) {
-        var pipe = { get: function () {
-            throw "Reading from the beginning of the pipeline";
-        }};
-        for (var i=0; i<pipeline.length; i++) {
-            var el = pipeline[i];
-            if (el.config === undefined) { el.config = {}; }
-            var nup;
-            if (el.engine === 'file') {
-                nup = new FileSource(el.files);
-            } else {
-                nup = new Pipe();
-                runElement(el, project, pipe, nup);
-            }
-            pipe = nup;
+    var pipe = pipes.None;
+    var end = false;
+    for (var i=0; !end && i<pipeline.length; i++) {
+        var source = pipeline[i];
+        var sink = pipeline[i+1];
+        if (source.config === undefined) { source.config = {}; }
+        var nup;
+        if (sink === undefined) {
+            nup = pipes.None;
+        } else if (sink.type === 'file') {
+            nup = new pipes.FileSink(sink.files[0]);
+            end = true;
+        } else {
+            nup = new pipes.Pipe();
         }
-    });
+        if (source.type === 'file') {
+            nup = new pipes.FileSource(source.files);
+        } else {
+            runElement(source, project, pipe, nup);
+        }
+        pipe = nup;
+    }
 };

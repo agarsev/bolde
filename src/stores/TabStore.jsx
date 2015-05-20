@@ -64,6 +64,16 @@ class TabStore extends EventEmitter {
                 case 'file.close':
                     this.closeTab('file_'+a.user+'/'+a.project+'/'+a.file);
                     break;
+                case 'file.put':
+                    if (this.tabs['file_'+a.path]) {
+                        this.closeTab('file_'+a.path);
+                        window.Dispatcher.waitFor([window.FileStore.dispatchToken]);
+                        this.addTab('file_'+a.path,
+                            a.path.substr(a.path.search(/\/[^\/]+$/)+1),
+                            Components.Editor(a.path)
+                        );
+                    }
+                    break;
                 case 'log.new':
                     var project = a.name.substr(a.name.search(/\/[^\/]+$/)+1);
                     window.Dispatcher.waitFor([window.LogStore.dispatchToken]);

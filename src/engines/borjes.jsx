@@ -6,7 +6,7 @@ var Parser = require('borjes/src/parser');
 var Read = require('borjes/src/reader');
 var types = require('borjes/src/types');
 
-var Worker = require('../engine_api');
+var Worker = require('../utils/EngineWorker');
 
 Worker.prototype.test = function (sentence) {
     if (sentence !== '') {
