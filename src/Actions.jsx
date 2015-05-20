@@ -42,3 +42,10 @@ exports.changeSettings = function (settings) {
         });
     });
 };
+
+exports.clearLogs = function (name) {
+    window.Dispatcher.dispatch({
+        actionType: 'log.clear',
+        name
+    });
+};

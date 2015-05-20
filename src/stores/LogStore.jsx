@@ -16,6 +16,10 @@ class LogStore extends EventEmitter {
                     this.logs[a.name].push({ level: a.level, message: a.message });
                     this.emit('changed');
                     break;
+                case 'log.clear':
+                    this.logs[a.name] = [];
+                    this.emit('changed');
+                    break;
             }
         });
     }
