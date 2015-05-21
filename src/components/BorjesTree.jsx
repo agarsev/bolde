@@ -31,7 +31,7 @@ class BorjesTree extends React.Component {
         var o = this.props.tree;
         if (o.length) {
             return (<div>
-                {o.map(t => <BorjesTree tree={t} />)}
+                {o.map((t, i) => <BorjesTree key={i} tree={t} />)}
             </div>);
         }
         var text = fmt.flist(o.node, 'symbol');
@@ -82,6 +82,10 @@ class BorjesTree extends React.Component {
                     </td></tr>
             </table>);
         }
+    }
+
+    shouldComponentUpdate(nextProps) {
+        return nextProps.tree !== this.props.tree;
     }
 
 };

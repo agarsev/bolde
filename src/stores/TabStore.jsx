@@ -87,6 +87,14 @@ class TabStore extends EventEmitter {
                     this.addTab('_settings', 'Settings',
                         Components.Form(Actions.changeSettings, window.UserStore.getSettingsForm.bind(window.UserStore)));
                     break;
+                case 'output':
+                    var tn = 'output_'+a.name;
+                    if (this.tabs[tn]) {
+                        this.updateTab(tn, Components.BorjesTree(a.results));
+                    } else {
+                        this.addTab(tn, a.name+' results', Components.BorjesTree(a.results), 1);
+                    }
+                    break;
             }
         });
     }
@@ -100,6 +108,11 @@ class TabStore extends EventEmitter {
         this.tabs[id] = { id: id, title: title, panel: panel, node: node,
             closecb: closeCallback };
         this.selected[panel] = id;
+        this.emit('changed');
+    }
+
+    updateTab(id, node) {
+        this.tabs[id].node = node;
         this.emit('changed');
     }
 

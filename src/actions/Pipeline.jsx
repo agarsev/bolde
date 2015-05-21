@@ -31,6 +31,9 @@ exports.run = function (project, pipeline) {
         } else if (sink.type === 'file') {
             nup = new pipes.FileSink(sink.files[0]);
             end = true;
+        } else if (sink.type === 'display') {
+            nup = new pipes.OutputDispatcher(project);
+            end = true;
         } else {
             nup = new pipes.Pipe();
         }

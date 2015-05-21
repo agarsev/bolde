@@ -49,3 +49,10 @@ exports.clearLogs = function (name) {
         name
     });
 };
+
+exports.output = function (name, results) {
+    window.Dispatcher.dispatch({
+        actionType: 'output',
+        name, results
+    });
+};

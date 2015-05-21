@@ -85,3 +85,18 @@ class FileSink {
     }
 }
 exports.FileSink = FileSink;
+
+class OutputDispatcher {
+    constructor (name) {
+        this.name = name;
+        this.buffer = [];
+    }
+    put (result) {
+        this.buffer = this.buffer.concat(result);
+        Actions.output(this.name, this.buffer);
+    }
+    close () {
+        delete this.buffer;
+    }
+}
+exports.OutputDispatcher = OutputDispatcher;
