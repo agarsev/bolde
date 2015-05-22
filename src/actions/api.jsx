@@ -5,6 +5,16 @@ function loading (yes) {
 };
 exports.loading = loading;
 
+exports.log = function (log, level) {
+    if (level === undefined) { level = "ERROR"; }
+    window.Dispatcher.dispatch({
+        actionType: 'log.new',
+        name: 'System',
+        level: level,
+        message: log,
+    });
+};
+
 exports.call = function (url, data) {
     loading(true);
     return new Promise(function (resolve, reject) {

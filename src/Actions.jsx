@@ -20,7 +20,7 @@ exports.login = function (user, password) {
             settings: data.settings
         });
     }).catch(function(error){
-        console.log(error);
+        api.log(error);
         window.Dispatcher.dispatch({
             actionType: 'loginFail',
             error

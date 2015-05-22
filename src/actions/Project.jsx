@@ -34,7 +34,7 @@ exports.delete = function (name) {
             name
         });
     }).catch(function(error) {
-        console.log(data.error);
+        api.log(data.error);
     });
 };
 
@@ -46,7 +46,7 @@ exports.new = function (name) {
             name
         });
     }).catch(function(error) {
-        console.log(data.error);
+        api.log(data.error);
     });
 };
 
@@ -58,7 +58,7 @@ exports.update_description = function (name, desc) {
             name, desc
         });
     }).catch(function(error) {
-        console.log(data.error);
+        api.log(data.error);
     });
 };
 
@@ -92,6 +92,6 @@ exports.run = function (project) {
         Pipeline.run(project, conf.pipeline);
     }).catch (function (error) {
         api.loading(false);
-        console.log(error);
+        api.log(error);
     });
 };
