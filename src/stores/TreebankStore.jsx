@@ -1,7 +1,5 @@
 "use strict";
 
-var nedb = require('nedb');
-
 var EventEmitter = require('events').EventEmitter;
 
 class TreebankStore extends EventEmitter {
@@ -9,39 +7,53 @@ class TreebankStore extends EventEmitter {
     constructor () {
         super();
 
-        this.tb = {};
+        this.tbs = {};
+        this.queries = [];
 
         this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
                 case 'treebank.new':
-                    //this.tb[a.name] = new nedb({filename: a.name, autoload: true });
-                    this.tb[a.name] = new nedb();
+                    if (this.w === undefined) { this.start(); }
+                    this.w.postMessage({ event: 'new', name: a.name });
+                    this.tbs[a.name] = true;
                     break;
                 case 'treebank.store':
-                    this.tb[a.name].insert(a.trees);
+                    if (this.w === undefined) { this.start(); }
+                    this.w.postMessage({ event: 'store', name: a.name, trees: a.trees });
                     break;
             }
         });
     }
 
     getTreebanks () {
-        return Object.keys(this.tb);
+        return Object.keys(this.tbs);
     }
 
     exists (name) {
-        return this.tb[name]!==undefined;
+        return this.tbs[name]!==undefined;
     }
 
-    query (treebank, query) {
-        var store = this;
-        return new Promise(function (resolve, reject) {
-            store.tb[treebank].find(query, function (err, docs) {
-                if (err) {
-                    reject(err);
+    start () {
+        this.w = new Worker('engines/treebank.js');
+        this.w.onmessage = (e) => {
+            var m = e.data;
+            switch (m.event) {
+            case 'query':
+                if (m.error) {
+                    this.queries[m.i][1](m.error);
                 } else {
-                    resolve(docs);
+                    this.queries[m.i][0](m.result);
                 }
-            });
+                delete this.queries[m.i];
+                break;
+            }
+        };
+    }
+
+    query (name, query) {
+        return new Promise((resolve, reject) => {
+            this.queries.push([resolve, reject]);
+            this.w.postMessage({ event: 'query', name, query, i: this.queries.length-1 });
         });
     }
 
