@@ -36,3 +36,8 @@ var BT = require('./components/BorjesTree');
 exports.BorjesTree = function (tree) {
     return <BT tree={tree} />;
 };
+
+var TBV = require('./components/TBView');
+exports.TBView = function (treebank) {
+    return <TBV treebank={treebank} />;
+};

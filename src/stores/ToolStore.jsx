@@ -9,7 +9,18 @@ class ToolStore extends EventEmitter {
         super();
 
         this.loading = false;
-        this.tools = {};
+
+        var newTB = { title: 'New', click: () => console.log('Not implemented') };
+
+        this.tools = {
+            '_treebanks': {
+                title: 'Treebank',
+                menu: [ newTB ],
+                order: 2,
+                right: false
+            }
+        };
+
         this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
                 case 'login':
@@ -52,6 +63,14 @@ class ToolStore extends EventEmitter {
                     this.loading = false;
                     this.emit('changed');
                     break;
+                case 'treebank.new':
+                    window.Dispatcher.waitFor([window.TreebankStore.dispatchToken]);
+                    this.tools['_treebanks'].menu = [ newTB ]
+                        .concat(window.TreebankStore.getTreebanks().map(name => {
+                            return { title: name, click: Actions.treebank.open.bind(null,name) };
+                        }));
+                    this.emit('changed');
+                    break;
             }
         });
     }
@@ -59,22 +78,21 @@ class ToolStore extends EventEmitter {
     getTools (right) {
         return Object.keys(this.tools)
             .filter(id => this.tools[id].right == right)
+            .sort((a, b) => this.tools[a].order > this.tools[b].order )
             .map(id => this.tools[id]);
     }
 
-    addTool (id, title, click, right) {
+    addTool (id, title, click, right, order) {
         if (right === undefined) { right = false; }
-        this.tools[id] = { title: title,
-                click: click,
-                right: right };
+        if (order === undefined) { order = 1; }
+        this.tools[id] = { title, click, right, order };
         this.emit('changed');
     }
 
-    addMenu (id, title, menu, right) {
+    addMenu (id, title, menu, right, order) {
         if (right === undefined) { right = false; }
-        this.tools[id] = { title: title,
-                menu: menu,
-                right: right };
+        if (order === undefined) { order = 1; }
+        this.tools[id] = { title, menu, right, order };
         this.emit('changed');
     }
 

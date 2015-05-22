@@ -34,6 +34,9 @@ exports.run = function (project, pipeline) {
         } else if (sink.type === 'display') {
             nup = new pipes.OutputDispatcher(project);
             end = true;
+        } else if (sink.type === 'treebank') {
+            nup = new pipes.TreeBankSink(sink.files[0]);
+            end = true;
         } else {
             nup = new pipes.Pipe();
         }

@@ -12,6 +12,7 @@ var ToolBar = require('./components/ToolBar');
 var ProjectStore = require('./stores/ProjectStore');
 var FileStore = require('./stores/FileStore');
 var LogStore = require('./stores/LogStore');
+var TreebankStore = require('./stores/TreebankStore');
 
 var Actions = require('./Actions');
 
@@ -25,6 +26,7 @@ window.ToolStore = new ToolStore();
 window.ProjectStore = new ProjectStore();
 window.FileStore = new FileStore();
 window.LogStore = new LogStore();
+window.TreebankStore = new TreebankStore();
 
 this.node = React.render(<TabPanel />, document.getElementById('TabPanel'));
 this.node = React.render(<ToolBar />, document.getElementById('NavBar'));

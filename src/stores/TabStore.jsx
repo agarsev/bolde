@@ -12,6 +12,8 @@ class TabStore extends EventEmitter {
         this.tabs = {};
         this.selected = [ -1, -1, -1 ];
 
+        var id = 0;
+
         this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
                 case 'tab.new_msg':
@@ -94,6 +96,9 @@ class TabStore extends EventEmitter {
                     } else {
                         this.addTab(tn, a.name+' results', Components.BorjesTree(a.results), 1);
                     }
+                    break;
+                case 'treebank.open':
+                    this.addTab('treebank_'+(id++), a.name, Components.TBView(a.name), 1);
                     break;
             }
         });

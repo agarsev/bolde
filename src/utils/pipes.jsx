@@ -100,3 +100,14 @@ class OutputDispatcher {
     }
 }
 exports.OutputDispatcher = OutputDispatcher;
+
+class TreeBankSink {
+    constructor (name) {
+        this.name = name;
+    }
+    put (tree) {
+        Actions.treebank.store(this.name, tree);
+    }
+    close () {}
+}
+exports.TreeBankSink = TreeBankSink;

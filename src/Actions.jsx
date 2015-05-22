@@ -7,6 +7,7 @@ exports.tab = require('./actions/Tab');
 exports.toolbar = require('./actions/Toolbar');
 exports.file = require('./actions/File');
 exports.engine = require('./actions/Engine');
+exports.treebank = require('./actions/Treebank');
 
 exports.login = function (user, password) {
     api.call('api/login', {user:user, password:password})
