@@ -92,9 +92,9 @@ class TabStore extends EventEmitter {
                 case 'output':
                     var tn = 'output_'+a.name;
                     if (this.tabs[tn]) {
-                        this.updateTab(tn, Components.BorjesTree(a.results));
+                        this.updateTab(tn, Components.TBView(a.results, true));
                     } else {
-                        this.addTab(tn, a.name+' results', Components.BorjesTree(a.results), 1);
+                        this.addTab(tn, a.name+' results', Components.TBView(a.results, true), 1);
                     }
                     break;
                 case 'treebank.open':

@@ -7,7 +7,11 @@ class TBView extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = { view: [], error: null, open: {} };
+        if (this.props.list) {
+            this.state = { view: this.props.list, error: null, open: {} };
+        } else {
+            this.state = { view: [], error: null, open: {} };
+        }
     }
 
     runQuery () {
@@ -19,6 +23,13 @@ class TBView extends React.Component {
         } catch (e) {
             this.setState({ error: e.message });
         }
+    }
+
+    shouldComponentUpdate(props) {
+        if (props.list) {
+            this.state.view = props.list;
+        }
+        return true;
     }
 
     toggleRow (i) {
@@ -44,13 +55,15 @@ class TBView extends React.Component {
             overflow: 'auto'
         };
         return (<div style={{display: 'flex', flexDirection: 'column' }}>
-            <div style={{flex: 0}}>Query: <input ref="querytext" type="text" />
-            <button onClick={this.runQuery.bind(this)}>Run</button></div>
+            {this.props.list===undefined?(<div style={{flex: 0}}>
+                Query: <input ref="querytext" type="text" />
+                <button onClick={this.runQuery.bind(this)}>Run</button>
+            </div>):null}
             {this.state.error!==null?<div style={{flex: 0, color: 'red'}}>{this.state.error}</div>:null}
             <div style={{flex: 1, overflowY: 'auto' }}>
-                {this.state.view.map((o, i) => <div style={rowStyle}>
+                {this.state.view.map((o, i) => <div style={rowStyle} key={i}>
                                      <div style={headerStyle} onClick={this.toggleRow.bind(this, i)}>Result {i}</div>
-                                     {this.state.open[i]?<div style={resultStyle}><BorjesTree key={i} tree={o} /></div>:null}
+                                     {this.state.open[i]?<div style={resultStyle}><BorjesTree tree={o} /></div>:null}
                                     </div>)}
             </div>
         </div>);

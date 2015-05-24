@@ -38,6 +38,10 @@ exports.BorjesTree = function (tree) {
 };
 
 var TBV = require('./components/TBView');
-exports.TBView = function (treebank) {
-    return <TBV treebank={treebank} />;
+exports.TBView = function (trees, temporary) {
+    if (temporary) {
+        return <TBV list={trees} />;
+    } else {
+        return <TBV treebank={trees} />;
+    }
 };
