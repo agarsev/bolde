@@ -21,23 +21,27 @@ function runEngineElement ( element, title, after ) {
 
 function runElement ( element, title, after ) {
     if (element.config === undefined) { element.config = {}; }
+    if (after !== null && after.add_in !== undefined) {
+        after.add_in();
+    }
     switch (element.type) {
         case 'javascript':
         case 'borjes':
             return runEngineElement(element, title, after);
-            break;
         case 'filesource':
             return Promise.resolve(new pipes.FileSource(element.files, after));
-            break;
         case 'filesink':
             return Promise.resolve(new pipes.FileSink(element.files[0]));
-            break;
         case 'display':
             return Promise.resolve(new pipes.OutputDispatcher(title));
-            break;
         case 'treebank':
             return Promise.resolve(new pipes.TreeBankSink(element.files[0]));
-            break;
+        case 'tee':
+            if (element.tee_element === undefined) {
+                element.tee_element = new pipes.Tee();
+            }
+            element.tee_element.add_out(after);
+            return Promise.resolve(element.tee_element);
     }
     api.log("Unrecognized element name: "+element.type);
     return Promise.reject("Unrecognized element name: "+element.type);

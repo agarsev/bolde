@@ -67,3 +67,28 @@ class TreeBankSink {
     close () {}
 }
 exports.TreeBankSink = TreeBankSink;
+
+class Tee {
+    constructor () {
+        this.channels = [];
+        this.n_in = 0;
+    }
+    put (data) {
+        this.channels.forEach(c => c.put(data));
+    }
+    close () {
+        this.n_in--;
+        if (this.n_in==0) {
+            this.channels.forEach(c => c.close());
+        }
+    }
+    add_out (channel) {
+        if (channel !== null) {
+            this.channels.push(channel);
+        }
+    }
+    add_in () {
+        this.n_in++;
+    }
+}
+exports.Tee = Tee;
