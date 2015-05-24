@@ -4,6 +4,7 @@ var nedb = require('nedb');
 
 var Tree = require('borjes/src/tree');
 var FStruct = require('borjes/src/types').FStruct;
+var s_parse = require('borjes/src/parenthesis');
 
 var tbs = {};
 
@@ -67,6 +68,14 @@ function store (tb, tree) {
 }
 
 function prepare_query (query) {
-    var q = { "node.0": query };
+    var s = s_parse(query);
+    var q = {};
+    for (var i=0; i<s.length; i++) {
+        if (i == 0) {
+            q["node.0"] = s[0];
+        } else {
+            q["node."+i+".0"] = s[i][0];
+        }
+    }
     return q;
 }

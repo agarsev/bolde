@@ -12,7 +12,7 @@ class TBView extends React.Component {
 
     runQuery () {
         try {
-            var query = JSON.parse(React.findDOMNode(this.refs.querytext).value);
+            var query = React.findDOMNode(this.refs.querytext).value;
             window.TreebankStore.query(this.props.treebank, query)
             .then((result) => this.setState({ view: result, error: null }) )
             .catch((err) => this.setState({ error: err }) );
