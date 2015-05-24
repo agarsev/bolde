@@ -68,14 +68,20 @@ function store (tb, tree) {
 }
 
 function prepare_query (query) {
-    var s = s_parse(query);
     var q = {};
-    for (var i=0; i<s.length; i++) {
-        if (i == 0) {
-            q["node.0"] = s[0];
-        } else {
-            q["node."+i+".0"] = s[i][0];
+    function callback (attr, val) {
+        if (val !== '_') { q['node'+attr] = val; }
+    }
+    function parse_sexp (sexp, attr, val) {
+        for (var i=0; i<sexp.length; i++) {
+            if (i == 0) {
+                callback(attr+".0", val[0]);
+            } else {
+                parse_sexp(sexp[i], attr+"."+i, val[i]);
+            }
         }
     }
+    var s = s_parse(query);
+    parse_sexp(s, "", s);
     return q;
 }
