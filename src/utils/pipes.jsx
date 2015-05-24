@@ -59,6 +59,8 @@ class FileSource {
         if (this.i<this.files.length) {
             Actions.file.load(this.files[this.i])
             .then(this.pumplines.bind(this));
+        } else {
+            this.pipe.close();
         }
     }
     pumplines () {

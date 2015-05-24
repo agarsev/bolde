@@ -20,31 +20,41 @@ function runElement ( element, title, pipein, pipeout ) {
 
 exports.run = function (project, pipeline) {
     var pipe = pipes.None;
-    var end = false;
-    for (var i=0; !end && i<pipeline.length; i++) {
-        var source = pipeline[i];
-        var sink = pipeline[i+1];
-        if (source.config === undefined) { source.config = {}; }
+    for (var i=pipeline.length-1; i>0; i--) {
+        var source = pipeline[i-1];
+        var sink = pipeline[i];
         var nup;
-        if (sink === undefined) {
-            nup = pipes.None;
-        } else if (sink.type === 'file') {
-            nup = new pipes.FileSink(sink.files[0]);
-            end = true;
-        } else if (sink.type === 'display') {
-            nup = new pipes.OutputDispatcher(project);
-            end = true;
-        } else if (sink.type === 'treebank') {
-            nup = new pipes.TreeBankSink(sink.files[0]);
-            end = true;
-        } else {
-            nup = new pipes.Pipe();
-        }
-        if (source.type === 'file') {
+        switch (source.type) {
+        case 'file':
             nup = new pipes.FileSource(source.files);
-        } else {
-            runElement(source, project, pipe, nup);
+            break;
+        default:
+            nup = new pipes.Pipe();
+            break;
+        }
+        switch (sink.type) {
+        case 'file':
+            nup = new pipes.FileSink(sink.files[0]);
+            break;
+        case 'display':
+            nup = new pipes.OutputDispatcher(project);
+            break;
+        case 'treebank':
+            nup = new pipes.TreeBankSink(sink.files[0]);
+            break;
+        default:
+            if (sink.config === undefined) { sink.config = {}; }
+            runElement(sink, project, nup, pipe);
+            break;
         }
         pipe = nup;
+    }
+    var origin = pipeline[0];
+    switch (source.type) {
+        case 'file':
+            break;
+        default:
+            runElement(origin, project, pipes.None, pipe);
+            break;
     }
 };
