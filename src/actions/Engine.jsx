@@ -13,16 +13,14 @@ exports.start = function (engine) {
         w.onmessage = function (e) {
             var m = e.data;
             switch (m.event) {
-            case 'input':
-                eng.workers[m.name].source.get()
-                .then(function (data) {
-                    w.postMessage({ event: 'input', name: m.name, counter: m.counter, data });
-                }).catch(function () {
-                    w.postMessage({ event: 'end', name: m.name, counter: m.counter });
-                });
+            case 'ready':
+                eng.workers[m.name].ready();
+                delete eng.workers[m.name]["ready"];
                 break;
             case 'output':
-                eng.workers[m.name].sink.put(m.data);
+                if (eng.workers[m.name].after !== null) {
+                    eng.workers[m.name].after.put(m.data);
+                }
                 break;
             case 'log':
                 window.Dispatcher.dispatch({
@@ -33,8 +31,9 @@ exports.start = function (engine) {
                 });
                 break;
             case 'finish':
-                eng.workers[m.name].sink.close();
-                w.postMessage({ event: 'delete', name: m.name });
+                if (eng.workers[m.name].after !== null) {
+                    eng.workers[m.name].after.close();
+                }
                 delete eng.workers[m.name];
                 break;
             };
@@ -43,9 +42,19 @@ exports.start = function (engine) {
     }
 };
 
-exports.run = function (engine, title, config, source, sink) {
+exports.run = function (engine, title, config, after) {
     var e = engines[engine];
+    var w = e.w;
     var name = id++;
-    e.workers[name] = { source, sink, title };
-    e.w.postMessage({ event: 'new', name, config });
+    e.workers[name] = { after, title };
+    var r = new Promise(function (resolve, reject) {
+        e.workers[name].ready = function () {
+            resolve({
+                put: (data) => w.postMessage({ event: 'input', name, data }),
+                close: () => w.postMessage({ event: 'end', name })
+            });
+        };
+    });
+    w.postMessage({ event: 'new', name, config });
+    return r;
 };

@@ -19,9 +19,6 @@ Worker.prototype.test = function (sentence) {
             this.output(parse);
         }
     }
-    this.input()
-    .then(this.test.bind(this))
-    .catch(this.finish.bind(this));
 }
 
 Worker.prototype.init = function (config) {
@@ -29,5 +26,8 @@ Worker.prototype.init = function (config) {
     this.log("DEBUG", "Loaded grammar");
     this.parser = Parser(this.grammar);
     this.log("DEBUG", "Built parser");
-    this.test('')
+};
+
+Worker.prototype.onInput = function (data) {
+    this.test(data);
 };

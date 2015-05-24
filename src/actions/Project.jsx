@@ -82,14 +82,14 @@ exports.run = function (project) {
     load(project+'/run.yml')
     .then (function () {
         conf = yaml.safeLoad(window.FileStore.getContents(project+'/run.yml'));
-        conf.pipeline.forEach(element => {
+        conf.connect.forEach(pipeline => pipeline.forEach(element => {
             if (element.files !== undefined) {
                 Object.keys(element.files).forEach(name => {
                     element.files[name] = project+'/'+element.files[name];
                 });
             }
-        });
-        Pipeline.run(project, conf.pipeline);
+        }));
+        conf.connect.forEach(pipeline => Pipeline.run(project, pipeline));
     }).catch (function (error) {
         api.loading(false);
         api.log(error);

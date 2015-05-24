@@ -3,58 +3,55 @@
 var File = require('./File');
 var Engine = require('./Engine');
 var pipes = require('../utils/pipes');
+var api = require('./api');
 
-function runElement ( element, title, pipein, pipeout ) {
+function runEngineElement ( element, title, after ) {
+    Engine.start(element.type);
     return Promise.all(Object.keys(element.files).map(file => File.load(element.files[file])))
     .then(function () {
-        Engine.start(element.type);
         if (element.files !== undefined) {
             element.config.files = {};
             Object.keys(element.files).forEach(file => {
                 element.config.files[file] = window.FileStore.getContents(element.files[file]);
             });
         }
-        Engine.run(element.type, title, element.config, pipein, pipeout);
+        return Engine.run(element.type, title, element.config, after);
     });
 }
 
-exports.run = function (project, pipeline) {
-    var pipe = pipes.None;
-    for (var i=pipeline.length-1; i>0; i--) {
-        var source = pipeline[i-1];
-        var sink = pipeline[i];
-        var nup;
-        switch (source.type) {
-        case 'file':
-            nup = new pipes.FileSource(source.files);
+function runElement ( element, title, after ) {
+    if (element.config === undefined) { element.config = {}; }
+    switch (element.type) {
+        case 'javascript':
+        case 'borjes':
+            return runEngineElement(element, title, after);
             break;
-        default:
-            nup = new pipes.Pipe();
+        case 'filesource':
+            return Promise.resolve(new pipes.FileSource(element.files, after));
             break;
-        }
-        switch (sink.type) {
-        case 'file':
-            nup = new pipes.FileSink(sink.files[0]);
+        case 'filesink':
+            return Promise.resolve(new pipes.FileSink(element.files[0]));
             break;
         case 'display':
-            nup = new pipes.OutputDispatcher(project);
+            return Promise.resolve(new pipes.OutputDispatcher(title));
             break;
         case 'treebank':
-            nup = new pipes.TreeBankSink(sink.files[0]);
-            break;
-        default:
-            if (sink.config === undefined) { sink.config = {}; }
-            runElement(sink, project, nup, pipe);
-            break;
-        }
-        pipe = nup;
-    }
-    var origin = pipeline[0];
-    switch (source.type) {
-        case 'file':
-            break;
-        default:
-            runElement(origin, project, pipes.None, pipe);
+            return Promise.resolve(new pipes.TreeBankSink(element.files[0]));
             break;
     }
+    api.log("Unrecognized element name: "+element.type);
+    return Promise.reject("Unrecognized element name: "+element.type);
+}
+
+function runIndex (pipeline, index, title, after) {
+    if (index>=0) {
+        runElement(pipeline[index], title, after)
+        .then(function (result) {
+            return runIndex(pipeline, index-1, title, result);
+        });
+    }
+}
+
+exports.run = function (project, pipeline) {
+    runIndex(pipeline, pipeline.length-1, project, null);
 };

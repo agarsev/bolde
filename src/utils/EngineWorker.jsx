@@ -24,20 +24,16 @@ self.onmessage = function (e) {
         switch (m.event) {
         case 'new':
             workers[m.name] = new Worker(m.name, m.config);
+            postMessage({ event: 'ready', name: m.name });
             break;
         }
     } else {
         switch (m.event) {
         case 'input':
-            var resolve = w.w_promises[m.counter][0];
-            resolve(m.data);
+            workers[m.name].onInput(m.data);
             break;
         case 'end':
-            var reject = w.w_promises[m.counter][1];
-            reject();
-            break;
-        case 'delete':
-            delete workers[m.name];
+            workers[m.name].onEnd();
             break;
         }
     }
@@ -64,17 +60,12 @@ class Worker {
 
     finish () {
         postMessage({ event: 'finish', name: this.w_name });
-        delete workers[worker.name];
+        delete workers[this.w_name];
     }
 
-    input () {
-        var i = this.w_counter++;
-        postMessage({ event: 'input', name: this.w_name, counter: i });
-        var p = new Promise((resolve, reject) => {
-            this.w_promises[i] = [resolve, reject];
-        });
-        return p;
-    }
+    onInput (data) { }
+
+    onEnd () { this.finish(); }
 }
 
 module.exports = Worker;
