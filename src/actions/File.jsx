@@ -12,11 +12,12 @@ var load = function (path) {
             api.call('api/sharejs/open/', {file: path})
             .then(function(data) {
                 api.loading(true);
+
                 window.BCSocket = require("share/node_modules/browserchannel/dist/bcsocket.js").BCSocket;
                 require("share/webclient/share.js");
                 require("share/webclient/ace.js");
 
-                sharejs.open(data.name, 'text',
+                sharejs.open(data.name, data.type,
                              location.href.substr(0, location.href.search(/\/[^\/]*$/))+'/api/sharejs/channel',
                              function(error, doc) {
                                  if (error) { reject(error); }
@@ -25,9 +26,10 @@ var load = function (path) {
                                          actionType: 'file.load',
                                          filename: path,
                                          doc,
+                                         type: data.type,
                                          mode: data.mode
                                      });
-                                     resolve();
+                                     resolve(data.type);
                                  }
                                  api.loading(false);
                              });
@@ -39,10 +41,11 @@ exports.load = load;
 
 exports.open = function (user, project, file) {
     var path = user + '/' + project + '/' + file;
-    load(path).then(() =>
+    load(path).then((type) =>
         window.Dispatcher.dispatch({
           actionType: 'file.open',
-          filename: path
+          filename: path,
+          type: type,
         }));
 };
 

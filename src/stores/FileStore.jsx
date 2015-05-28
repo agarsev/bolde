@@ -14,7 +14,8 @@ class FileStore extends EventEmitter {
                 case 'file.load':
                     this.files[a.filename] = {
                         doc: a.doc,
-                        mode: a.mode
+                        mode: a.mode,
+                        type: a.type
                     };
                     break;
                 case 'file.close':
@@ -25,7 +26,11 @@ class FileStore extends EventEmitter {
                     }
                     break;
                 case 'file.put':
-                    var doc = this.files[a.path].doc;
+                    var f = this.files[a.path];
+                    if (f.type !== 'text') {
+                        throw 'Trying to write to non-text file';
+                    }
+                    var doc = f.doc;
                     doc.del(0, doc.getText().length);
                     doc.insert(0, a.content);
                     break;
