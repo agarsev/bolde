@@ -65,23 +65,26 @@ function openpad (file) {
         return Promise.resolve({ mode: docs[file].mode, name: docs[file].name });
     } else {
         log.debug("creating pad for file "+file);
-        var name = "doc_"+(padNumber++);
-        var mode = modes[file.substr(file.search(/\.[^.]+$/)+1)];
-        docs[file] = {file: file, name: name, mode: mode};
-        return new Promise(function(resolve, reject) {
-            client.open(name, 'text', channelurl, function(error, doc) {
-                if (error) { reject(error); }
-                docs[file].doc = doc;
-                resolve(store.readFile(file));
+        var d = docs[file] = { file: file };
+        return store.getFileOpts(file).then(function (fileOpts) {
+            d.name = "doc_"+(padNumber++);
+            d.mode = modes[file.substr(file.search(/\.[^.]+$/)+1)];
+            d.type = fileOpts.type;
+            return new Promise(function(resolve, reject) {
+                client.open(d.name, d.type, channelurl, function(error, doc) {
+                    if (error) { reject(error); }
+                    d.doc = doc;
+                    resolve(store.readFile(d.file));
+                });
             });
         }).then(function (content) {
             return new Promise(function(resolve, reject) {
-                docs[file].doc.insert(0, content, function (err) {
+                d.doc.insert(0, content, function (err) {
                     if (err) { reject(err); }
-                    log.debug("created pad for file "+file+" ("+name+")");
+                    log.debug("created pad for file "+d.file+" ("+d.name+")");
                     // TODO close properly when no longer used
-                    startSaving(docs[file]);
-                    resolve({ mode: mode, name: name });
+                    startSaving(d);
+                    resolve({ mode: d.mode, name: d.name, type: d.type });
                 });
             });
         });

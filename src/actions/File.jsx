@@ -2,9 +2,7 @@
 
 var api = require('./api');
 
-function parse_path (path) {
-    return /^([^\/]+)\/([^\/]+)\/(.+)$/.exec(path);
-}
+var respath = require('../utils/path');
 
 var load = function (path) {
     return new Promise(function (resolve, reject) {
@@ -57,7 +55,7 @@ exports.close = function (user, project, file) {
     });
 };
 
-exports.new = function(user, project, path) {
+exports.new = function(user, project, path, type) {
     return api.call('api/file/new', {user: user, project: project, path: path })
     .then(function(data) {
         window.Dispatcher.dispatch({
@@ -65,16 +63,17 @@ exports.new = function(user, project, path) {
             user: user,
             project: project,
             path: path,
-            files: data.files
+            files: data.files,
+            type: type
         });
     });
 };
 
-exports.new_at_selected = function (user, project, filename) {
+exports.new_at_selected = function (user, project, filename, type) {
     var dir = window.ProjectStore.get(project).cwd;
     if (!dir) { dir = ''; }
     else { dir += '/'; }
-    exports.new(user, project, dir+filename);
+    exports.new(user, project, dir+filename, type);
 };
 
 exports.delete = function (user, project, path) {
@@ -92,7 +91,7 @@ exports.delete = function (user, project, path) {
 };
 
 exports.put = function (path, content) {
-    var parts = parse_path(path);
+    var parts = respath.parse(path);
     exports.new(parts[1], parts[2], parts[3])
     .then(load.bind(null, path))
     .then(function () {

@@ -1,6 +1,7 @@
 var fs = require('fs-promise'),
     yaml = require('js-yaml'),
-    log4js = require('log4js');
+    log4js = require('log4js'),
+    respath = require('../src/utils/path');
 
 var log = log4js.getLogger('store');
 
@@ -39,4 +40,11 @@ exports.readFile = function (path) {
 
 exports.writeFile = function (path, data) {
     return fs.outputFile(config.get('user_files')+'/'+path, data);
+};
+
+exports.getFileOpts = function (path) {
+    // TODO subdirectories
+    var res = respath.parse(path);
+    return exports.load(res[1],res[2],'files')
+    .then(function(files) { return files[res[3]]; });
 };

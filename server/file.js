@@ -11,6 +11,7 @@ Router.post('/new', function (req, res) {
     var user = req.body.user,
         project = req.body.project,
         path = req.body.path,
+        type = req.body.type === 'grammar' ? 'json': 'text',
         fullname = user+'/'+project+'/'+path;
     var nufiles;
     store.newFile(fullname)
@@ -23,8 +24,7 @@ Router.post('/new', function (req, res) {
             files = files[res[1]].files;
             name = res[2];
         }
-        // TODO mode detection
-        files[name] = { type: 'javascript' };
+        files[name] = { type: type };
         return store.write(nufiles, user, project, 'files');
     }).then(function () {
         log.info('new file '+fullname);
