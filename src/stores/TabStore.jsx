@@ -87,7 +87,7 @@ class TabStore extends EventEmitter {
                     break;
                 case 'tab.openSettings':
                     this.addTab('_settings', 'Settings',
-                        Components.Form(Actions.changeSettings, window.UserStore.getSettingsForm.bind(window.UserStore)));
+                        Components.Form('User Settings', Actions.changeSettings, window.UserStore.getSettingsForm.bind(window.UserStore)));
                     break;
                 case 'output':
                     var tn = 'output_'+a.name;

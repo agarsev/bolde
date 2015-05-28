@@ -13,6 +13,7 @@ var ProjectStore = require('./stores/ProjectStore');
 var FileStore = require('./stores/FileStore');
 var LogStore = require('./stores/LogStore');
 var TreebankStore = require('./stores/TreebankStore');
+var Prompt = require('./components/Prompt');
 
 var Actions = require('./Actions');
 
@@ -28,8 +29,18 @@ window.FileStore = new FileStore();
 window.LogStore = new LogStore();
 window.TreebankStore = new TreebankStore();
 
-this.node = React.render(<TabPanel />, document.getElementById('TabPanel'));
-this.node = React.render(<ToolBar />, document.getElementById('NavBar'));
+React.render(<TabPanel />, document.getElementById('TabPanel'));
+React.render(<ToolBar />, document.getElementById('NavBar'));
+
+window.Dispatcher.register(a => { switch(a.actionType) {
+    case 'prompt.in':
+        React.render(<Prompt form={a.form} resolve={a.resolve} reject={a.reject} />,
+                     document.getElementById('Prompt'));
+        break;
+    case 'prompt.out':
+        React.unmountComponentAtNode(document.getElementById('Prompt'));
+        break;
+}});
 
 var welcome = fs.readFileSync('welcome.md', 'utf8');
 

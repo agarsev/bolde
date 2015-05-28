@@ -57,3 +57,21 @@ exports.output = function (name, results) {
         name, results
     });
 };
+
+exports.prompt = function (form) {
+    var res, rej;
+    var r = new Promise(function(resolve, reject) {
+        res = resolve; rej = reject;
+    });
+    window.Dispatcher.dispatch({
+        actionType: 'prompt.in',
+        form, resolve: res, reject: rej
+    });
+    return r;
+};
+
+exports.clearPrompt = function () {
+    window.Dispatcher.dispatch({
+        actionType: 'prompt.out'
+    });
+};

@@ -23,8 +23,8 @@ exports.Editor = function (filename) {
 };
 
 var Fo = require('./components/TForm');
-exports.Form = function (onchange, getdata) {
-    return <Fo onChange={onchange} getData={getdata} />;
+exports.Form = function (title, onchange, getdata) {
+    return <Fo title={title} onChange={onchange} getData={getdata} />;
 };
 
 var LV = require('./components/LogView');

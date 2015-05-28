@@ -3,6 +3,8 @@
 var EventEmitter = require('events').EventEmitter;
 var Actions = require('../Actions');
 
+var t = require('tcomb-form');
+
 class ToolStore extends EventEmitter {
 
     constructor () {
@@ -43,9 +45,19 @@ class ToolStore extends EventEmitter {
                 case 'project.open':
                     this.addMenu('Proj_'+a.name, a.name, [
                         {title:'New file',click: function () {
-                            var filename = prompt('New file name:');
-                            if (!filename || filename.length<1) { return; }
-                            Actions.file.new_at_selected(window.UserStore.getUser(),a.name,filename);
+                            Actions.prompt({
+                                model: t.struct({
+                                    filename: t.Str,
+                                    type: t.enums({ text: 'text', grammar: 'grammar' })
+                                }),
+                                options: { fields: {
+                                    type: { nullOption: false }
+                                }},
+                                value: { type: 'text' }
+                            }).then(function(data) {
+                                Actions.file.new_at_selected(window.UserStore.getUser(),
+                                    a.name, data.filename, data.type);
+                            }).catch(() => {});
                         }},
                         {title:'Run',click: function() {
                             Actions.project.run(window.UserStore.getUser()+'/'+a.name);
