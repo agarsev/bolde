@@ -15,24 +15,24 @@ var load = function (path) {
 
                 window.BCSocket = require("share/node_modules/browserchannel/dist/bcsocket.js").BCSocket;
                 require("share/webclient/share.js");
-                require("share/webclient/ace.js");
-
+                require('share/webclient/ace.js');
+                require('share/webclient/json.js');
                 sharejs.open(data.name, data.type,
-                             location.href.substr(0, location.href.search(/\/[^\/]*$/))+'/api/sharejs/channel',
-                             function(error, doc) {
-                                 if (error) { reject(error); }
-                                 else {
-                                     window.Dispatcher.dispatch({
-                                         actionType: 'file.load',
-                                         filename: path,
-                                         doc,
-                                         type: data.type,
-                                         mode: data.mode
-                                     });
-                                     resolve(data.type);
-                                 }
-                                 api.loading(false);
-                             });
+                    location.href.substr(0, location.href.search(/\/[^\/]*$/))+'/api/sharejs/channel',
+                    function(error, doc) {
+                        if (error) { reject(error); }
+                        else {
+                            window.Dispatcher.dispatch({
+                                actionType: 'file.load',
+                                filename: path,
+                                doc,
+                                type: data.type,
+                                mode: data.mode
+                            });
+                            resolve(data.type);
+                        }
+                        api.loading(false);
+                    });
             });
         }
     });
@@ -59,7 +59,7 @@ exports.close = function (user, project, file) {
 };
 
 exports.new = function(user, project, path, type) {
-    return api.call('api/file/new', {user: user, project: project, path: path })
+    return api.call('api/file/new', {user, project, path, type })
     .then(function(data) {
         window.Dispatcher.dispatch({
             actionType: 'file.new',

@@ -22,7 +22,13 @@ function startSaving(file) {
     file.saver = setInterval(function() {
         if (file.doc.version>file.saved) {
             log.debug("Saving file "+file.file);
-            store.writeFile(file.file, file.doc.snapshot)
+            var text;
+            if (file.type === 'text') {
+                text = file.doc.snapshot;
+            } else {
+                text = JSON.stringify(file.doc.get());
+            }
+            store.writeFile(file.file, text)
             .then(function () {
                 file.saved = file.doc.version;
                 file.idleCount=0;
@@ -62,7 +68,7 @@ function openpad (file) {
     if (docs[file]) {
         log.debug("opening existing pad for file "+file);
         startSaving(docs[file]);
-        return Promise.resolve({ mode: docs[file].mode, name: docs[file].name });
+        return Promise.resolve({ mode: docs[file].mode, name: docs[file].name, type: docs[file].type });
     } else {
         log.debug("creating pad for file "+file);
         var d = docs[file] = { file: file };
@@ -79,13 +85,26 @@ function openpad (file) {
             });
         }).then(function (content) {
             return new Promise(function(resolve, reject) {
-                d.doc.insert(0, content, function (err) {
-                    if (err) { reject(err); }
-                    log.debug("created pad for file "+d.file+" ("+d.name+")");
-                    // TODO close properly when no longer used
-                    startSaving(d);
-                    resolve({ mode: d.mode, name: d.name, type: d.type });
-                });
+                if (d.type === 'text') {
+                    d.doc.insert(0, content, function (err) {
+                        if (err) { reject(err); }
+                        log.debug("created text pad for file "+d.file+" ("+d.name+")");
+                        // TODO close properly when no longer used
+                        startSaving(d);
+                        resolve({ mode: d.mode, name: d.name, type: d.type });
+                    });
+                } else {
+                    var o;
+                    try { o = JSON.parse(content); }
+                    catch (e) { o = {}; }
+                    d.doc.at().set(o, function (err) {
+                        if (err) { reject(err); }
+                        log.debug("created json pad for file "+d.file+" ("+d.name+")");
+                        // TODO close properly when no longer used
+                        startSaving(d);
+                        resolve({ mode: d.mode, name: d.name, type: d.type });
+                    });
+                }
             });
         });
     }

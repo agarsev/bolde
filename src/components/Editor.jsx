@@ -4,7 +4,7 @@ var React = require('react');
 
 require('../../bower_components/ace-builds/src-min-noconflict/ace.js');
 require('../../bower_components/ace-builds/src-min-noconflict/ext-settings_menu.js');
-ace.config.set("basePath", "bower_components/ace-builds/src-min-noconflict");
+ace.config.set("basePath", "ace");
 
 class Editor extends React.Component {
 

@@ -22,6 +22,11 @@ exports.Editor = function (filename) {
     return <Ed filename={filename} />;
 };
 
+var VEd = require('./components/VisualEditor');
+exports.VisualEditor = function (filename) {
+    return <VEd filename={filename} />;
+};
+
 var Fo = require('./components/TForm');
 exports.Form = function (title, onchange, getdata) {
     return <Fo title={title} onChange={onchange} getData={getdata} />;
