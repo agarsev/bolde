@@ -5,7 +5,9 @@ var React = require('react');
 var Tree = require('borjes/src/tree');
 var FStruct = require('borjes/src/types').FStruct;
 
-var BorjesTree = require('./BorjesTree');
+var BorjesTree = require('components/BorjesTree');
+
+require('styles/tree');
 
 class RuleEditor extends React.Component {
 
@@ -70,26 +72,11 @@ class VisualEditor extends React.Component {
     render () {
         var rules = this.state.doc.at('rules');
         var lexicon = this.state.doc.at('lexicon').get();
-        var rowStyle = {
-            border: "1px solid #666",
-            margin: "0.5ex",
-            marginRight: "1.5em"
-        };
-        var headerStyle = {
-            background: "#ccd",
-            padding: "0.5ex",
-            textAlign: "right",
-            cursor: "pointer",
-        };
-        var resultStyle = {
-            padding: "0.5ex",
-            overflow: 'auto'
-        };
         return (<div>
             <h1>Rules</h1>
             <div>
-                {rules.get().map((x, i) => <div key={i} style={rowStyle}>
-                    <div style={headerStyle} onClick={this.toggleRow.bind(this, i)}>
+                {rules.get().map((x, i) => <div key={i} className="tree_row">
+                    <div className="tree_header" onClick={this.toggleRow.bind(this, i)}>
                         <span onClick={this.delete.bind(this, 'rules', i)}>remove</span>
                     </div>
                     {this.state.open[i]?<RuleEditor doc={rules.at(i)} />:null}

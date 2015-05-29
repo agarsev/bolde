@@ -1,21 +1,24 @@
 "use strict";
 
+require('styles/layout');
+require('styles/dark');
+
 var fs = require('fs');
 
 var React = require('react');
 
-var UserStore = require('./stores/UserStore');
-var TabStore = require('./stores/TabStore');
-var TabPanel = require('./components/TabPanel');
-var ToolStore = require('./stores/ToolStore');
-var ToolBar = require('./components/ToolBar');
-var ProjectStore = require('./stores/ProjectStore');
-var FileStore = require('./stores/FileStore');
-var LogStore = require('./stores/LogStore');
-var TreebankStore = require('./stores/TreebankStore');
-var Prompt = require('./components/Prompt');
+var UserStore = require('stores/UserStore');
+var TabStore = require('stores/TabStore');
+var TabPanel = require('components/TabPanel');
+var ToolStore = require('stores/ToolStore');
+var ToolBar = require('components/ToolBar');
+var ProjectStore = require('stores/ProjectStore');
+var FileStore = require('stores/FileStore');
+var LogStore = require('stores/LogStore');
+var TreebankStore = require('stores/TreebankStore');
+var Prompt = require('components/Prompt');
 
-var Actions = require('./Actions');
+var Actions = require('Actions');
 
 var Dispatcher = require('flux').Dispatcher;
 
