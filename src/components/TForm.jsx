@@ -31,6 +31,10 @@ class TForm extends React.Component {
         return this.refs.form.getValue();
     }
 
+    focus () {
+        React.findDOMNode(this.refs.form).querySelector('input').focus();
+    }
+
 }
 
 module.exports = TForm;

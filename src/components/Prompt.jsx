@@ -11,6 +11,10 @@ class Prompt extends React.Component {
         Actions.clearPrompt();
     }
 
+    componentDidMount () {
+        this.refs.form.focus();
+    }
+
     accept () {
         var v = this.refs.form.getValue();
         if (v == null) {
