@@ -27,6 +27,8 @@
     "react-tools": "^0.12.2",
     "reactify": "^1.1.0",
     "share": "^0.6.3",
-    "tcomb-form": "^0.4.11"
+    "tcomb-form": "^0.4.11",
+    "borjes": "git+ssh://git@garciasevilla.com:borjes#master",
+    "borjes-react": "git+ssh://git@garciasevilla.com:borjes-react#master"
   }
 }

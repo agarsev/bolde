@@ -1,11 +1,11 @@
 "use strict";
 
 var React = require('react');
+var bjs = require('borjes');
+var Tree = bjs.tree;
+var FStruct = bjs.types.FStruct;
 
-var Tree = require('borjes/src/tree');
-var FStruct = require('borjes/src/types').FStruct;
-
-var BorjesTree = require('components/BorjesTree');
+var Borjes = require('borjes-react');
 
 require('styles/tree');
 
@@ -30,7 +30,7 @@ class RuleEditor extends React.Component {
     }
 
     render () {
-        return <BorjesTree tree={this.state.tree} />;
+        return <Borjes tree={this.state.tree} />;
     }
 }
 

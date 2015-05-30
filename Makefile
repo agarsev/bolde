@@ -13,7 +13,12 @@ build/bundle.js: $(wildcard src/*) $(wildcard src/**) welcome.md
 
 $(ENGINES): build/%.js: src/%.jsx
 	mkdir -p build/engines
-	browserifyinc -v --extension=.jsx -t [ reactify --es6 ] $< -o $@
+	NODE_PATH="node_modules:src" browserify \
+			  --ignore-missing \
+			  --extension=.less -t lessify \
+			  --extension=.jsx -t [ reactify --es6 ] \
+			  -t brfs \
+			  $< >$@
 
 update:
 	npm install

@@ -2,9 +2,10 @@
 
 var nedb = require('nedb');
 
-var Tree = require('borjes/src/tree');
-var FStruct = require('borjes/src/types').FStruct;
-var s_parse = require('borjes/src/parenthesis');
+var Borjes = require('borjes');
+var Tree = Borjes.tree;
+var FStruct = Borjes.types.FStruct;
+var s_parse = Borjes.parenthesis;
 
 var tbs = {};
 

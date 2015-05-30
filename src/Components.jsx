@@ -37,11 +37,6 @@ exports.LogView = function (filter) {
     return <LV filter={filter} />;
 };
 
-var BT = require('./components/BorjesTree');
-exports.BorjesTree = function (tree) {
-    return <BT tree={tree} />;
-};
-
 var TBV = require('./components/TBView');
 exports.TBView = function (trees, temporary) {
     if (temporary) {

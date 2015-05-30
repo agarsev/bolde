@@ -2,9 +2,10 @@
 
 var util = require('util');
 
-var Parser = require('borjes/src/parser');
-var Read = require('borjes/src/reader');
-var types = require('borjes/src/types');
+var bjs = require('borjes');
+var Parser = bjs.parser;
+var Read = bjs.reader;
+var types = bjs.types;
 
 var Worker = require('../utils/EngineWorker');
 
