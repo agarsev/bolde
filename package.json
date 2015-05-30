@@ -28,7 +28,7 @@
     "reactify": "^1.1.0",
     "share": "^0.6.3",
     "tcomb-form": "^0.4.11",
-    "borjes": "git+ssh://git@garciasevilla.com:borjes#master",
-    "borjes-react": "git+ssh://git@garciasevilla.com:borjes-react#master"
+    "borjes": "https://garciasevilla.com/pkgs/borjes.tar.gz",
+    "borjes-react": "https://garciasevilla.com/pkgs/borjes-react.tar.gz"
   }
 }
