@@ -50,7 +50,7 @@ class TBView extends React.Component {
             <div style={{flex: 1, overflowY: 'auto' }}>
                 {this.state.view.map((o, i) => <div className="tree_row" key={i}>
                                      <div className="tree_header" onClick={this.toggleRow.bind(this, i)}>Result {i}</div>
-                                     {this.state.open[i]?<div className="tree_item"><Borjes tree={o} /></div>:null}
+                                     {this.state.open[i]?<div className="tree_item"><Borjes x={o} /></div>:null}
                                     </div>)}
             </div>
         </div>);
