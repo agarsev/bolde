@@ -7,6 +7,8 @@ var api = require('./api');
 var load = require('./File').load;
 var Pipeline = require('./Pipeline');
 
+var pro = require('utils/promises');
+
 exports.open = function (name) {
     api.call('api/project/files', { project: window.UserStore.getUser()+'/'+name })
     .then(function (data) {
@@ -90,7 +92,7 @@ exports.run = function (project) {
                 });
             }
         }));
-        conf.connect.forEach(pipeline => Pipeline.run(project, pipeline));
+        pro.chain(conf.connect, pipeline => Pipeline.run(project, pipeline));
     }).catch (function (error) {
         api.loading(false);
         api.log(error);

@@ -2,8 +2,10 @@
 
 var File = require('./File');
 var Engine = require('./Engine');
-var pipes = require('../utils/pipes');
 var api = require('./api');
+
+var pipes = require('utils/pipes');
+var pro = require('utils/promises');
 
 function runEngineElement ( element, title, after ) {
     Engine.start(element.type);
@@ -47,15 +49,6 @@ function runElement ( element, title, after ) {
     return Promise.reject("Unrecognized element name: "+element.type);
 }
 
-function runIndex (pipeline, index, title, after) {
-    if (index>=0) {
-        runElement(pipeline[index], title, after)
-        .then(function (result) {
-            return runIndex(pipeline, index-1, title, result);
-        });
-    }
-}
-
 exports.run = function (project, pipeline) {
-    runIndex(pipeline, pipeline.length-1, project, null);
+    return pro.chain(pipeline, (element, after) => runElement(element, project, after));
 };
