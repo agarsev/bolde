@@ -7,7 +7,7 @@ var respath = require('../utils/path');
 var load = function (path) {
     return new Promise(function (resolve, reject) {
         if (window.FileStore.isLoaded(path)) {
-            resolve();
+            resolve(window.FileStore.getFile(path).type);
         } else {
             api.call('api/sharejs/open/', {file: path})
             .then(function(data) {
