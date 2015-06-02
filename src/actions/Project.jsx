@@ -83,7 +83,8 @@ exports.run = function (project) {
     .then (function () {
         conf = yaml.safeLoad(window.FileStore.getContents(project+'/run.yml'));
         conf.connect.forEach(pipeline => pipeline.forEach(element => {
-            if (element.files !== undefined) {
+            if (element.files !== undefined && !element['_files_have_been_processed']) {
+                element['_files_have_been_processed'] = true;
                 Object.keys(element.files).forEach(name => {
                     element.files[name] = project+'/'+element.files[name];
                 });
