@@ -4,6 +4,6 @@
   "description": "Prototype tfm",
   "private": true,
   "dependencies": {
-    "ace-builds": "ajaxorg/ace-builds#~1.1.8",
+    "ace-builds": "ajaxorg/ace-builds#~1.1.8"
   }
 }

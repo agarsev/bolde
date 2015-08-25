@@ -4,7 +4,6 @@ var util = require('util');
 
 var bjs = require('borjes');
 var Parser = bjs.parser;
-var Read = bjs.reader;
 var types = bjs.types;
 
 var Worker = require('../utils/EngineWorker');
@@ -23,7 +22,7 @@ Worker.prototype.test = function (sentence) {
 }
 
 Worker.prototype.init = function (config) {
-    this.grammar = Read[config.format](config.files.grammar);
+    this.grammar = bjs.grammar[config.format](config.files.grammar);
     this.log("DEBUG", "Loaded grammar");
     this.parser = Parser(this.grammar);
     this.log("DEBUG", "Built parser");
