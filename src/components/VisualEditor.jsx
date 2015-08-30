@@ -4,10 +4,12 @@ var React = require('react');
 var Bjs = require('borjes');
 var Tree = Bjs.tree;
 var Rule = Bjs.rule;
+var Lattice = Bjs.types.Lattice;
 var FStruct = Bjs.types.FStruct;
 var World = Bjs.types.World;
 
 var BorjesReact = require('borjes-react');
+var BorjesProtoLattice = require('borjes-react/dist/BorjesProtoLattice');
 
 require('styles/tree');
 
@@ -41,7 +43,7 @@ class RuleEditor extends React.Component {
     }
 
     render () {
-        return <BorjesReact x={this.state.tree} update={this.update.bind(this)} opts={{editable:this.state.editable}}/>;
+        return <BorjesReact x={this.state.tree} cpbuffer={this.props.cpbuffer} update={this.update.bind(this)} opts={{editable:this.state.editable, signature:this.props.sig}}/>;
     }
 }
 
@@ -50,18 +52,20 @@ class VisualEditor extends React.Component {
     constructor (props) {
         super(props);
         var doc = window.FileStore.getFile(this.props.filename).doc;
-        var rules, lexicon;
+        var rules, lexicon, global;
         try {
             rules = doc.at('rules').get();
             lexicon = doc.at('lexicon').get();
+            global = doc.at('global').get();
         } catch (e) { }
-        if (!rules || !lexicon) {
+        if (!rules || !lexicon || !global) {
             rules = rules || [];
             lexicon = lexicon || [];
-            doc.at().set({ rules, lexicon });
+            global = global || { signature: {} };
+            doc.at().set({ rules, lexicon, global });
         }
         doc.on('change', () => this.forceUpdate());
-        this.state = { doc, open: {} };
+        this.state = { doc, open: {}, sigEdit: false };
     }
 
     add () {
@@ -83,14 +87,30 @@ class VisualEditor extends React.Component {
     }
 
     editToggle (i, e) {
-        this.refs["rule"+i].editToggle();
+        if (i === 'SIG') {
+            this.setState({sigEdit: !this.state.sigEdit});
+        } else {
+            this.refs["rule"+i].editToggle();
+        }
         e.stopPropagation();
     }
 
+    updateSignature (x) {
+        this.state.doc.at('global').at('signature').set(x);
+    }
+
     render () {
+        var protosig = this.state.doc.at('global').at('signature').get();
+        var signature = Lattice.fromProto(protosig);
+        var cpbuffer = {};
         var rules = this.state.doc.at('rules');
         var lexicon = this.state.doc.at('lexicon').get();
         return (<div>
+            <h1>Signature</h1>
+            <span onClick={this.editToggle.bind(this, 'SIG')}>edit</span>
+            <div>
+                <BorjesProtoLattice x={protosig} update={this.updateSignature.bind(this)} opts={{editable:this.state.sigEdit}} />
+            </div>
             <h1>Rules</h1>
             <div>
                 {rules.get().map((x, i) => <div key={i} className="tree_row">
@@ -98,7 +118,7 @@ class VisualEditor extends React.Component {
                         <span onClick={this.editToggle.bind(this, i)}>edit</span>
                         <span onClick={this.delete.bind(this, 'rules', i)}>remove</span>
                     </div>
-                    {this.state.open[i]?<RuleEditor ref={"rule"+i} doc={rules.at(i)} />:null}
+                    {this.state.open[i]?<RuleEditor ref={"rule"+i} doc={rules.at(i)} sig={signature} cpbuffer={cpbuffer} />:null}
                 </div>)}
                 <div><button onClick={this.add.bind(this)}>Add</button></div>
             </div>
