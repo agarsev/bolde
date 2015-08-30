@@ -65,7 +65,7 @@ class VisualEditor extends React.Component {
             doc.at().set({ rules, lexicon, global });
         }
         doc.on('change', () => this.forceUpdate());
-        this.state = { doc, open: {}, sigEdit: false };
+        this.state = { doc, open: {}, sigEdit: false, cpbuffer: {} };
     }
 
     add () {
@@ -101,8 +101,7 @@ class VisualEditor extends React.Component {
 
     render () {
         var protosig = this.state.doc.at('global').at('signature').get();
-        var signature = Lattice.fromProto(protosig);
-        var cpbuffer = {};
+        var signature = Lattice.fromProto(protosig, 'signature');
         var rules = this.state.doc.at('rules');
         var lexicon = this.state.doc.at('lexicon').get();
         return (<div>
@@ -118,7 +117,7 @@ class VisualEditor extends React.Component {
                         <span onClick={this.editToggle.bind(this, i)}>edit</span>
                         <span onClick={this.delete.bind(this, 'rules', i)}>remove</span>
                     </div>
-                    {this.state.open[i]?<RuleEditor ref={"rule"+i} doc={rules.at(i)} sig={signature} cpbuffer={cpbuffer} />:null}
+                    {this.state.open[i]?<RuleEditor ref={"rule"+i} doc={rules.at(i)} sig={signature} cpbuffer={this.state.cpbuffer} />:null}
                 </div>)}
                 <div><button onClick={this.add.bind(this)}>Add</button></div>
             </div>
