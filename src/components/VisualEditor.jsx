@@ -20,17 +20,26 @@ class RuleEditor extends React.Component {
         var doc = this.props.doc;
         var mother = doc.at('m').get();
         var daughters = doc.at('d').get();
-        this.state = { tree: Tree(mother, [daughters[0], daughters[1]]), editable: false };
+        var tree = Tree(mother, [daughters[0], daughters[1]]);
+        World.bind(mother.borjes_bound, tree);
+        this.state = { tree, editable: false };
         doc.on('child op', () => {
             var mi = doc.at('m').get();
             var dou = doc.at('d').get();
-            this.setState({ tree: Tree(mi, [dou[0], dou[1]]) });
+            var tree = Tree(mi, [dou[0], dou[1]]);
+            World.bind(mi.borjes_bound, tree);
+            this.setState({ tree });
         });
     }
 
     update (x) {
         var doc = this.props.doc;
         var mother = doc.at('m').get();
+        var oldworld = this.state.tree.borjes_bound;
+        if (!Bjs.types.eq(x.node, Bjs.types.Anything)) {
+            World.bind(oldworld, x.node);
+        }
+        World.bind(oldworld, x);
         var daughters = doc.at('d').get();
         doc.at('m').set(x.node);
         doc.at('d').at(0).set(x.children[0]);
