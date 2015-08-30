@@ -11,50 +11,10 @@ var World = Bjs.types.World;
 var BorjesReact = require('borjes-react');
 var BorjesProtoLattice = require('borjes-react/dist/BorjesProtoLattice');
 
+var RuleEditor = require('./visual/RuleEditor');
+var LexEditor = require('./visual/LexEditor');
+
 require('styles/tree');
-
-class RuleEditor extends React.Component {
-
-    constructor(props) {
-        super(props);
-        var doc = this.props.doc;
-        var mother = doc.at('m').get();
-        var daughters = doc.at('d').get();
-        var tree = Tree(mother, [daughters[0], daughters[1]]);
-        World.bind(mother.borjes_bound, tree);
-        this.state = { tree, editable: false };
-        doc.on('child op', () => {
-            var mi = doc.at('m').get();
-            var dou = doc.at('d').get();
-            var tree = Tree(mi, [dou[0], dou[1]]);
-            World.bind(mi.borjes_bound, tree);
-            this.setState({ tree });
-        });
-    }
-
-    update (x) {
-        var doc = this.props.doc;
-        var mother = doc.at('m').get();
-        var oldworld = this.state.tree.borjes_bound;
-        if (!Bjs.types.eq(x.node, Bjs.types.Anything)) {
-            World.bind(oldworld, x.node);
-        }
-        World.bind(oldworld, x);
-        var daughters = doc.at('d').get();
-        doc.at('m').set(x.node);
-        doc.at('d').at(0).set(x.children[0]);
-        doc.at('d').at(1).set(x.children[1]);
-        this.setState({tree: x});
-    }
-
-    editToggle () {
-        this.setState({editable: !this.state.editable});
-    }
-
-    render () {
-        return <BorjesReact x={this.state.tree} cpbuffer={this.props.cpbuffer} update={this.update.bind(this)} opts={{editable:this.state.editable, signature:this.props.sig}}/>;
-    }
-}
 
 class VisualEditor extends React.Component {
 
@@ -69,7 +29,7 @@ class VisualEditor extends React.Component {
         } catch (e) { }
         if (!rules || !lexicon || !global) {
             rules = rules || [];
-            lexicon = lexicon || [];
+            lexicon = lexicon || {};
             global = global || { signature: {} };
             doc.at().set({ rules, lexicon, global });
         }
@@ -77,11 +37,20 @@ class VisualEditor extends React.Component {
         this.state = { doc, open: {}, sigEdit: false, cpbuffer: {} };
     }
 
-    add () {
+    addRule () {
         var doc = this.state.doc;
         var mo = FStruct();
         World.bind(World(), mo);
         doc.at('rules').push(Rule(mo, [FStruct(), FStruct()]));
+    }
+
+    addLex () {
+        var doc = this.state.doc;
+        var val = React.findDOMNode(this.refs.addLext).value;
+        var lex = doc.at('lexicon');
+        if (lex.at(val).get()===undefined) {
+            lex.at(val).set(Bjs.types.Anything);
+        }
     }
 
     delete (path, i) {
@@ -99,7 +68,7 @@ class VisualEditor extends React.Component {
         if (i === 'SIG') {
             this.setState({sigEdit: !this.state.sigEdit});
         } else {
-            this.refs["rule"+i].editToggle();
+            this.refs[i].editToggle();
         }
         e.stopPropagation();
     }
@@ -112,7 +81,7 @@ class VisualEditor extends React.Component {
         var protosig = this.state.doc.at('global').at('signature').get();
         var signature = Lattice.fromProto(protosig, 'signature');
         var rules = this.state.doc.at('rules');
-        var lexicon = this.state.doc.at('lexicon').get();
+        var lexicon = this.state.doc.at('lexicon');
         return (<div>
             <h1>Signature</h1>
             <span onClick={this.editToggle.bind(this, 'SIG')}>edit</span>
@@ -121,19 +90,22 @@ class VisualEditor extends React.Component {
             </div>
             <h1>Rules</h1>
             <div>
-                {rules.get().map((x, i) => <div key={i} className="tree_row">
+                {rules.get().map((x, i) => <div key={"rule"+i} className="tree_row">
                     <div className="tree_header" onClick={this.toggleRow.bind(this, i)}>
-                        <span onClick={this.editToggle.bind(this, i)}>edit</span>
+                        <span onClick={this.editToggle.bind(this, "rule"+i)}>edit</span>
                         <span onClick={this.delete.bind(this, 'rules', i)}>remove</span>
                     </div>
                     {this.state.open[i]?<RuleEditor ref={"rule"+i} doc={rules.at(i)} sig={signature} cpbuffer={this.state.cpbuffer} />:null}
                 </div>)}
-                <div><button onClick={this.add.bind(this)}>Add</button></div>
+                <div key="addRule"><button onClick={this.addRule.bind(this)}>Add</button></div>
             </div>
             <h1>Lexicon</h1>
             <div>
-                {lexicon.map((x, i) => <div key={i}>{x}</div>)}
-                <div><button onClick={this.add.bind(this)}>Add</button></div>
+                {Object.keys(lexicon.get()).map((k) => <div key={"lex"+k} className="borjes tree_row">
+                    <button onClick={this.delete.bind(this, 'lexicon', k)}>x</button>
+                    <LexEditor word={k} ref={"lex"+k} doc={lexicon.at(k)} sig={signature} cpbuffer={this.state.cpbuffer} />
+                </div>)}
+                <div key="addLex"><input type="text" ref="addLext" /><button onClick={this.addLex.bind(this)}>+</button></div>
             </div>
         </div>);
     }
