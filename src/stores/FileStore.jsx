@@ -47,7 +47,12 @@ class FileStore extends EventEmitter {
     }
 
     getContents (path) {
-        return this.files[path].doc.getText();
+        var f = this.files[path];
+        if (f.type === 'text') {
+            return f.doc.getText();
+        } else {
+            return f.doc.get();
+        }
     }
 
 };

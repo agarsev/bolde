@@ -22,7 +22,22 @@ Worker.prototype.test = function (sentence) {
 }
 
 Worker.prototype.init = function (config) {
-    this.grammar = bjs.grammar[config.format](config.files.grammar);
+    switch (config.format) {
+    case 'CFG':
+    case 'cfg':
+        this.grammar = bjs.grammar[config.format](config.files.grammar);
+        break;
+    case 'HPSG':
+    case 'hpsg':
+        var desc = config.files.grammar;
+        types.Lattice.fromProto(desc.global.signature, 'signature');
+        var l = bjs.lexicon();
+        for (var w in desc.lexicon) {
+            bjs.lexicon.add(l, w, desc.lexicon[w]);
+        }
+        this.grammar = bjs.grammar(desc.rules, l);
+        break;
+    }
     this.log("DEBUG", "Loaded grammar");
     this.parser = Parser(this.grammar);
     this.log("DEBUG", "Built parser");
