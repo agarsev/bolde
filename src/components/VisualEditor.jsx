@@ -2,8 +2,7 @@
 
 var React = require('react');
 var Bjs = require('borjes');
-var Tree = Bjs.tree;
-var Rule = Bjs.rule;
+var Rule = Bjs.Rule;
 var Lattice = Bjs.types.Lattice;
 var FStruct = Bjs.types.FStruct;
 var World = Bjs.types.World;
