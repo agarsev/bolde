@@ -16,7 +16,6 @@ Worker.prototype.test = function (sentence) {
             this.log("ERROR", "No parse for '"+sentence+"'");
         } else {
             this.log("INFO", "Parsed '"+sentence+"'");
-            console.log(parse);
             this.output(parse);
         }
     }
@@ -36,7 +35,7 @@ Worker.prototype.init = function (config) {
         for (var w in desc.lexicon) {
             bjs.Lexicon.add(l, w, desc.lexicon[w]);
         }
-        this.grammar = bjs.Grammar(desc.rules, l);
+        this.grammar = bjs.Grammar(desc.rules, l, desc.principles);
         break;
     }
     this.log("DEBUG", "Loaded grammar");

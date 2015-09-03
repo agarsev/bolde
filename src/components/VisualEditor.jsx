@@ -3,6 +3,7 @@
 var React = require('react');
 var Bjs = require('borjes');
 var Rule = Bjs.Rule;
+var Principle = Bjs.Principle;
 var Lattice = Bjs.types.Lattice;
 var FStruct = Bjs.types.FStruct;
 var World = Bjs.types.World;
@@ -11,6 +12,7 @@ var BorjesReact = require('borjes-react');
 var BorjesProtoLattice = require('borjes-react/dist/BorjesProtoLattice');
 
 var RuleEditor = require('./visual/RuleEditor');
+var PrincipleEditor = require('./visual/PrincipleEditor');
 var LexEditor = require('./visual/LexEditor');
 
 require('styles/tree');
@@ -20,17 +22,19 @@ class VisualEditor extends React.Component {
     constructor (props) {
         super(props);
         var doc = window.FileStore.getFile(this.props.filename).doc;
-        var rules, lexicon, global;
+        var rules, pples, lexicon, global;
         try {
             rules = doc.at('rules').get();
+            pples = doc.at('principles').get();
             lexicon = doc.at('lexicon').get();
             global = doc.at('global').get();
         } catch (e) { }
-        if (!rules || !lexicon || !global) {
+        if (!rules || !lexicon || !global || ! pples) {
             rules = rules || [];
+            pples = pples || [];
             lexicon = lexicon || {};
             global = global || { signature: {} };
-            doc.at().set({ rules, lexicon, global });
+            doc.at().set({ rules, principles: pples, lexicon, global });
         }
         doc.on('change', () => this.forceUpdate());
         this.state = { doc, open: {}, sigEdit: false, cpbuffer: {} };
@@ -41,6 +45,13 @@ class VisualEditor extends React.Component {
         var mo = FStruct();
         World.bind(World(), mo);
         doc.at('rules').push(Rule(mo, [FStruct(), FStruct()]));
+    }
+
+    addPple () {
+        var doc = this.state.doc;
+        var ante = FStruct();
+        World.bind(World(), ante);
+        doc.at('principles').push(Principle(ante, FStruct()));
     }
 
     addLex () {
@@ -80,6 +91,7 @@ class VisualEditor extends React.Component {
         var protosig = this.state.doc.at('global').at('signature').get();
         var signature = Lattice.fromProto(protosig, 'signature');
         var rules = this.state.doc.at('rules');
+        var pples = this.state.doc.at('principles');
         var lexicon = this.state.doc.at('lexicon');
         return (<div>
             <h1>Signature</h1>
@@ -97,6 +109,17 @@ class VisualEditor extends React.Component {
                     {this.state.open[i]?<RuleEditor ref={"rule"+i} doc={rules.at(i)} sig={signature} cpbuffer={this.state.cpbuffer} />:null}
                 </div>)}
                 <div key="addRule"><button onClick={this.addRule.bind(this)}>Add</button></div>
+            </div>
+            <h1>Principles</h1>
+            <div>
+                {pples.get().map((x, i) => <div key={"pple"+i} className="tree_row">
+                    <div className="tree_header">
+                        <span onClick={this.editToggle.bind(this, "pple"+i)}>edit</span>
+                        <span onClick={this.delete.bind(this, 'principles', i)}>remove</span>
+                    </div>
+                    <PrincipleEditor ref={"pple"+i} doc={pples.at(i)} sig={signature} cpbuffer={this.state.cpbuffer} />
+                </div>)}
+                <div key="addPple"><button onClick={this.addPple.bind(this)}>Add</button></div>
             </div>
             <h1>Lexicon</h1>
             <div>

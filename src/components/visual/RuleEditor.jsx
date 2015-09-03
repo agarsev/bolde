@@ -3,9 +3,6 @@
 var React = require('react');
 var Bjs = require('borjes');
 var Tree = Bjs.Tree;
-var Rule = Bjs.Rule;
-var Lattice = Bjs.types.Lattice;
-var FStruct = Bjs.types.FStruct;
 var World = Bjs.types.World;
 
 var BorjesReact = require('borjes-react');
@@ -31,13 +28,11 @@ class RuleEditor extends React.Component {
 
     update (x) {
         var doc = this.props.doc;
-        var mother = doc.at('m').get();
         var oldworld = this.state.tree.borjes_bound;
         if (!Bjs.types.eq(x.node, Bjs.types.Anything)) {
             World.bind(oldworld, x.node);
         }
         World.bind(oldworld, x);
-        var daughters = doc.at('d').get();
         doc.at('m').set(x.node);
         doc.at('d').at(0).set(x.children[0]);
         doc.at('d').at(1).set(x.children[1]);
