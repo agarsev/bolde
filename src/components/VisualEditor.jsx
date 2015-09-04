@@ -50,8 +50,10 @@ class VisualEditor extends React.Component {
     addPple () {
         var doc = this.state.doc;
         var ante = FStruct();
+        var cons = FStruct();
         World.bind(World(), ante);
-        doc.at('principles').push(Principle(ante, FStruct()));
+        World.bind(World(), cons);
+        doc.at('principles').push(Principle(ante, cons));
     }
 
     addLex () {
