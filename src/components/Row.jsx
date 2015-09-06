@@ -58,9 +58,11 @@ class Row extends React.Component {
     }
 
     render () {
-        var as = this.props.actions;
+        var as = this.props.actions || {};
+        var col = this.props.collapsable;
         return <div className="row">
-            <div className="row_header" onClick={this.props.collapsable?this.toggle.bind(this):null}>
+            <div className={"row_header"+(col?" collapsable":'')}
+                onClick={col?this.toggle.bind(this):null}>
                 <span key="sp1" className="spacer" />
                 <span key="title" >{this.props.title}</span>
                 <span key="sp2" className="spacer" />

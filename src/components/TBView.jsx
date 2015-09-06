@@ -3,6 +3,8 @@
 var React = require('react');
 var Borjes = require('borjes-react');
 
+var Row = require('./Row');
+
 require('styles/tree');
 
 class TBView extends React.Component {
@@ -41,17 +43,17 @@ class TBView extends React.Component {
     }
 
     render () {
-        return (<div style={{display: 'flex', flexDirection: 'column' }}>
+        return (<div style={{display: 'flex', flexDirection: 'column'}}>
             {this.props.list===undefined?(<div style={{flex: 0}}>
                 Query: <input ref="querytext" type="text" />
                 <button onClick={this.runQuery.bind(this)}>Run</button>
             </div>):null}
             {this.state.error!==null?<div style={{flex: 0, color: 'red'}}>{this.state.error}</div>:null}
-            <div style={{flex: 1, overflowY: 'auto' }}>
-                {this.state.view.map((o, i) => <div className="tree_row" key={i}>
-                                     <div className="tree_header" onClick={this.toggleRow.bind(this, i)}>Result {i}</div>
-                                     {this.state.open[i]?<div className="tree_item"><Borjes x={o} /></div>:null}
-                                    </div>)}
+            <div style={{flex: 1, overflowY: 'auto', paddingRight: '1em' }}>
+                {this.state.view.map((o, i) =>
+                    <Row collapsable={true} initShown={false} key={'row'+i} title={'Result '+i}>
+                        <Borjes x={o} />
+                    </Row>)}
             </div>
         </div>);
     }

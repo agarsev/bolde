@@ -3,7 +3,7 @@
 var nedb = require('nedb');
 
 var Borjes = require('borjes');
-var Tree = Borjes.tree;
+var Tree = Borjes.Tree;
 var FStruct = Borjes.types.FStruct;
 var s_parse = Borjes.parenthesis;
 
