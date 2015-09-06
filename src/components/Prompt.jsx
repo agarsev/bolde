@@ -6,9 +6,10 @@ var Form = require('./TForm');
 
 class Prompt extends React.Component {
 
-    dismiss () {
+    dismiss (e) {
         this.props.reject();
         Actions.clearPrompt();
+        e.stopPropagation();
     }
 
     componentDidMount () {
@@ -17,7 +18,7 @@ class Prompt extends React.Component {
         }
     }
 
-    accept () {
+    accept (e) {
         var v = this.refs.form !== undefined ?
             this.refs.form.getValue() : true;
         if (v === null) {
@@ -26,6 +27,7 @@ class Prompt extends React.Component {
             this.props.resolve(v);
         }
         Actions.clearPrompt();
+        e.stopPropagation();
     }
 
     render () {
