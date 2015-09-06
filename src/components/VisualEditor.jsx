@@ -11,6 +11,8 @@ var World = Bjs.types.World;
 var BorjesReact = require('borjes-react');
 var BorjesProtoLattice = require('borjes-react/dist/BorjesProtoLattice');
 
+var Row = require('./Row');
+
 var RuleEditor = require('./visual/RuleEditor');
 var PrincipleEditor = require('./visual/PrincipleEditor');
 var LexEditor = require('./visual/LexEditor');
@@ -37,7 +39,7 @@ class VisualEditor extends React.Component {
             doc.at().set({ rules, principles: pples, lexicon, global });
         }
         doc.on('change', () => this.forceUpdate());
-        this.state = { doc, open: {}, sigEdit: false, cpbuffer: {} };
+        this.state = { doc, sigEdit: false, cpbuffer: {} };
     }
 
     addRule () {
@@ -70,17 +72,12 @@ class VisualEditor extends React.Component {
         doc.at(path).at(i).remove();
     }
 
-    toggleRow (i) {
-        var open = this.state.open;
-        open[i] = !open[i];
-        this.setState({open: open});
-    }
-
     editToggle (i, e) {
         if (i === 'SIG') {
             this.setState({sigEdit: !this.state.sigEdit});
         } else {
-            this.refs[i].editToggle();
+            this.refs['row'+i].open();
+            setTimeout(() => this.refs[i].editToggle(), 0);
         }
         e.stopPropagation();
     }
@@ -97,30 +94,27 @@ class VisualEditor extends React.Component {
         var lexicon = this.state.doc.at('lexicon');
         return (<div>
             <h1>Signature</h1>
-            <span onClick={this.editToggle.bind(this, 'SIG')}>edit</span>
-            <div>
-                <BorjesProtoLattice x={protosig} update={this.updateSignature.bind(this)} opts={{editable:this.state.sigEdit}} />
+            <div style={{paddingRight: '1em'}}>
+                <Row actions={{edit: this.editToggle.bind(this, 'SIG')}}>
+                    <BorjesProtoLattice x={protosig} update={this.updateSignature.bind(this)} opts={{editable:this.state.sigEdit}} />
+                </Row>
             </div>
             <h1>Rules</h1>
-            <div>
-                {rules.get().map((x, i) => <div key={"rule"+i} className="tree_row">
-                    <div className="tree_header" onClick={this.toggleRow.bind(this, i)}>
-                        <span onClick={this.editToggle.bind(this, "rule"+i)}>edit</span>
-                        <span onClick={this.delete.bind(this, 'rules', i)}>remove</span>
-                    </div>
-                    {this.state.open[i]?<RuleEditor ref={"rule"+i} doc={rules.at(i)} sig={signature} cpbuffer={this.state.cpbuffer} />:null}
-                </div>)}
+            <div style={{paddingRight: '1em'}}>
+                {rules.get().map((x, i) => <Row initShown={false} collapsable={true} ref={"rowrule"+i} key={"rule"+i} actions={{
+                    'edit': this.editToggle.bind(this, "rule"+i),
+                    'remove': this.delete.bind(this, 'rules', i)}}>
+                    <RuleEditor ref={"rule"+i} doc={rules.at(i)} sig={signature} cpbuffer={this.state.cpbuffer} />
+                </Row>)}
                 <div key="addRule"><button onClick={this.addRule.bind(this)}>Add</button></div>
             </div>
             <h1>Principles</h1>
-            <div>
-                {pples.get().map((x, i) => <div key={"pple"+i} className="tree_row">
-                    <div className="tree_header">
-                        <span onClick={this.editToggle.bind(this, "pple"+i)}>edit</span>
-                        <span onClick={this.delete.bind(this, 'principles', i)}>remove</span>
-                    </div>
+            <div style={{paddingRight: '1em'}}>
+                {pples.get().map((x, i) => <Row initShown={false} collapsable={true} ref={"rowpple"+i} key={"pple"+i} actions={{
+                    'edit': this.editToggle.bind(this, "pple"+i),
+                    'remove': this.delete.bind(this, 'principles', i)}}>
                     <PrincipleEditor ref={"pple"+i} doc={pples.at(i)} sig={signature} cpbuffer={this.state.cpbuffer} />
-                </div>)}
+                </Row>)}
                 <div key="addPple"><button onClick={this.addPple.bind(this)}>Add</button></div>
             </div>
             <h1>Lexicon</h1>

@@ -57,6 +57,10 @@ class Row extends React.Component {
         this.setState({ shown: !this.state.shown });
     }
 
+    open () {
+        this.setState({ shown: true });
+    }
+
     render () {
         var as = this.props.actions || {};
         var col = this.props.collapsable;
