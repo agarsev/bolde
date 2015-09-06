@@ -12,12 +12,15 @@ class Prompt extends React.Component {
     }
 
     componentDidMount () {
-        this.refs.form.focus();
+        if (this.refs.form !== undefined) {
+            this.refs.form.focus();
+        }
     }
 
     accept () {
-        var v = this.refs.form.getValue();
-        if (v == null) {
+        var v = this.refs.form !== undefined ?
+            this.refs.form.getValue() : true;
+        if (v === null) {
             this.props.reject();
         } else {
             this.props.resolve(v);
@@ -43,7 +46,8 @@ class Prompt extends React.Component {
         };
         return (<div style={overlayStyle} onClick={this.dismiss.bind(this)}>
             <div style={promptStyle} onClick={e => e.stopPropagation()}>
-                <Form ref="form" getData={() => this.props.form} />
+                {this.props.msg?<div>{this.props.msg}</div>:null}
+                {this.props.form?<Form ref="form" getData={() => this.props.form} />:null}
                 <button onClick={this.accept.bind(this)}>OK</button>
                 <button onClick={this.dismiss.bind(this)}>Cancel</button>
             </div>

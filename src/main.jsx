@@ -37,7 +37,7 @@ React.render(<ToolBar />, document.getElementById('NavBar'));
 
 window.Dispatcher.register(a => { switch(a.actionType) {
     case 'prompt.in':
-        React.render(<Prompt form={a.form} resolve={a.resolve} reject={a.reject} />,
+        React.render(<Prompt form={a.form} msg={a.msg} resolve={a.resolve} reject={a.reject} />,
                      document.getElementById('Prompt'));
         break;
     case 'prompt.out':
