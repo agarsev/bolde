@@ -13,31 +13,31 @@ class PrincipleEditor extends React.Component {
     constructor(props) {
         super(props);
         var doc = this.props.doc;
+        var ante;
+        var cons;
         if (doc.at().get() === null) {
-            var ante = FStruct();
-            var cons = FStruct();
+            ante = FStruct();
+            cons = FStruct();
             World.bind(World(), ante);
             World.bind(World(), cons);
             doc.at().set(Principle(ante, cons));
+        } else {
+            ante = doc.at('a').get();
+            cons = doc.at('c').get();
         }
-        var ante = doc.at('a').get();
-        var cons = doc.at('c').get();
-        this.state = { ante, cons, editable: false };
+        this.state = { editable: false, aworld: ante.borjes_bound, cworld: cons.borjes_bound };
         doc.on('child op', () => {
-            var an = doc.at('a').get();
-            var co = doc.at('c').get();
-            this.setState({ ante, cons });
+            this.forceUpdate();
         });
     }
 
     update (who, x) {
         var doc = this.props.doc;
-        var oldworld = this.state[who=='a'?'ante':'cons'].borjes_bound;
+        var oldworld = this.state[who+'world'];
         if (!Bjs.types.eq(x, Bjs.types.Anything)) {
             World.bind(oldworld, x);
         }
         doc.at(who).set(x);
-        this.setState(who=='a'?{ante: x}:{cons: x});
     }
 
     editToggle () {
@@ -45,8 +45,9 @@ class PrincipleEditor extends React.Component {
     }
 
     render () {
-        var a = this.state.ante;
-        var c = this.state.cons;
+        var doc = this.props.doc;
+        var a = doc.at('a').get();
+        var c = doc.at('c').get();
         return <span className="borjes">
             <BorjesReact x={a} cpbuffer={this.props.cpbuffer} update={this.update.bind(this, 'a')} opts={{editable:this.state.editable, signature:this.props.sig}}/>
             {"⇒"}

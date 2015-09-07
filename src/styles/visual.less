@@ -1,0 +1,17 @@
+@import "colours.less";
+
+table.paradigm_editor {
+    border-collapse: collapse;
+    margin: 1ex 0;
+    width: 100%;
+    & > tbody > tr > td {
+        border: 1px solid @blue;
+        padding: 1px;
+    }
+    & > tbody > tr:nth-child(odd) {
+        background: lighten(@blue, 50%);
+    }
+    & > tbody > tr:nth-child(even) {
+        background: lighten(@blue, 55%);
+    }
+}

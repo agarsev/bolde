@@ -13,7 +13,7 @@ var RuleEditor = require('./visual/RuleEditor');
 var PrincipleEditor = require('./visual/PrincipleEditor');
 var ParadigmEditor = require('./visual/ParadigmEditor');
 
-//require('styles/tree');
+require('styles/visual');
 
 class VisualEditor extends React.Component {
 
@@ -97,7 +97,7 @@ class VisualEditor extends React.Component {
             </div>
             <h1>Lexicon</h1>
             <div style={{paddingRight: '1em'}}>
-                {lexicon.get().map((x, i) => <ParadigmEditor key={"lex"+i} ref={"rowlex"+i} doc={lexicon.at(i)} sig={signature} cpbuffer={this.state.cpbuffer} />)}
+                {lexicon.get().map((x, i) => <ParadigmEditor key={"lex"+i} ref={"rowlex"+i} doc={lexicon.at(i)} sig={signature} cpbuffer={this.state.cpbuffer} rm={this.delete.bind(this, 'lexicon', i)} />)}
                 <div key="addLex"><button onClick={this.add.bind(this, 'lexicon', 'lex')}>Add</button></div>
             </div>
         </div>);
