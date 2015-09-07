@@ -77,7 +77,7 @@ class Row extends React.Component {
                  )}
             </div>
             {this.state.shown?
-                <div className="row_body">
+                <div className="row_body" style={{overflow: this.props.overflow || 'visible'}}>
                 {this.props.children}
                 </div>
                 :null}

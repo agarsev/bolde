@@ -51,7 +51,7 @@ class TBView extends React.Component {
             {this.state.error!==null?<div style={{flex: 0, color: 'red'}}>{this.state.error}</div>:null}
             <div style={{flex: 1, overflowY: 'auto', paddingRight: '1em' }}>
                 {this.state.view.map((o, i) =>
-                    <Row collapsable={true} initShown={false} key={'row'+i} title={'Result '+i}>
+                    <Row overflow="auto" collapsable={true} initShown={false} key={'row'+i} title={'Result '+i}>
                         <Borjes x={o} />
                     </Row>)}
             </div>
