@@ -4,7 +4,10 @@ var util = require('util');
 
 var bjs = require('borjes');
 var Parser = bjs.Parser;
+var Lexicon = bjs.Lexicon;
 var types = bjs.types;
+var World = types.World;
+var Literal = types.Literal;
 
 var Worker = require('../utils/EngineWorker');
 
@@ -30,15 +33,28 @@ Worker.prototype.init = function (config) {
     case 'HPSG':
     case 'hpsg':
         var desc = config.files.grammar;
+        this.log("DEBUG", "Loading signature");
         types.Lattice.fromProto(desc.global.signature, 'signature');
-        var l = bjs.Lexicon();
-        for (var w in desc.lexicon) {
-            bjs.Lexicon.add(l, w, desc.lexicon[w]);
-        }
+        this.log("DEBUG", "Loading lexicon");
+        var l = Lexicon();
+        desc.lexicon.forEach((paradigm) => {
+            var common = paradigm.value.borjes_bound;
+            var ind = paradigm.indices;
+            Lexicon.inflect(l, (lexeme) => {
+                var w = types.copy(common);
+                for (var i=0; i<ind.length; i++) {
+                    World.set(w, ind[i], i==0?Literal(lexeme[0]):lexeme[i]);
+                }
+                var v = types.copy(paradigm.value);
+                World.bind(w, v);
+                return [[lexeme[0], types.normalize(v)]];
+            }, paradigm.lexemes);
+        });
+        this.log("DEBUG", "Creating grammar");
         this.grammar = bjs.Grammar(desc.rules, l, desc.principles);
         break;
     }
-    this.log("DEBUG", "Loaded grammar");
+    this.log("DEBUG", "Creating parser");
     this.parser = Parser(this.grammar);
     this.log("DEBUG", "Built parser");
 };

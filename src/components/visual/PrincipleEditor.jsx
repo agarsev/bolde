@@ -21,11 +21,8 @@ class PrincipleEditor extends React.Component {
             World.bind(World(), ante);
             World.bind(World(), cons);
             doc.at().set(Principle(ante, cons));
-        } else {
-            ante = doc.at('a').get();
-            cons = doc.at('c').get();
         }
-        this.state = { editable: false, aworld: ante.borjes_bound, cworld: cons.borjes_bound };
+        this.state = { editable: false };
         doc.on('child op', () => {
             this.forceUpdate();
         });
@@ -33,7 +30,7 @@ class PrincipleEditor extends React.Component {
 
     update (who, x) {
         var doc = this.props.doc;
-        var oldworld = this.state[who+'world'];
+        var oldworld = doc.at(who, 'borjes_bound').get();
         if (!Bjs.types.eq(x, Bjs.types.Anything)) {
             World.bind(oldworld, x);
         }
