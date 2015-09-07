@@ -1,12 +1,16 @@
 "use strict";
 
 var React = require('react');
+var t = require('tcomb-form');
 var Bjs = require('borjes');
 var World = Bjs.types.World;
 var Principle = Bjs.Principle;
 var FStruct = Bjs.types.FStruct;
 
 var BorjesReact = require('borjes-react');
+
+var Row = require('../Row');
+var Actions = require('../../Actions');
 
 class PrincipleEditor extends React.Component {
 
@@ -37,19 +41,43 @@ class PrincipleEditor extends React.Component {
         doc.at(who).set(x);
     }
 
-    editToggle () {
+    editToggle (e) {
+        var ed = this.state.editable;
+        if (!ed) {
+            this.refs['row'].open();
+        }
         this.setState({editable: !this.state.editable});
+        if (e) { e.stopPropagation(); }
+    }
+
+    open () {
+        this.refs['row'].open();
+    }
+
+    changeName (e) {
+        var doc = this.props.doc;
+        Actions.prompt({
+            model: t.struct({ name: t.Str }),
+            value: { name: doc.at('name').get() }
+        }).then(data => {
+            doc.at('name').set(data.name);
+        }).catch(() => {});
+        e.stopPropagation();
     }
 
     render () {
         var doc = this.props.doc;
         var a = doc.at('a').get();
         var c = doc.at('c').get();
-        return <span className="borjes">
+        return <Row ref="row" title={doc.at('name').get()} initShown={false} collapsable={true} actions={{
+            edit: this.editToggle.bind(this),
+            name: this.changeName.bind(this),
+            remove: this.props.rm
+            }}><span className="borjes">
             <BorjesReact x={a} cpbuffer={this.props.cpbuffer} update={this.update.bind(this, 'a')} opts={{editable:this.state.editable, signature:this.props.sig}}/>
             {"⇒"}
             <BorjesReact x={c} cpbuffer={this.props.cpbuffer} update={this.update.bind(this, 'c')} opts={{editable:this.state.editable, signature:this.props.sig}}/>
-        </span>;
+        </span></Row>;
     }
 }
 

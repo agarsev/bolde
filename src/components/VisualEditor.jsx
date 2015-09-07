@@ -51,13 +51,7 @@ class VisualEditor extends React.Component {
     }
 
     editToggle (i, e) {
-        if (i === 'SIG') {
-            this.setState({sigEdit: !this.state.sigEdit});
-        } else {
-            this.refs['row'+i].open();
-            setTimeout(() => this.refs[i].editToggle(), 0);
-        }
-        e.stopPropagation();
+        this.setState({sigEdit: !this.state.sigEdit});
     }
 
     updateSignature (x) {
@@ -73,26 +67,18 @@ class VisualEditor extends React.Component {
         return (<div>
             <h1>Signature</h1>
             <div style={{paddingRight: '1em'}}>
-                <Row actions={{edit: this.editToggle.bind(this, 'SIG')}}>
+                <Row actions={{edit: this.editToggle.bind(this)}}>
                     <BorjesProtoLattice x={protosig} update={this.updateSignature.bind(this)} opts={{editable:this.state.sigEdit}} />
                 </Row>
             </div>
             <h1>Rules</h1>
             <div style={{paddingRight: '1em'}}>
-                {rules.get().map((x, i) => <Row initShown={false} collapsable={true} ref={"rowrule"+i} key={"rule"+i} actions={{
-                    'edit': this.editToggle.bind(this, "rule"+i),
-                    'remove': this.delete.bind(this, 'rules', i)}}>
-                    <RuleEditor ref={"rule"+i} doc={rules.at(i)} sig={signature} cpbuffer={this.state.cpbuffer} />
-                </Row>)}
+                {rules.get().map((x, i) => <RuleEditor key={"rule"+i} ref={"rowrule"+i} doc={rules.at(i)} sig={signature} cpbuffer={this.state.cpbuffer} rm={this.delete.bind(this, 'rules', i)} />)}
                 <div key="addRule"><button onClick={this.add.bind(this, 'rules', 'rule')}>Add</button></div>
             </div>
             <h1>Principles</h1>
             <div style={{paddingRight: '1em'}}>
-                {pples.get().map((x, i) => <Row initShown={false} collapsable={true} ref={"rowpple"+i} key={"pple"+i} actions={{
-                    'edit': this.editToggle.bind(this, "pple"+i),
-                    'remove': this.delete.bind(this, 'principles', i)}}>
-                    <PrincipleEditor ref={"pple"+i} doc={pples.at(i)} sig={signature} cpbuffer={this.state.cpbuffer} />
-                </Row>)}
+                {pples.get().map((x, i) => <PrincipleEditor key={"pple"+i} ref={"rowpple"+i} doc={pples.at(i)} sig={signature} cpbuffer={this.state.cpbuffer} rm={this.delete.bind(this, 'principles', i)} />)}
                 <div key="addPple"><button onClick={this.add.bind(this, 'principles', 'pple')}>Add</button></div>
             </div>
             <h1>Lexicon</h1>

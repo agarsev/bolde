@@ -1,6 +1,7 @@
 "use strict";
 
 var React = require('react');
+var t = require('tcomb-form');
 var Bjs = require('borjes');
 var Tree = Bjs.Tree;
 var World = Bjs.types.World;
@@ -8,6 +9,9 @@ var FStruct = Bjs.types.FStruct;
 var Rule = Bjs.Rule;
 
 var BorjesReact = require('borjes-react');
+
+var Row = require('../Row');
+var Actions = require('../../Actions');
 
 class RuleEditor extends React.Component {
 
@@ -46,12 +50,38 @@ class RuleEditor extends React.Component {
         this.setState({tree: x});
     }
 
-    editToggle () {
+    editToggle (e) {
+        var ed = this.state.editable;
+        if (!ed) {
+            this.refs['row'].open();
+        }
         this.setState({editable: !this.state.editable});
+        if (e) { e.stopPropagation(); }
+    }
+
+    open () {
+        this.refs['row'].open();
+    }
+
+    changeName (e) {
+        var doc = this.props.doc;
+        Actions.prompt({
+            model: t.struct({ name: t.Str }),
+            value: { name: doc.at('name').get() }
+        }).then(data => {
+            doc.at('name').set(data.name);
+        }).catch(() => {});
+        e.stopPropagation();
     }
 
     render () {
-        return <BorjesReact x={this.state.tree} cpbuffer={this.props.cpbuffer} update={this.update.bind(this)} opts={{editable:this.state.editable, signature:this.props.sig}}/>;
+        return <Row ref="row" title={this.props.doc.at('name').get()} initShown={false} collapsable={true} actions={{
+            edit: this.editToggle.bind(this),
+            name: this.changeName.bind(this),
+            remove: this.props.rm
+            }}>
+            <BorjesReact x={this.state.tree} cpbuffer={this.props.cpbuffer} update={this.update.bind(this)} opts={{editable:this.state.editable, signature:this.props.sig}}/>
+        </Row>;
     }
 }
 

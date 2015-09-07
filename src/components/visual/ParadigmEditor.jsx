@@ -25,7 +25,7 @@ class ParadigmEditor extends React.Component {
             World.bind(common, value);
             var v = Variable(common, Anything);
             common.titles[v.index] = 'Lexeme';
-            doc.at().set({ value, indices: [v.index], lexemes: [] });
+            doc.at().set({ value, indices: [v.index], lexemes: [], name: 'Paradigm' });
         }
         this.state = { editable: false };
         doc.on('child op', () => {
@@ -40,6 +40,17 @@ class ParadigmEditor extends React.Component {
 
     open () {
         this.refs['row'].open();
+    }
+
+    changeName (e) {
+        var doc = this.props.doc;
+        Actions.prompt({
+            model: t.struct({ name: t.Str }),
+            value: { name: doc.at('name').get() }
+        }).then(data => {
+            doc.at('name').set(data.name);
+        }).catch(() => {});
+        e.stopPropagation();
     }
 
     add () {
@@ -113,8 +124,9 @@ class ParadigmEditor extends React.Component {
         var ind = doc.at('indices').get();
         var lex = doc.at('lexemes').get();
         var edi = this.state.editable;
-        return <Row ref="row" collapsable={true} initShown={false} actions={{
+        return <Row ref="row" title={doc.at('name').get()} collapsable={true} initShown={false} actions={{
             edit: this.editToggle.bind(this),
+            name: this.changeName.bind(this),
             remove: this.props.rm
             }}>
             <BorjesReact x={x} cpbuffer={this.props.cpbuffer} update={this.updateValue.bind(this)} opts={{editable:edi, signature:this.props.sig}}/>
