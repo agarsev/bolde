@@ -53,8 +53,9 @@ class Row extends React.Component {
         this.state = { shown: is!==undefined?is:true };
     }
 
-    toggle () {
+    toggle (e) {
         this.setState({ shown: !this.state.shown });
+        if (e) { e.stopPropagation(); }
     }
 
     open () {

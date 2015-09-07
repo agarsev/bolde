@@ -3,6 +3,8 @@
 var React = require('react');
 var Bjs = require('borjes');
 var World = Bjs.types.World;
+var Principle = Bjs.Principle;
+var FStruct = Bjs.types.FStruct;
 
 var BorjesReact = require('borjes-react');
 
@@ -11,6 +13,13 @@ class PrincipleEditor extends React.Component {
     constructor(props) {
         super(props);
         var doc = this.props.doc;
+        if (doc.at().get() === null) {
+            var ante = FStruct();
+            var cons = FStruct();
+            World.bind(World(), ante);
+            World.bind(World(), cons);
+            doc.at().set(Principle(ante, cons));
+        }
         var ante = doc.at('a').get();
         var cons = doc.at('c').get();
         this.state = { ante, cons, editable: false };

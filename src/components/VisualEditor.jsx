@@ -2,11 +2,7 @@
 
 var React = require('react');
 var Bjs = require('borjes');
-var Rule = Bjs.Rule;
-var Principle = Bjs.Principle;
 var Lattice = Bjs.types.Lattice;
-var FStruct = Bjs.types.FStruct;
-var World = Bjs.types.World;
 
 var BorjesReact = require('borjes-react');
 var BorjesProtoLattice = require('borjes-react/dist/BorjesProtoLattice');
@@ -15,9 +11,9 @@ var Row = require('./Row');
 
 var RuleEditor = require('./visual/RuleEditor');
 var PrincipleEditor = require('./visual/PrincipleEditor');
-var LexEditor = require('./visual/LexEditor');
+var ParadigmEditor = require('./visual/ParadigmEditor');
 
-require('styles/tree');
+//require('styles/tree');
 
 class VisualEditor extends React.Component {
 
@@ -34,37 +30,19 @@ class VisualEditor extends React.Component {
         if (!rules || !lexicon || !global || ! pples) {
             rules = rules || [];
             pples = pples || [];
-            lexicon = lexicon || {};
+            lexicon = lexicon || [];
             global = global || { signature: {} };
-            doc.at().set({ rules, principles: pples, lexicon, global });
+            doc.set({ rules, principles: pples, lexicon, global });
         }
         doc.on('change', () => this.forceUpdate());
         this.state = { doc, sigEdit: false, cpbuffer: {} };
     }
 
-    addRule () {
+    add (path, ref) {
         var doc = this.state.doc;
-        var mo = FStruct();
-        World.bind(World(), mo);
-        doc.at('rules').push(Rule(mo, [FStruct(), FStruct()]));
-    }
-
-    addPple () {
-        var doc = this.state.doc;
-        var ante = FStruct();
-        var cons = FStruct();
-        World.bind(World(), ante);
-        World.bind(World(), cons);
-        doc.at('principles').push(Principle(ante, cons));
-    }
-
-    addLex () {
-        var doc = this.state.doc;
-        var val = React.findDOMNode(this.refs.addLext).value;
-        var lex = doc.at('lexicon');
-        if (lex.at(val).get()===undefined) {
-            lex.at(val).set(Bjs.types.Anything);
-        }
+        doc.at(path).push(null);
+        var i = doc.at(path).get().length-1;
+        setTimeout(() => this.refs['row'+ref+i].open(), 0);
     }
 
     delete (path, i) {
@@ -106,7 +84,7 @@ class VisualEditor extends React.Component {
                     'remove': this.delete.bind(this, 'rules', i)}}>
                     <RuleEditor ref={"rule"+i} doc={rules.at(i)} sig={signature} cpbuffer={this.state.cpbuffer} />
                 </Row>)}
-                <div key="addRule"><button onClick={this.addRule.bind(this)}>Add</button></div>
+                <div key="addRule"><button onClick={this.add.bind(this, 'rules', 'rule')}>Add</button></div>
             </div>
             <h1>Principles</h1>
             <div style={{paddingRight: '1em'}}>
@@ -115,15 +93,12 @@ class VisualEditor extends React.Component {
                     'remove': this.delete.bind(this, 'principles', i)}}>
                     <PrincipleEditor ref={"pple"+i} doc={pples.at(i)} sig={signature} cpbuffer={this.state.cpbuffer} />
                 </Row>)}
-                <div key="addPple"><button onClick={this.addPple.bind(this)}>Add</button></div>
+                <div key="addPple"><button onClick={this.add.bind(this, 'principles', 'pple')}>Add</button></div>
             </div>
             <h1>Lexicon</h1>
-            <div>
-                {Object.keys(lexicon.get()).map((k) => <div key={"lex"+k} className="borjes tree_row">
-                    <button onClick={this.delete.bind(this, 'lexicon', k)}>x</button>
-                    <LexEditor word={k} ref={"lex"+k} doc={lexicon.at(k)} sig={signature} cpbuffer={this.state.cpbuffer} />
-                </div>)}
-                <div key="addLex"><input type="text" ref="addLext" /><button onClick={this.addLex.bind(this)}>+</button></div>
+            <div style={{paddingRight: '1em'}}>
+                {lexicon.get().map((x, i) => <ParadigmEditor key={"lex"+i} ref={"rowlex"+i} doc={lexicon.at(i)} sig={signature} cpbuffer={this.state.cpbuffer} />)}
+                <div key="addLex"><button onClick={this.add.bind(this, 'lexicon', 'lex')}>Add</button></div>
             </div>
         </div>);
     }

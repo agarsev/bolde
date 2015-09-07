@@ -4,6 +4,8 @@ var React = require('react');
 var Bjs = require('borjes');
 var Tree = Bjs.Tree;
 var World = Bjs.types.World;
+var FStruct = Bjs.types.FStruct;
+var Rule = Bjs.Rule;
 
 var BorjesReact = require('borjes-react');
 
@@ -12,6 +14,11 @@ class RuleEditor extends React.Component {
     constructor(props) {
         super(props);
         var doc = this.props.doc;
+        if (doc.at().get()===null) {
+            var mo = FStruct();
+            World.bind(World(), mo);
+            doc.at().set(Rule(mo, [FStruct(), FStruct()]));
+        }
         var mother = doc.at('m').get();
         var daughters = doc.at('d').get();
         var tree = Tree(mother, [daughters[0], daughters[1]]);
