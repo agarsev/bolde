@@ -16,32 +16,37 @@ var modes = {
     'yml': 'yaml'
 };
 
-function startSaving(file) {
+function startSaving(name) {
+    var file = docs[name];
     file.saved = file.doc.version;
-    file.idleCount= 0;
-    file.saver = setInterval(function() {
-        if (file.doc.version>file.saved) {
-            log.debug("Saving file "+file.file);
-            var text;
-            if (file.type === 'text') {
-                text = file.doc.snapshot;
+    file.idleCount = 0;
+    if (!file.saver) {
+        file.saver = setInterval(function() {
+            if (file.doc.version>file.saved) {
+                log.debug("Saving file "+file.file);
+                var text;
+                if (file.type === 'text') {
+                    text = file.doc.snapshot;
+                } else {
+                    text = JSON.stringify(file.doc.get());
+                }
+                store.writeFile(file.file, text)
+                .then(function () {
+                    file.saved = file.doc.version;
+                    file.idleCount=0;
+                }).catch(function (err) {
+                    log.error(err);
+                });
+            } else if (file.idleCount>10) {
+                log.debug("closing pad for file "+file.file);
+                clearInterval(file.saver);
+                file.doc.close();
+                delete docs[name];
             } else {
-                text = JSON.stringify(file.doc.get());
+                file.idleCount++;
             }
-            store.writeFile(file.file, text)
-            .then(function () {
-                file.saved = file.doc.version;
-                file.idleCount=0;
-            }).catch(function (err) {
-                log.error(err);
-            });
-        } else if (file.idleCount>100) {
-            clearInterval(file.saver);
-            file.doc.close();
-        } else {
-            file.idleCount++;
-        }
-    },3000);
+        },3000);
+    }
 }
 
 var channelurl;
@@ -60,6 +65,13 @@ exports.init = function (router, mount, conf) {
             res.send({ok: false, error: error});
         });
     });
+    router.post('/keepalive', bodyParser.json(), function (req, res) {
+        var paths = req.body.paths;
+        for (var i=0; i<paths.length; i++) {
+            docs[paths[i]].idleCount = 0;
+        }
+        res.send({ok: true});
+    });
     sharejs.attach(router, {db: {type: 'none'}});
 }
 
@@ -67,7 +79,7 @@ var padNumber=0;
 function openpad (file) {
     if (docs[file]) {
         log.debug("opening existing pad for file "+file);
-        startSaving(docs[file]);
+        startSaving(file);
         return Promise.resolve({ mode: docs[file].mode, name: docs[file].name, type: docs[file].type });
     } else {
         log.debug("creating pad for file "+file);
@@ -89,8 +101,7 @@ function openpad (file) {
                     d.doc.insert(0, content, function (err) {
                         if (err) { reject(err); }
                         log.debug("created text pad for file "+d.file+" ("+d.name+")");
-                        // TODO close properly when no longer used
-                        startSaving(d);
+                        startSaving(file);
                         resolve({ mode: d.mode, name: d.name, type: d.type });
                     });
                 } else {
@@ -100,8 +111,7 @@ function openpad (file) {
                     d.doc.at().set(o, function (err) {
                         if (err) { reject(err); }
                         log.debug("created json pad for file "+d.file+" ("+d.name+")");
-                        // TODO close properly when no longer used
-                        startSaving(d);
+                        startSaving(file);
                         resolve({ mode: d.mode, name: d.name, type: d.type });
                     });
                 }

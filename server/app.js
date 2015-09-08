@@ -19,7 +19,7 @@ var httplog = log4js.getLogger('http');
 app.use(log4js.connectLogger(httplog, {
     level: 'auto',
     format: ':remote-addr :method :url HTTP/:http-version :status :res[content-length] - :response-time ms :referrer :user-agent',
-    nolog: /^\/api\/sharejs\/channel/
+    nolog: /^\/api\/sharejs\/(channel|keepalive)/
 }));
 
 var applog = log4js.getLogger('app');

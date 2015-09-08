@@ -39,6 +39,10 @@ var load = function (path) {
 };
 exports.load = load;
 
+exports.keepalive = function (paths) {
+    api.call('api/sharejs/keepalive', {paths});
+};
+
 exports.open = function (user, project, file) {
     var path = user + '/' + project + '/' + file;
     load(path).then((type) =>
@@ -46,6 +50,9 @@ exports.open = function (user, project, file) {
           actionType: 'file.open',
           filename: path,
           type: type,
+          user: user,
+          project: project,
+          file: file
         }));
 };
 

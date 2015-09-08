@@ -59,7 +59,9 @@ class TabStore extends EventEmitter {
                     } else {
                         this.addTab('file_'+a.filename,
                              a.filename.substr(a.filename.search(/\/[^\/]+$/)+1),
-                             a.type=='text'?Components.Editor(a.filename):Components.VisualEditor(a.filename)
+                             a.type=='text'?Components.Editor(a.filename):Components.VisualEditor(a.filename),
+                             1,
+                             () => { Actions.file.close(a.user, a.project, a.file); return true; }
                         );
                     }
                     break;

@@ -1,6 +1,7 @@
 "use strict";
 
 var EventEmitter = require('events').EventEmitter;
+var Actions = require('../Actions');
 
 class FileStore extends EventEmitter {
 
@@ -8,6 +9,7 @@ class FileStore extends EventEmitter {
         super();
 
         this.files = {};
+        this.keepalive = setInterval(this.keepalive.bind(this), 5000);
 
         this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
@@ -15,11 +17,11 @@ class FileStore extends EventEmitter {
                     this.files[a.filename] = {
                         doc: a.doc,
                         mode: a.mode,
-                        type: a.type
+                        type: a.type,
                     };
                     break;
                 case 'file.close':
-                    var path = a.user+'/'+a.project+'/'+a.path;
+                    var path = a.user+'/'+a.project+'/'+a.file;
                     if (this.files[path]) {
                         this.files[path].doc.close();
                         delete this.files[path];
@@ -52,6 +54,13 @@ class FileStore extends EventEmitter {
             return f.doc.getText();
         } else {
             return f.doc.get();
+        }
+    }
+
+    keepalive () {
+        var f = Object.keys(this.files);
+        if (f.length>0) {
+            Actions.file.keepalive(f);
         }
     }
 
