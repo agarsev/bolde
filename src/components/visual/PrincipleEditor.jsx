@@ -34,7 +34,7 @@ class PrincipleEditor extends React.Component {
 
     update (who, x) {
         var doc = this.props.doc;
-        var oldworld = doc.at(who, 'borjes_bound').get();
+        var oldworld = doc.at(who, 'borjes_bound').get() || World();
         if (!Bjs.types.eq(x, Bjs.types.Anything)) {
             World.bind(oldworld, x);
         }

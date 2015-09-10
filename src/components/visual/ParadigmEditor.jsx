@@ -35,6 +35,8 @@ class ParadigmEditor extends React.Component {
 
     updateValue (x) {
         var doc = this.props.doc;
+        var oldworld = doc.at('value', 'borjes_bound').get() || World();
+        World.bind(oldworld, x);
         doc.at('value').set(x);
     }
 
