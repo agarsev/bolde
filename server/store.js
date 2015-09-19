@@ -48,3 +48,11 @@ exports.getFileOpts = function (path) {
     return exports.load(res[1],res[2],'files')
     .then(function(files) { return files[res[3]]; });
 };
+
+exports.copyFile = function (from, to) {
+    var uf = config.get('user_files')+'/';
+    return fs.readFile(uf+from)
+    .then(function (data) {
+        return fs.outputFile(uf+to, data);
+    });
+};

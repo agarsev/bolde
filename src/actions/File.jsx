@@ -111,3 +111,27 @@ exports.put = function (path, content) {
         });
     });
 };
+
+var copyPath;
+
+exports.copy = function (user, project, file) {
+    copyPath = user+'/'+project+'/'+file;
+};
+
+exports.paste_at_selected = function (user, project, filename) {
+    var dir = window.ProjectStore.get(project).cwd;
+    if (!dir) { dir = ''; }
+    else { dir += '/'; }
+    var path = user+'/'+project+'/'+dir+filename;
+    return api.call('api/file/copy', {from: copyPath, to: path})
+    .then(function(data) {
+        window.Dispatcher.dispatch({
+            actionType: 'file.new',
+            user: user,
+            project: project,
+            path: path,
+            files: data.files,
+            type: data.type
+        });
+    });
+};

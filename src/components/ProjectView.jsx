@@ -24,9 +24,11 @@ class ProjectView extends React.Component {
         var p = window.ProjectStore.get(this.props.project);
         return (<div className="projectView">
             <span>
-                <button onClick={this.newFile.bind(this)}>+</button>
-                <button onClick={this.deleteSelected.bind(this)}>x</button>
-                <button onClick={this.run.bind(this)}>⏵</button>
+                <button title="copy" onClick={this.copySelected.bind(this)}>c</button>
+                <button title="paste" onClick={this.paste.bind(this)}>p</button>
+                <button title="new" onClick={this.newFile.bind(this)}>+</button>
+                <button title="delete" onClick={this.deleteSelected.bind(this)}>x</button>
+                <button title="run" onClick={this.run.bind(this)}>⏵</button>
             </span>
             <span>
                 <DirTree files={p.files} root="true"
@@ -48,6 +50,24 @@ class ProjectView extends React.Component {
             .then(() => Actions.file.delete(this.state.user, this.state.pname, file))
             .catch(() => {});
         }
+    }
+
+    copySelected () {
+        var file = this.state.selected;
+        if (file !== undefined) {
+            Actions.file.copy(this.state.user, this.state.pname, file);
+        }
+    }
+
+    paste () {
+        Actions.prompt({
+            model: t.struct({
+                filename: t.Str,
+            })
+        }).then(data => {
+            Actions.file.paste_at_selected(window.UserStore.getUser(),
+                     this.state.pname, data.filename);
+        }).catch(() => {});
     }
 
     newFile () {
