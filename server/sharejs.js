@@ -49,6 +49,18 @@ function startSaving(name) {
     }
 }
 
+exports.close_pad = function (name) {
+    var file = docs[name];
+    if (file !== undefined) {
+        log.debug("closing pad for file "+file.file);
+        if (file.saver) {
+            clearInterval(file.saver);
+        }
+        file.doc.close();
+        delete docs[name];
+    }
+};
+
 var channelurl;
 
 exports.init = function (router, mount, conf) {

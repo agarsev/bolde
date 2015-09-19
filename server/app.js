@@ -58,6 +58,14 @@ app.post('/api/settings/update', function (req, res) {
 app.use('/api/project', require('./project'));
 
 // TODO permissions
+app.use('/api/file/delete', function (req, res, next) {
+    var user = req.body.user,
+        project = req.body.project,
+        path = req.body.path,
+        fullname = user+'/'+project+'/'+path;
+    sharejs.close_pad(fullname);
+    next();
+});
 app.use('/api/file', require('./file'));
 
 app.use(express.static('build'));
