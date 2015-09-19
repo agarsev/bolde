@@ -57,8 +57,7 @@ class ProjectStore extends EventEmitter {
                     this.projects[a.project].cwd = a.path;
                     break;
                 case 'project.select_file':
-                    // TODO maybe select parent
-                    this.projects[a.project].cwd = null;
+                    this.projects[a.project].cwd = a.path.substr(0, a.path.lastIndexOf('/'));
                     break;
             }
         });

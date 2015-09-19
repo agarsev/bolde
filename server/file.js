@@ -2,7 +2,7 @@ var express = require('express'),
     log4js = require('log4js');
 
 var store = require('./store');
-var path = require('../src/utils/path');
+var Path = require('../src/utils/path');
 
 var log = log4js.getLogger('file');
 
@@ -20,12 +20,9 @@ Router.post('/new', function (req, res) {
         return store.load(user, project, 'files');
     }).then(function (files) {
         nufiles = files;
-        var res, name = path;
-        while (res = /^([^\/]+)\/(.+)$/.exec(name)) {
-            files = files[res[1]].files;
-            name = res[2];
-        }
-        files[name] = { type: type };
+        var p = { files: files, path: path };
+        Path.navigate(p);
+        p.files[p.path] = { type: type };
         return store.write(nufiles, user, project, 'files');
     }).then(function () {
         log.info('new file '+fullname);
@@ -47,12 +44,9 @@ Router.post('/delete', function (req, res) {
         return store.load(user, project, 'files');
     }).then(function (files) {
         nufiles = files;
-        var res, name = path;
-        while (res = /^([^\/]+)\/(.+)$/.exec(name)) {
-            files = files[res[1]].files;
-            name = res[2];
-        }
-        delete files[name];
+        var p = { files: files, path: path };
+        Path.navigate(p);
+        delete p.files[p.path];
         return store.write(nufiles, user, project, 'files');
     }).then(function () {
         log.info('deleted file '+fullname);
@@ -64,31 +58,25 @@ Router.post('/delete', function (req, res) {
 });
 
 Router.post('/copy', function (req, res) {
-    var from = path.parse(req.body.from),
-        to = path.parse(req.body.to);
+    var from = Path.parse(req.body.from),
+        to = Path.parse(req.body.to);
     var nufiles, type;
     store.copyFile(req.body.from, req.body.to)
     .then(function () {
         return Promise.all([store.load(from[1], from[2], 'files')
                           ,store.load(to[1], to[2], 'files')]);
     }).then(function (files) {
-        var fromfiles = files[0], tofiles = files[1];
-        nufiles = tofiles;
-        var res, old = from[3], nu = to[3];
-        while (res = /^([^\/]+)\/(.+)$/.exec(old)) {
-            fromfiles = fromfiles[res[1]].files;
-            old = res[2];
-        }
-        type = fromfiles[old].type;
-        while (res = /^([^\/]+)\/(.+)$/.exec(nu)) {
-            tofiles = tofiles[res[1]].files;
-            nu = res[2];
-        }
-        tofiles[nu] = { type: type };
+        var fromp = {files: files[0], path: from[3]};
+        Path.navigate(fromp);
+        var top = {files: files[1], path: to[3]};
+        nufiles = top.files;
+        Path.navigate(top);
+        type = fromp.files[fromp.path].type;
+        top.files[top.path] = { type: type };
         return store.write(nufiles, to[1], to[2], 'files');
     }).then(function () {
         log.info('copy file '+req.body.from+' to '+req.body.to);
-        res.send({ok: true, data:{files:nufiles}});
+        res.send({ok: true, data:{files:nufiles,type:type}});
     }).catch(function(error) {
         applog.warn(error);
         res.send({ok: false, error:error});

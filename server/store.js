@@ -43,10 +43,13 @@ exports.writeFile = function (path, data) {
 };
 
 exports.getFileOpts = function (path) {
-    // TODO subdirectories
     var res = respath.parse(path);
     return exports.load(res[1],res[2],'files')
-    .then(function(files) { return files[res[3]]; });
+    .then(function(files) {
+        var f = { files: files, path: res[3] };
+        respath.navigate(f);
+        return f.files[f.path];
+    });
 };
 
 exports.copyFile = function (from, to) {
