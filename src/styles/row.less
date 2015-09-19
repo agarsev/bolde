@@ -21,12 +21,15 @@
             background: lighten(@blue, 40%);
             color: black;
             border-radius: 1ex;
-            cursor: pointer;
             & > div {
                 border: 1px solid @blue;
                 border-radius: 3px;
                 background: lighten(@blue, 40%);
                 padding: 2px;
+            }
+            &:hover {
+                cursor: pointer;
+                background: lighten(@blue, 50%);
             }
         }
         &.collapsable {

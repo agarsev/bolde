@@ -42,15 +42,6 @@ class DirTree extends React.Component {
         e.preventDefault();
     }
 
-    deleteClick (file, e) {
-        // TODO nested deleting
-        this.props.deleteFile(file);
-        if (e) {
-            e.stopPropagation();
-            e.preventDefault();
-        }
-    }
-
     render () {
         var below;
         var selected = this.props.selected || this.state.selected;
@@ -61,19 +52,14 @@ class DirTree extends React.Component {
                     return(<li key={filename}>
                            <DirTree openFile={this.props.openFile} path={this.state.fullname}
                            selected={selected} clickFile={this.clickFile.bind(this)}
-                           deleteFile={this.deleteClick.bind(this)}
                            name={filename} files={file.files} />
                            </li>);
                 } else {
                     var fullname = this.props.root?filename:this.state.fullname+'/'+filename;
-                    var remove;
-                    if (selected == fullname) {
-                        remove = <a onClick={this.deleteClick.bind(this, fullname)}>x</a>;
-                    }
                     return(<li key={filename} className={selected==fullname?'selected':''}
                            onClick={this.clickFile.bind(this, fullname, false)}
                            onDoubleClick={this.dblClickFile.bind(this, fullname)}>
-                           <a>{filename}</a>{remove}
+                           <a>{filename}</a>
                            </li>);
                 }
             });

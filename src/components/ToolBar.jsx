@@ -63,7 +63,6 @@ class ToolBar extends React.Component {
         }
         return (
             <nav>
-                <a id="Home" href="index.html">Home</a>
                 {window.ToolStore.getTools(false).map(map_to_node)}
                 <span className="spacer"></span>
                 <img src="loading.gif" style={window.ToolStore.isLoading()?{display:''}:{display:'none'}} />

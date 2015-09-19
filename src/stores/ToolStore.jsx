@@ -42,6 +42,7 @@ class ToolStore extends EventEmitter {
                 case 'toolbar.remove':
                     this.removeTool(a.id);
                     break;
+                /*
                 case 'project.open':
                     this.addMenu('Proj_'+a.name, a.name, [
                         {title:'New file',click: function () {
@@ -67,6 +68,7 @@ class ToolStore extends EventEmitter {
                 case 'project.close':
                     this.removeTool('Proj_'+a.name);
                     break;
+                */
                 case 'loading.start':
                     this.loading = true;
                     this.emit('changed');

@@ -1,0 +1,29 @@
+@import "colours.less";
+
+.projectView {
+    display: flex;
+    flex-direction: column;
+    span:first-child {
+        background: @blue;
+        padding: 2px 3px;
+        flex: 0;
+        flex-basis: auto;
+        text-align: right;
+        button {
+            background: lighten(@blue, 40%);
+            border-radius: 0.2em;
+            margin: 2px 1px;
+            border: none;
+            color: black;
+            width: 1.2em;
+            font-size: 110%;
+            &:hover {
+                cursor: pointer;
+                background: lighten(@blue, 50%);
+            }
+        }
+    }
+    span:second-child {
+        flex: 1;
+    }
+}

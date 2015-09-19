@@ -45,6 +45,6 @@ window.Dispatcher.register(a => { switch(a.actionType) {
         break;
 }});
 
-var welcome = fs.readFileSync('welcome.md', 'utf8');
+var welcome = fs.readFileSync('config/welcome.md', 'utf8');
 
 Actions.tab.new_msg('Welcome', welcome);

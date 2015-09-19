@@ -2,7 +2,7 @@ ENGINES:=$(patsubst src/%.jsx, build/%.js, $(wildcard src/engines/*))
 
 all: build/bundle.js $(ENGINES)
 
-build/bundle.js: $(wildcard src/*) $(wildcard src/**) $(wildcard src/*/**) welcome.md
+build/bundle.js: $(wildcard src/*) $(wildcard src/**) $(wildcard src/*/**) config/welcome.md
 	mkdir -p build
 	NODE_PATH="node_modules:src" browserifyinc -v \
 			  --ignore-missing \
