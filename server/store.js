@@ -30,6 +30,10 @@ exports.newFile = function (path) {
     return fs.ensureFile(config.get('user_files')+'/'+path);
 };
 
+exports.newDir = function (path) {
+    return fs.mkdir(config.get('user_files')+'/'+path);
+};
+
 exports.deleteFile = function (path) {
     return fs.remove(config.get('user_files')+'/'+path);
 };

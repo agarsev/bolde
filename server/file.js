@@ -12,20 +12,28 @@ Router.post('/new', function (req, res) {
     var user = req.body.user,
         project = req.body.project,
         path = req.body.path,
-        type = req.body.type === 'grammar' ? 'json': 'text',
+        type = req.body.type;
         fullname = user+'/'+project+'/'+path;
     var nufiles;
-    store.newFile(fullname)
+    (type=='dir'?store.newDir(fullname):store.newFile(fullname))
     .then(function () {
         return store.load(user, project, 'files');
     }).then(function (files) {
         nufiles = files;
         var p = { files: files, path: path };
         Path.navigate(p);
-        p.files[p.path] = { type: type };
+        if (type === 'dir') {
+            p.files[p.path] = { type: type, files: {} };
+        } else {
+            p.files[p.path] = { type: type };
+        }
         return store.write(nufiles, user, project, 'files');
     }).then(function () {
-        log.info('new file '+fullname);
+        if (type=='dir') {
+            log.info('new directory '+fullname);
+        } else {
+            log.info('new file '+fullname);
+        }
         res.send({ok: true, data:{files:nufiles}});
     }).catch(function(error) {
         applog.warn(error);

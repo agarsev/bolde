@@ -74,7 +74,7 @@ class ProjectView extends React.Component {
         Actions.prompt({
             model: t.struct({
                 filename: t.Str,
-                type: t.enums({ text: 'text', grammar: 'grammar' })
+                type: t.enums({ text: 'text', json: 'grammar', dir: 'directory' })
             }),
             options: { fields: {
                 type: { nullOption: false }
