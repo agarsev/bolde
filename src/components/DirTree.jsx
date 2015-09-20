@@ -2,6 +2,8 @@
 
 var React = require('react');
 
+require('styles/dirtree');
+
 class DirTree extends React.Component {
 
     constructor (props) {

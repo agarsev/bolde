@@ -37,14 +37,16 @@ class Prompt extends React.Component {
             background: 'rgba(0,0,0,0.5)',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-around'
+            justifyContent: 'space-around',
+            zIndex: 100
         };
         var promptStyle = {
             padding: '2em',
             flex: '0 0 auto',
             borderRadius: 5,
             border: '1px solid black',
-            background: 'white'
+            background: 'white',
+            zIndex: 101
         };
         return (<div style={overlayStyle} onClick={this.dismiss.bind(this)}>
             <div style={promptStyle} onClick={e => e.stopPropagation()}>

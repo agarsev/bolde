@@ -5,8 +5,6 @@ var Borjes = require('borjes-react');
 
 var Row = require('./Row');
 
-require('styles/tree');
-
 class TBView extends React.Component {
 
     constructor(props) {

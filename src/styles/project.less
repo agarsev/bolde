@@ -3,7 +3,7 @@
 .projectView {
     display: flex;
     flex-direction: column;
-    span:first-child {
+    & > span:first-child {
         background: @blue;
         padding: 2px 3px;
         flex: 0;
@@ -23,7 +23,8 @@
             }
         }
     }
-    span:second-child {
+    & > span:nth-child(2) {
         flex: 1;
+        overflow-y: auto;
     }
 }
