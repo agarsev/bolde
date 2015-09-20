@@ -39,11 +39,11 @@ Worker.prototype.init = function (config) {
         var l = Lexicon();
         desc.lexicon.forEach((paradigm) => {
             var common = paradigm.value.borjes_bound;
-            var ind = paradigm.indices;
             Lexicon.inflect(l, (lexeme) => {
                 var w = types.copy(common);
-                for (var i=0; i<ind.length; i++) {
-                    World.set(w, ind[i], i==0?Literal(lexeme[0]):lexeme[i]);
+                World.set(w, 0, Literal(lexeme[0]));
+                for (var i=1; i<lexeme.length; i++) {
+                    World.set(w, i, lexeme[i]);
                 }
                 var v = types.copy(paradigm.value);
                 World.bind(w, v);
