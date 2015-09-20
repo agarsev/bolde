@@ -68,7 +68,7 @@ class VisualEditor extends React.Component {
             <h1>Signature</h1>
             <div style={{paddingRight: '1em'}}>
                 <Row actions={{edit: this.editToggle.bind(this)}}>
-                    <BorjesProtoLattice x={protosig} update={this.updateSignature.bind(this)} opts={{editable:this.state.sigEdit}} />
+                    <BorjesProtoLattice x={protosig} name='signature' update={this.updateSignature.bind(this)} cpbuffer={this.state.cpbuffer} opts={{editable:this.state.sigEdit}} />
                 </Row>
             </div>
             <h1>Rules</h1>
