@@ -3,6 +3,7 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     log4js = require('log4js'),
     yaml = require('js-yaml'),
+    compression = require('compression'),
     config = require('config');
 
 var store = require('./store');
@@ -68,6 +69,7 @@ app.use('/api/file/delete', function (req, res, next) {
 });
 app.use('/api/file', require('./file'));
 
+app.use(compression());
 app.use(express.static('build'));
 app.use(express.static('static'));
 app.use('/ace', express.static('bower_components/ace-builds/src-min-noconflict'));
