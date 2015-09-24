@@ -27,7 +27,7 @@ class ParadigmEditor extends React.Component {
             common.titles[morph.index] = 'Morph';
             doc.at().set({ common, values: [['','',Anything,FStruct()]], lexemes: [], nparams: 2, name: 'Paradigm' });
         }
-        this.state = { editable: false };
+        this.state = { editV: doc.at('values').get().map(() => false), editL: doc.at('lexemes').get().map(() => false) };
         doc.on('child op', () => {
             this.forceUpdate();
         });
@@ -129,12 +129,15 @@ class ParadigmEditor extends React.Component {
         doc.at('lexemes').at(i).remove();
     }
 
-    editToggle (e) {
-        var ed = this.state.editable;
-        if (!ed) {
-            this.refs['row'].open();
+    editToggle (what, who, e) {
+        var edi;
+        if (what == 'v') {
+            edi = this.state.editV;
+        } else {
+            edi = this.state.editL;
         }
-        this.setState({editable: !this.state.editable});
+        edi[who] = !edi[who];
+        this.setState(this.state);
         if (e) { e.stopPropagation(); }
     }
 
@@ -167,7 +170,9 @@ class ParadigmEditor extends React.Component {
         var lex = doc.at('lexemes').get();
         var vals = doc.at('values').get();
         var nparams = doc.at('nparams').get();
-        var edi = this.state.editable;
+
+        var editV = this.state.editV;
+        var editL = this.state.editL;
 
         var params = [];
         for (var i=0; i<nparams; i++) {
@@ -178,12 +183,11 @@ class ParadigmEditor extends React.Component {
                     <span className="borjes_variable" onDoubleClick={this.editParam.bind(this,i)}>
                         {w.titles[i]}
                     </span>
-                    {edi?<button onClick={this.copyParam.bind(this, i)}>c</button>:null}
+                    <button onClick={this.copyParam.bind(this, i)}>c</button>
                 </td>);
             }
         }
         return <Row ref="row" title={doc.at('name').get()} collapsable={true} initShown={false} actions={{
-            edit: this.editToggle.bind(this),
             name: this.changeName.bind(this),
             remove: this.props.rm
             }}>
@@ -192,9 +196,10 @@ class ParadigmEditor extends React.Component {
                 <span className="borjes_variable" onDoubleClick={this.editParam.bind(this,1)}>
                     {w.titles[1]}
                 </span>
-                {edi?<button onClick={this.copyParam.bind(this, 1)}>c</button>:null}
-            </td><td>Class</td><td>Template</td>{edi?<td></td>:null}</tr>
+                <button onClick={this.copyParam.bind(this, 1)}>c</button>
+            </td><td>Class</td><td>Template</td><td></td></tr>
             {vals.map((v, i) => {
+                var edi = editV[i];
                 World.bind(w, v[2]);
                 World.bind(w, v[3]);
                 return <tr key={"val"+i}>
@@ -205,28 +210,34 @@ class ParadigmEditor extends React.Component {
                     </td>
                     <td><BorjesReact x={v[2]} cpbuffer={this.props.cpbuffer} update={this.updateGuard.bind(this, i)} opts={{editable:edi, signature:this.props.sig}}/></td>
                     <td><BorjesReact x={v[3]} cpbuffer={this.props.cpbuffer} update={this.updateValue.bind(this, i)} opts={{editable:edi, signature:this.props.sig}}/></td>
-                    {edi?<td><button onClick={this.rmVal.bind(this,i)}>x</button></td>:null}
+                    <td>
+                        {edi?<button onClick={this.rmVal.bind(this,i)}>x</button>:null}
+                        <button onClick={this.editToggle.bind(this,'v',i)}>{edi?'ok':'e'}</button>
+                    </td>
                 </tr>;
             })}
             </tbody></table>
-            {edi?<span className="borjes"><button onClick={this.addVal.bind(this)}>+</button></span>:null}
+            <span className="borjes"><button onClick={this.addVal.bind(this)}>+</button></span>
             <table className="borjes paradigm_editor"><tbody>
             <tr key="tr-1">
                 {params}
-                {edi?<td>
+                <td>
                     <button onClick={this.addParam.bind(this)}>+</button>
                     {nparams>1?<button onClick={this.rmParam.bind(this)}>-</button>:null}
-                </td>:null}
+                </td>
             </tr>
             {lex.map((l, i) => <tr key={"tr"+i}>
                 {l.map((n, j) => <td key={j}>
                     {j==0?n:
-                    <BorjesReact x={n} cpbuffer={this.props.cpbuffer} update={this.updateLex.bind(this, i, j)} opts={{editable:this.state.editable, signature:this.props.sig}}/>}
+                    <BorjesReact x={n} cpbuffer={this.props.cpbuffer} update={this.updateLex.bind(this, i, j)} opts={{editable:editL[i], signature:this.props.sig}}/>}
                 </td>)}
-                {edi?<td><button onClick={this.rm.bind(this, i)}>x</button></td>:null}
+                <td>
+                    {editL[i]?<button onClick={this.rm.bind(this, i)}>x</button>:null}
+                    <button onClick={this.editToggle.bind(this, 'l', i)}>{editL[i]?'ok':'e'}</button>
+                </td>
             </tr>)}
             </tbody></table>
-            {edi?<span className="borjes"><input ref="addLex" type="text" /><button onClick={this.add.bind(this)}>+</button></span>:null}
+            <span className="borjes"><input ref="addLex" type="text" /><button onClick={this.add.bind(this)}>+</button></span>
         </Row>;
     }
 }

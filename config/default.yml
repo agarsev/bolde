@@ -10,7 +10,7 @@ log:
     appenders:
         - type: console
         - type: file
-          filename: logs/tfm.log
+          filename: logs/bolde.log
           maxLogSize: 100000
           backups: 5
     levels:
