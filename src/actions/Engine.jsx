@@ -38,6 +38,16 @@ exports.start = function (engine) {
                 break;
             };
         };
+        w.onerror = function (e) {
+            window.Dispatcher.dispatch({
+                actionType: 'log.new',
+                name: 'System',
+                level: 'ERROR',
+                message: 'Engine '+engine+': '+e.message,
+            });
+            e.preventDefault();
+            e.stopPropagation();
+        };
         engines[engine] = eng;
     }
 };

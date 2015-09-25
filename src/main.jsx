@@ -48,3 +48,10 @@ window.Dispatcher.register(a => { switch(a.actionType) {
 var welcome = fs.readFileSync('config/welcome.md', 'utf8');
 
 Actions.tab.new_msg('Welcome', welcome);
+
+window.onerror = function (msg, script, line, col, err) {
+    console.log(msg, script, line, col, err);
+    Actions.prompt(undefined, "Error: "+msg+"\n\nDo you want to reload BOLDE?")
+    .then(() => { window.location.reload(); })
+    .catch(() => {});
+};

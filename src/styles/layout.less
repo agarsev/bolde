@@ -1,6 +1,11 @@
-@headersize: 4ex;
+@headersize: 0;
 @navsize: 4ex;
 @footersize: 4ex;
+
+.unselectable {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
 
 * {
     box-sizing: border-box;
@@ -103,9 +108,9 @@ body > footer {
                 display: flex;
                 flex-direction: row;
                 & > a {
+                    .unselectable;
                     white-space: nowrap;
                     flex: 1 10 auto;
-                    user-select: none;
                     display: inline-flex;
                     overflow: hidden;
                     span {
