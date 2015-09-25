@@ -28,40 +28,15 @@ Worker.prototype.init = function (config) {
     switch (config.format) {
     case 'CFG':
     case 'cfg':
-        this.grammar = bjs.Grammar[config.format](config.files.grammar);
+        this.grammar = bjs.Grammar.from_YAML(config.files.grammar);
         break;
     case 'HPSG':
     case 'hpsg':
-        var desc = config.files.grammar;
-        this.log("DEBUG", "Loading signature");
-        types.Lattice.fromProto(desc.global.signature, 'signature');
-        this.log("DEBUG", "Loading lexicon");
-        var l = Lexicon();
-        desc.lexicon.forEach((paradigm) => {
-            var common = paradigm.common;
-            for (var j=0; j<paradigm.values.length; j++) {
-                var value = paradigm.values[j][3];
-                var regex = new RegExp(paradigm.values[j][0]);
-                var subst = paradigm.values[j][1];
-                var guard = paradigm.values[j][2];
-                Lexicon.inflect(l, (lexeme) => {
-                    var u = bjs.unify(guard, lexeme[1]);
-                    if (types.eq(u, types.Nothing)) { return []; }
-                    var w = types.copy(common);
-                    var m = lexeme[0].replace(regex, subst);
-                    World.set(w, 0, Literal(lexeme[0]));
-                    World.set(w, 1, Literal(m));
-                    for (var i=2; i<lexeme.length; i++) {
-                        World.set(w, i, lexeme[i]);
-                    }
-                    var v = types.copy(value);
-                    World.bind(w, v);
-                    return [[m, types.normalize(v)]];
-                }, paradigm.lexemes);
-            }
-        });
-        this.log("DEBUG", "Creating grammar");
-        this.grammar = bjs.Grammar(desc.rules, l, desc.principles);
+        this.grammar = bjs.Grammar();
+        for (var k in config.files) {
+            this.log("DEBUG", "Compiling "+k);
+            bjs.Grammar.from_JSON(this.grammar, config.files[k]);
+        }
         break;
     }
     this.log("DEBUG", "Creating parser");
