@@ -13,15 +13,14 @@ class ToolStore extends EventEmitter {
         this.loading = false;
 
         var newTB = { title: 'New', click: () => console.log('Not implemented') };
-
-        this.tools = {
-            '_treebanks': {
-                title: 'Treebank',
-                menu: [ newTB ],
-                order: 2,
-                right: false
-            }
+        var tbtool = {
+            title: 'Treebank',
+            menu: [ ],
+            order: 2,
+            right: false
         };
+
+        this.tools = {};
 
         this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
@@ -42,33 +41,6 @@ class ToolStore extends EventEmitter {
                 case 'toolbar.remove':
                     this.removeTool(a.id);
                     break;
-                /*
-                case 'project.open':
-                    this.addMenu('Proj_'+a.name, a.name, [
-                        {title:'New file',click: function () {
-                            Actions.prompt({
-                                model: t.struct({
-                                    filename: t.Str,
-                                    type: t.enums({ text: 'text', grammar: 'grammar' })
-                                }),
-                                options: { fields: {
-                                    type: { nullOption: false }
-                                }},
-                                value: { type: 'text' }
-                            }).then(function(data) {
-                                Actions.file.new_at_selected(window.UserStore.getUser(),
-                                    a.name, data.filename, data.type);
-                            }).catch(() => {});
-                        }},
-                        {title:'Run',click: function() {
-                            Actions.project.run(window.UserStore.getUser()+'/'+a.name);
-                        }}
-                    ]);
-                    break;
-                case 'project.close':
-                    this.removeTool('Proj_'+a.name);
-                    break;
-                */
                 case 'loading.start':
                     this.loading = true;
                     this.emit('changed');
@@ -79,10 +51,12 @@ class ToolStore extends EventEmitter {
                     break;
                 case 'treebank.new':
                     window.Dispatcher.waitFor([window.TreebankStore.dispatchToken]);
-                    this.tools['_treebanks'].menu = [ newTB ]
-                        .concat(window.TreebankStore.getTreebanks().map(name => {
+                    if (this.tools['_treebanks'] === undefined) {
+                        this.tools['_treebanks'] = tbtool;
+                    }
+                    this.tools['_treebanks'].menu = window.TreebankStore.getTreebanks().map(name => {
                             return { title: name, click: Actions.treebank.open.bind(null,name) };
-                        }));
+                        });
                     this.emit('changed');
                     break;
             }
