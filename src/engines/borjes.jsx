@@ -28,10 +28,16 @@ Worker.prototype.init = function (config) {
     switch (config.format) {
     case 'CFG':
     case 'cfg':
+    case 'yaml':
+    case 'YAML':
+    case 'yml':
+    case 'YML':
         this.grammar = bjs.Grammar.from_YAML(config.files.grammar);
         break;
     case 'HPSG':
     case 'hpsg':
+    case 'json':
+    case 'JSON':
         this.grammar = bjs.Grammar();
         for (var k in config.files) {
             this.log("DEBUG", "Compiling "+k);

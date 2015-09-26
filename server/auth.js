@@ -26,3 +26,23 @@ exports.login = function (username, password) {
         }
     }
 };
+
+exports.createUser = function (username, password) {
+    if (users[username] || !username || !password) {
+        return Promise.reject("Username already exists");
+    } else {
+        var salt = crypto.randomBytes(16).toString('hex');
+        var salted = password+salt;
+        var hash = crypto.createHash('md5').update(salted).digest('hex');
+        users[username] = {
+            salt: salt,
+            hash: hash
+        };
+        store.newDir(username);
+        store.write({}, username, 'projects');
+        store.write({editor: 'default'}, username, 'settings');
+        store.write(users, 'users');
+        log.warn('created user '+username);
+        return Promise.resolve("Created "+username);
+    }
+};

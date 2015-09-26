@@ -46,6 +46,18 @@ app.post('/api/login', function (req, res) {
     });
 });
 
+app.post('/api/newuser', function (req, res) {
+    var user = req.body.user,
+        password = req.body.password;
+    auth.createUser(user, password)
+    .then(function(results) {
+        res.send({ok: true, data: results});
+    }).catch(function(error) {
+        applog.warn(error);
+        res.send({ok: false, error:error});
+    });
+});
+
 app.post('/api/settings/update', function (req, res) {
     store.write(req.body.settings, req.body.user, 'settings')
     .then(function() {
