@@ -12,7 +12,7 @@ var Literal = types.Literal;
 var Worker = require('../utils/EngineWorker');
 
 Worker.prototype.test = function (sentence) {
-    if (sentence !== '') {
+    if (this.parser && sentence !== '') {
         var words = sentence.split(' ');
         var parse = Parser.parse(this.parser, words);
         if (types.eq(parse, types.Nothing)) {
@@ -44,6 +44,9 @@ Worker.prototype.init = function (config) {
             bjs.Grammar.from_JSON(this.grammar, config.files[k]);
         }
         break;
+    default:
+        this.log("ERROR", "Unsupported format: "+config.format);
+        return;
     }
     this.log("DEBUG", "Creating parser");
     this.parser = Parser(this.grammar);
