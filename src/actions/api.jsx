@@ -5,7 +5,7 @@ function loading (yes) {
 };
 exports.loading = loading;
 
-exports.log = function (log, level) {
+function syslog (log, level) {
     if (level === undefined) { level = "ERROR"; }
     window.Dispatcher.dispatch({
         actionType: 'log.new',
@@ -14,7 +14,9 @@ exports.log = function (log, level) {
         message: log,
     });
 };
+exports.log = syslog;
 
+var refresh_msg = false;
 exports.call = function (url, data) {
     loading(true);
     return new Promise(function (resolve, reject) {
@@ -24,17 +26,31 @@ exports.call = function (url, data) {
         client.onload = function () {
             if (this.status == 200) {
                 var res = JSON.parse(this.response);
-                if (res.ok) { resolve(res.data); }
+                if (res.ok === true) { resolve(res.data); }
                 else { reject(res.error); }
             } else {
                 reject('API call to '+url+': response '+this.status);
             }
             loading(false);
         };
-        client.onerror = function () {
-            reject(this.statusText);
+        client.onerror = function (e) {
+            if (this.statusText == "") {
+                if (!refresh_msg) {
+                    window.Dispatcher.dispatch({
+                        actionType: 'prompt.in',
+                        msg: 'The server seems to be unreachable.\nDo you want to refresh the page?',
+                        reject: () => {},
+                        resolve: () => { window.location.reload(); }
+                    });
+                    refresh_msg = true;
+                }
+                reject("No connection to the server");
+            } else {
+                reject(this.statusText);
+            }
             loading(false);
         };
         client.send(JSON.stringify(data));
-    });
+    })
+    .catch(syslog);
 };

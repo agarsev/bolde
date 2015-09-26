@@ -79,10 +79,16 @@ exports.init = function (router, mount, conf) {
     });
     router.post('/keepalive', bodyParser.json(), function (req, res) {
         var paths = req.body.paths;
-        for (var i=0; i<paths.length; i++) {
-            docs[paths[i]].idleCount = 0;
+        var ok = true;
+        for (var i=0; ok && i<paths.length; i++) {
+            if (docs[paths[i]] === undefined) {
+                res.send({ok: false, error: 'the server has restarted, please refresh the page'});
+                ok = false;
+            } else {
+                docs[paths[i]].idleCount = 0;
+            }
         }
-        res.send({ok: true});
+        if (ok) { res.send({ok: true}); }
     });
     sharejs.attach(router, {db: {type: 'none'}});
 }
