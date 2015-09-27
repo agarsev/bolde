@@ -38,7 +38,7 @@ exports.call = function (url, data) {
                 if (!refresh_msg) {
                     window.Dispatcher.dispatch({
                         actionType: 'prompt.in',
-                        msg: 'The server seems to be unreachable.\nDo you want to refresh the page?',
+                        msg: 'The server seems to be unreachable. Do you want to refresh the page?',
                         reject: () => {},
                         resolve: () => { window.location.reload(); }
                     });

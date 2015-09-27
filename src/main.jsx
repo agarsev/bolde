@@ -51,7 +51,7 @@ Actions.tab.new_msg('Welcome', welcome);
 
 window.onerror = function (msg, script, line, col, err) {
     console.log(msg, script, line, col, err);
-    Actions.prompt(undefined, "Error: "+msg+"\n\nDo you want to reload BOLDE?")
+    Actions.prompt(undefined, <div><p>The system has experienced an internal error:</p><p>{msg}</p><p>Do you want to reload BOLDE?</p></div>)
     .then(() => { window.location.reload(); })
     .catch(() => {});
 };
