@@ -20,7 +20,7 @@ class TabStore extends EventEmitter {
                     this.openMessage(a.title, a.text, a.links);
                     break;
                 case 'tab.open':
-                    this.addTab(a.id, a.title, a.node);
+                    this.addTab(a.id, a.title, a.node, a.panel);
                     break;
                 case 'tab.close':
                     this.closeTab(a.id);

@@ -12,22 +12,22 @@ class UserStore extends EventEmitter {
         this.user = null;
         window.Dispatcher.register(a => {
             switch (a.actionType) {
-            case 'login':
+            case 'user.login':
                 this.user = a.user;
                 this.token = a.token;
                 this.settings = a.settings;
                 this.emit('changed');
                 break;
-            case 'logout':
+            case 'user.logout':
                 this.user = null;
                 this.token = null;
                 this.loginError = null;
                 this.emit('changed');
                 break;
-            case 'changeSettings':
+            case 'user.changeSettings':
                 this.settings = a.settings;
                 break;
-            case 'loginFail':
+            case 'user.loginFail':
                 this.loginError = a.error;
                 this.emit('changed');
                 break;

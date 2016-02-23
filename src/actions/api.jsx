@@ -51,6 +51,5 @@ exports.call = function (url, data) {
             loading(false);
         };
         client.send(JSON.stringify(data));
-    })
-    .catch(syslog);
+    });
 };

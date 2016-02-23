@@ -1,7 +1,6 @@
 "use strict";
 
 var React = require('react');
-var LoginForm = require('./LoginForm');
 var Actions = require('../Actions');
 
 class ToolButton extends React.Component {
@@ -57,9 +56,9 @@ class ToolBar extends React.Component {
         };
         var log;
         if (window.UserStore.isLogged()) {
-            log = <ToolButton title="Logout" click={() => Actions.logout()} />;
+            log = <ToolButton title="Logout" click={() => Actions.user.logout()} />;
         } else {
-            log = <LoginForm />;
+            log = null;
         }
         return (
             <nav>

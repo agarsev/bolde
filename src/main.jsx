@@ -8,6 +8,7 @@ var fs = require('fs');
 var React = require('react');
 
 var UserStore = require('stores/UserStore');
+var UserPage = require('components/UserPage');
 var TabStore = require('stores/TabStore');
 var TabPanel = require('components/TabPanel');
 var ToolStore = require('stores/ToolStore');
@@ -48,6 +49,7 @@ window.Dispatcher.register(a => { switch(a.actionType) {
 var welcome = fs.readFileSync('config/welcome.md', 'utf8');
 
 Actions.tab.new_msg('Welcome', welcome);
+Actions.tab.open('_UserTab', 'Anonymous User', <UserPage />, 2);
 
 window.onerror = function (msg, script, line, col, err) {
     console.log(msg, script, line, col, err);

@@ -5,7 +5,9 @@ var crypto = require('crypto'),
 var log = log4js.getLogger('auth');
 
 var users;
-store.load('users').then(function(x) { users = x; });
+store.load('users')
+.then(function(x) { users = x; })
+.catch(function() { users = {}; })
 
 var sessions = {};
 
