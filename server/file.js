@@ -12,7 +12,7 @@ Router.post('/new', function (req, res) {
     var user = req.body.user,
         project = req.body.project,
         path = req.body.path,
-        type = req.body.type;
+        type = req.body.type,
         fullname = user+'/'+project+'/'+path;
     var nufiles;
     (type=='dir'?store.newDir(fullname):store.newFile(fullname))

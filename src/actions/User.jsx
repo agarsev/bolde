@@ -3,7 +3,7 @@
 var api = require('./api');
 
 var login = function (user, password) {
-    api.call('api/login', {user:user, password:password})
+    api.call('api/user/login', {user:user, password:password})
     .then(function(data){
         window.Dispatcher.dispatch({
             actionType: 'user.login',
@@ -22,7 +22,7 @@ var login = function (user, password) {
 exports.login = login;
 
 exports.register = function (user, password) {
-    api.call('api/newuser', {user:user, password:password})
+    api.call('api/user/new', {user:user, password:password})
     .then(function() { return login(user, password); })
     .catch(function(error){
         window.Dispatcher.dispatch({
@@ -39,7 +39,7 @@ exports.logout = function () {
 };
 
 exports.changeSettings = function (settings) {
-    api.call('api/settings/update', {user:window.UserStore.getUser(), settings})
+    api.call('api/user/settings', {user:window.UserStore.getUser(), settings})
     .then(function(data) {
         window.Dispatcher.dispatch({
             actionType: 'user.changeSettings',

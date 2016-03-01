@@ -10,7 +10,7 @@ var store = require('./store');
 store.init(config);
 
 var sharejs = require('./sharejs'),
-    auth = require('./auth');
+    user = require('./user');
 
 var app = express();
 var server = http.createServer(app);
@@ -31,46 +31,11 @@ app.use('/api/sharejs', shareRoute);
 
 app.use(bodyParser.json());
 
-app.post('/api/login', function (req, res) {
-    var token;
-    auth.login(req.body.user, req.body.password)
-    .then(function(tok) {
-        token = tok;
-        return Promise.all([store.load(req.body.user, 'settings'),
-                            store.load(req.body.user, 'projects')]);
-    }).then(function(results) {
-        res.send({ok: true, data:{ token:token, projects: results[1], settings:results[0]}});
-    }).catch(function(error) {
-        applog.warn(error);
-        res.send({ok: false, error:error});
-    });
-});
+// TODO permissions
 
-app.post('/api/newuser', function (req, res) {
-    var user = req.body.user,
-        password = req.body.password;
-    auth.createUser(user, password)
-    .then(function(results) {
-        res.send({ok: true, data: results});
-    }).catch(function(error) {
-        applog.warn(error);
-        res.send({ok: false, error:error});
-    });
-});
-
-app.post('/api/settings/update', function (req, res) {
-    store.write(req.body.settings, req.body.user, 'settings')
-    .then(function() {
-        res.send({ok: true, data: {}});
-    }).catch(function (error) {
-        applog.warn(error);
-        res.send({ok: false, error:error});
-    });
-});
-
+app.use('/api/user/', require('./user'));
 app.use('/api/project', require('./project'));
 
-// TODO permissions
 app.use('/api/file/delete', function (req, res, next) {
     var user = req.body.user,
         project = req.body.project,
