@@ -49,3 +49,14 @@ exports.changeSettings = function (settings) {
     });
 };
 
+exports.message = function (to, subject, text) {
+    api.call('api/user/message', {from:window.UserStore.getUser(), to, subject, text})
+    .then(function(messages) {
+        window.Dispatcher.dispatch({
+            actionType: 'user.messages',
+            messages
+        });
+    }).catch(function(error) {
+        api.log(error);
+    });
+};

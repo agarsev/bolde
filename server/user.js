@@ -87,4 +87,35 @@ Router.post('/settings', function (req, res) {
     });
 });
 
+Router.post('/message', function (req, res) {
+    var from = req.body.from,
+        to = req.body.to,
+        subject = req.body.subject,
+        text = req.body.text,
+        snd, rcp;
+    if (!users[to]) {
+        res.send({ok: false, error: 'No such user'});
+        return;
+    }
+    Promise.all([store.load(from, 'messages'),
+                 store.load(to, 'messages')])
+    .then(function(msgs) {
+        snd = msgs[0]; rcp = msgs[1];
+        var sndtitle = subject+'%%'+to,
+            rcptitle = subject+'%%'+from;
+        if (!snd[sndtitle]) { snd[sndtitle] = []; }
+        if (!rcp[rcptitle]) { rcp[rcptitle] = []; }
+        snd[sndtitle].push({ me: text });
+        rcp[rcptitle].push({ them: text });
+        return Promise.all([store.write(snd, from, 'messages'),
+                            store.write(rcp, to, 'messages')]);
+    }).then(function () {
+        res.send({ok: true, data: snd });
+        // TODO push to receiver
+    }).catch(function (error) {
+        applog.warn(error);
+        res.send({ok: false, error: error });
+    });
+});
+
 module.exports = Router;

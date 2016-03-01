@@ -32,6 +32,9 @@ class UserStore extends EventEmitter {
                 this.loginError = a.error;
                 this.emit('changed');
                 break;
+            case 'user.messages':
+                this.messages = a.messages;
+                this.emit('changed');
             }
         });
     }
