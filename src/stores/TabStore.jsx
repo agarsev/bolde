@@ -32,9 +32,11 @@ class TabStore extends EventEmitter {
                     this.focusTab(a.id);
                     break;
                 case 'user.login':
+                    this.tabs['_UserTab'].title = 'User: '+a.user;
                     this.addTab('_ProjectList', 'Projects', Components.ProjectList(), 1);
                     break;
                 case 'user.logout':
+                    this.tabs['_UserTab'].title = 'Anonymous User';
                     window.ProjectStore.getAll()
                         .forEach(name => this.closeProjectView(name));
                     this.closeTab('_ProjectList');

@@ -2,6 +2,8 @@
 
 var api = require('./api');
 
+var sses = {};
+
 var login = function (user, password) {
     api.call('api/user/login', {user:user, password:password})
     .then(function(data){
@@ -19,6 +21,7 @@ var login = function (user, password) {
             data.actionType = 'server.'+data.action;
             window.Dispatcher.dispatch(data);
         };
+        sses[user] = sse;
     }).catch(function(error){
         window.Dispatcher.dispatch({
             actionType: 'user.loginFail',
@@ -40,6 +43,9 @@ exports.register = function (user, password) {
 };
 
 exports.logout = function () {
+    var us = window.UserStore.getUser();
+    sses[us].close();
+    delete sses[us];
     window.Dispatcher.dispatch({
         actionType: 'user.logout'
     });
