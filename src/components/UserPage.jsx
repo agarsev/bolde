@@ -1,4 +1,6 @@
 var React = require('react');
+var t = require('tcomb-form');
+
 var LoginForm = require('./LoginForm');
 var Actions = require('../Actions');
 var Form = require('./TForm');
@@ -17,7 +19,7 @@ class Conversation extends React.Component {
             title = split[0];
         return <Row title={user+": "+title} collapsable={true} actions={{
             'Delete': () => console.log('Delete'),
-            'Reply': () => console.log('Reply')
+            'Reply': () => this.props.reply(user, title)
             }}>
             <div className="conversationBody">
             {body.map((t, i) => <div key={i}>
@@ -45,12 +47,11 @@ class UserPage extends React.Component {
             return <div className="paper">
                 <p>{"Welcome back, "+u}</p>
                 <h1>Conversations</h1>
-                {Object.keys(ms).map(c => <Conversation key={c} name={c} body={ms[c]} />)}
-                <h2>New message</h2>
-                To: <input ref="to" type="text" />
-                Subject: <input ref="sub" type="text" />
-                <textarea ref="txt" />
-                <button onClick={this.sendMsg.bind(this)}>Send</button>
+                {Object.keys(ms).map(c => <Conversation key={c} name={c}
+                                     body={ms[c]}
+                                     reply={this.sendMsg.bind(this)}
+                                     />)}
+                <button onClick={this.sendMsg.bind(this, undefined, undefined)}>New message</button>
                 <Form title='Settings' onChange={Actions.user.changeSettings} getData={us.getSettingsForm.bind(us)} />
             </div>;
         } else {
@@ -66,11 +67,25 @@ class UserPage extends React.Component {
         }
     }
 
-    sendMsg () {
-        var to = React.findDOMNode(this.refs.to).value,
-            sub = React.findDOMNode(this.refs.sub).value,
-            txt = React.findDOMNode(this.refs.txt).value;
-        Actions.user.message(to, sub, txt);
+    sendMsg (to, subject) {
+        Actions.prompt({
+            model: t.struct({
+                To: t.Str,
+                Subject: t.Str,
+                Message: t.Str
+            }),
+            options: { fields: {
+                Message: {
+                    type: 'textarea',
+                    auto: 'placeholders'
+                }
+            }},
+            value:  {
+                To: to,
+                Subject: subject
+            }
+        }).then(data => Actions.user.message(data.To, data.Subject, data.Message))
+        .catch(() => {});
     }
 
 };

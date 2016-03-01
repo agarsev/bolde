@@ -73,7 +73,7 @@ class Row extends React.Component {
                 <span key="sp2" className="spacer" />
                 {Object.keys(as).map(ax => typeof as[ax] == 'object'
                     ?<RowMenu key={ax} title={ax} actions={as[ax]} />
-                    :<a key={ax} onClick={as[ax]}>{ax}</a>
+                    :<a key={ax} onClick={this.notoggle.bind(this, as[ax])}>{ax}</a>
                  )}
             </div>
             {this.state.shown?
@@ -82,6 +82,12 @@ class Row extends React.Component {
                 </div>
                 :null}
         </div>;
+    }
+
+    notoggle (action, e) {
+        action();
+        e.preventDefault();
+        e.stopPropagation();
     }
 }
 
