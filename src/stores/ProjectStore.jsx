@@ -10,7 +10,7 @@ class ProjectStore extends EventEmitter {
         this.projects = {};
         this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
-                case 'login':
+                case 'user.login':
                     this.projects = a.projects;
                     Object.keys(this.projects).forEach(p => {
                         if (!this.projects[p]) { this.projects[p] = {} }
@@ -19,7 +19,7 @@ class ProjectStore extends EventEmitter {
                     });
                     this.emit('changed');
                     break;
-                case 'logout':
+                case 'user.logout':
                     window.Dispatcher.waitFor([
                         window.TabStore.dispatchToken,
                         window.ToolStore.dispatchToken

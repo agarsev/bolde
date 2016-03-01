@@ -28,7 +28,7 @@ class ProjectView extends React.Component {
                 <button title="paste" onClick={this.paste.bind(this)}>p</button>
                 <button title="new" onClick={this.newFile.bind(this)}>+</button>
                 <button title="delete" onClick={this.deleteSelected.bind(this)}>x</button>
-                <button title="run" onClick={this.run.bind(this)}>⏵</button>
+                <button title="run" onClick={this.run.bind(this)}>▶</button>
             </span>
             <span>
                 <DirTree files={p.files} root="true"

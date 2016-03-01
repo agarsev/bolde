@@ -31,10 +31,10 @@ class TabStore extends EventEmitter {
                 case 'tab.focus':
                     this.focusTab(a.id);
                     break;
-                case 'login':
+                case 'user.login':
                     this.addTab('_ProjectList', 'Projects', Components.ProjectList(), 1);
                     break;
-                case 'logout':
+                case 'user.logout':
                     window.ProjectStore.getAll()
                         .forEach(name => this.closeProjectView(name));
                     this.closeTab('_ProjectList');

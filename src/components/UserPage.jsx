@@ -1,6 +1,7 @@
 var React = require('react');
 var LoginForm = require('./LoginForm');
 var Actions = require('../Actions');
+var Form = require('./TForm');
 
 class UserPage extends React.Component {
 
@@ -14,8 +15,8 @@ class UserPage extends React.Component {
             var u = window.UserStore.getUser();
             return <div className="paper">
                 <p>{"Welcome back, "+u}</p>
-            </div>
-            // Settings, Messages
+                <Form title='Settings' onChange={Actions.user.changeSettings} getData={window.UserStore.getSettingsForm.bind(window.UserStore)} />
+            </div>;
         } else {
             var error = window.UserStore.getLoginError();
             return <div className="paper">
