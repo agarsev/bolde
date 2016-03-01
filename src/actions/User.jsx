@@ -13,6 +13,12 @@ var login = function (user, password) {
             settings: data.settings,
             messages: data.messages
         });
+        var sse = new EventSource('api/user/sse/'+user);
+        sse.onmessage = function (event) {
+            data = JSON.parse(event.data);
+            data.actionType = 'server.'+data.action;
+            window.Dispatcher.dispatch(data);
+        };
     }).catch(function(error){
         window.Dispatcher.dispatch({
             actionType: 'user.loginFail',

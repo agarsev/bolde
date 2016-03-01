@@ -1,5 +1,6 @@
 var crypto = require('crypto'),
     express = require('express'),
+    SSE = require('sse-pusher'),
     log4js = require('log4js');
 
 var store = require('./store');
@@ -20,6 +21,7 @@ store.load('users')
 .catch(function() { users = {}; })
 
 var sessions = {};
+var ssestreams = {};
 
 Router.post('/login', function (req, res) {
     var username = req.body.user,
@@ -35,6 +37,9 @@ Router.post('/login', function (req, res) {
             var token = crypto.randomBytes(48).toString('hex');
             sessions[token] = { user: username };
             log.info('logged in '+username);
+            var stream = SSE(res);
+            ssestreams[username] = stream;
+            Router.get('/sse/'+username, stream.handler());
             Promise.all([store.load(username, 'settings'),
                          store.load(username, 'messages'),
                          store.load(username, 'projects')])
@@ -111,7 +116,7 @@ Router.post('/message', function (req, res) {
                             store.write(rcp, to, 'messages')]);
     }).then(function () {
         res.send({ok: true, data: snd });
-        // TODO push to receiver
+        ssestreams[to]({ action: 'messages', messages: rcp });
     }).catch(function (error) {
         applog.warn(error);
         res.send({ok: false, error: error });

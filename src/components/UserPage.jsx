@@ -22,7 +22,7 @@ class Conversation extends React.Component {
             'Reply': () => this.props.reply(user, title)
             }}>
             <div className="conversationBody">
-            {body.map((t, i) => <div key={i}>
+            {body.map((t, i) => <div key={i} className={t.me?"meMessage":"themMessage"}>
                     <div>{t.me?"Me":user}</div>
                     <div dangerouslySetInnerHTML={{__html: md.render(t.me?t.me:t.them)}} />
             </div>)}

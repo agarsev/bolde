@@ -30,6 +30,7 @@
     "react": "^0.13.1",
     "reactify": "^1.1.0",
     "share": "^0.6.3",
+    "sse-pusher": "^1.1.1",
     "tcomb": "^1.1.0",
     "tcomb-form": "^0.4.11"
   }
