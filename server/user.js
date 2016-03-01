@@ -8,6 +8,12 @@ var log = log4js.getLogger('auth');
 
 var Router = new express.Router();
 
+var default_messages = {
+    "Welcome!%%BOLDE": [
+        { them: '*Welcome* to the system.' }
+    ]
+};
+
 var users;
 store.load('users')
 .then(function(x) { users = x; })
@@ -29,12 +35,14 @@ Router.post('/login', function (req, res) {
             var token = crypto.randomBytes(48).toString('hex');
             sessions[token] = { user: username };
             log.info('logged in '+username);
-            Promise.all([store.load(req.body.user, 'settings'),
-                         store.load(req.body.user, 'projects')])
+            Promise.all([store.load(username, 'settings'),
+                         store.load(username, 'messages'),
+                         store.load(username, 'projects')])
             .then(function(results) {
                 res.send({ok: true, data: {
                     token:token,
-                    projects: results[1],
+                    messages: results[1],
+                    projects: results[2],
                     settings:results[0]
                 }});
             });
@@ -48,7 +56,7 @@ Router.post('/login', function (req, res) {
 Router.post('/new', function (req, res) {
     var username = req.body.user,
         password = req.body.password;
-    if (users[username] || !username || !password) {
+    if (users[username] || !username || !password || username == 'BOLDE') {
         log.error("username "+username+" already in use");
         res.send({ok:false, error:"Username already exists"});
     } else {
@@ -62,6 +70,7 @@ Router.post('/new', function (req, res) {
         store.newDir(username);
         store.write({}, username, 'projects');
         store.write({editor: 'default'}, username, 'settings');
+        store.write(default_messages, username, 'messages');
         store.write(users, 'users');
         log.warn('created user '+username);
         res.send({ok: true, data: "Created "+username});

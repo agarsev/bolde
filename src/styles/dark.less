@@ -129,3 +129,17 @@ body > header {
         padding: 0.2em;
     }
 }
+
+.conversationBody {
+    max-height: 30vh;
+    overflow-y: auto;
+    & > p {
+        & > span:first-child {
+            font-weight: bold;
+            padding-left: 1ex;
+            &:after {
+                content: ": ";
+            }
+        }
+    }
+}

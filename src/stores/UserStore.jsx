@@ -15,6 +15,7 @@ class UserStore extends EventEmitter {
             case 'user.login':
                 this.user = a.user;
                 this.token = a.token;
+                this.messages = a.messages;
                 this.settings = a.settings;
                 this.emit('changed');
                 break;
@@ -45,6 +46,10 @@ class UserStore extends EventEmitter {
 
     getToken () {
         return this.token;
+    }
+
+    getMessages () {
+        return this.messages;
     }
 
     getSettings () {

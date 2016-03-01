@@ -4,18 +4,27 @@ var Actions = require('../Actions');
 var Form = require('./TForm');
 var Row = require('./Row');
 
+var markdownit = require('markdown-it');
+var md = markdownit({html: true});
+
 class Conversation extends React.Component {
 
     render () {
-        var data = this.props.data;
-        var them = data.user;
-        return <Row title={data.title} collapsable={true} actions={{
+        var name = this.props.name,
+            body = this.props.body,
+            split = name.split('%%'),
+            user = split[1],
+            title = split[0];
+        return <Row title={title} collapsable={true} actions={{
+            'Delete': () => console.log('Delete'),
             'Reply': () => console.log('Reply')
             }}>
-            <div>{data.txt.map(t => t.me?
-                <p><b>Me:</b> {t.me}</p>:
-                <p><b>{them}:</b> {t.them}</p>
-            )}</div>
+            <div className="conversationBody">
+            {body.map((t, i) => <p key={i}>
+                    <span>{t.me?"Me":user}</span>
+                    <span dangerouslySetInnerHTML={{__html: md.render(t.me?t.me:t.them)}} />
+            </p>)}
+            </div>
         </Row>;
     }
 
@@ -29,20 +38,18 @@ class UserPage extends React.Component {
     }
 
     render () {
-        var convs = [
-            { user: 'user', title: 'Cool', txt: [ { me: 'This thing is really cool' } ] },
-            { user: 'teacher', title: 'Homework', txt: [ { them:'Please do your homework now'}, {me:"I'm on it"} ] }
-        ];
-        if (window.UserStore.isLogged()) {
-            var u = window.UserStore.getUser();
+        var us = window.UserStore;
+        if (us.isLogged()) {
+            var u = us.getUser();
+            var ms = us.getMessages();
             return <div className="paper">
                 <p>{"Welcome back, "+u}</p>
-                <h1>Messages</h1>
-                {convs.map(c => <Conversation data={c} />)}
-                <Form title='Settings' onChange={Actions.user.changeSettings} getData={window.UserStore.getSettingsForm.bind(window.UserStore)} />
+                <h1>Conversations</h1>
+                {Object.keys(ms).map(c => <Conversation key={c} name={c} body={ms[c]} />)}
+                <Form title='Settings' onChange={Actions.user.changeSettings} getData={us.getSettingsForm.bind(us)} />
             </div>;
         } else {
-            var error = window.UserStore.getLoginError();
+            var error = us.getLoginError();
             return <div className="paper">
                 <p>Please log in or register to access BOLDE</p>
                 <h3>Login</h3>

@@ -10,7 +10,8 @@ var login = function (user, password) {
             user: user,
             token: data.token,
             projects: data.projects,
-            settings: data.settings
+            settings: data.settings,
+            messages: data.messages
         });
     }).catch(function(error){
         window.Dispatcher.dispatch({
