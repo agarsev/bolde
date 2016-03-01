@@ -18,7 +18,7 @@ class Conversation extends React.Component {
             user = split[1],
             title = split[0];
         return <Row title={user+": "+title} collapsable={true} actions={{
-            'Delete': () => console.log('Delete'),
+            'Delete': () => Actions.user.clearConversation(user, title),
             'Reply': () => this.props.reply(user, title)
             }}>
             <div className="conversationBody">

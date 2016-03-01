@@ -118,4 +118,22 @@ Router.post('/message', function (req, res) {
     });
 });
 
+Router.post('/clearmessages', function (req, res) {
+    var from = req.body.from,
+        to = req.body.to,
+        subject = req.body.subject,
+        snd;
+    store.load(from, 'messages')
+    .then(function(msgs) {
+        snd = msgs;
+        delete snd[subject+'%%'+to];
+        return store.write(snd, from, 'messages');
+    }).then(function () {
+        res.send({ok: true, data: snd });
+    }).catch(function (error) {
+        applog.warn(error);
+        res.send({ok: false, error: error });
+    });
+});
+
 module.exports = Router;

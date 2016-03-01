@@ -60,3 +60,15 @@ exports.message = function (to, subject, text) {
         api.log(error);
     });
 };
+
+exports.clearConversation = function (to, subject) {
+    api.call('api/user/clearmessages', {from:window.UserStore.getUser(), to, subject})
+    .then(function(messages) {
+        window.Dispatcher.dispatch({
+            actionType: 'user.messages',
+            messages
+        });
+    }).catch(function(error) {
+        api.log(error);
+    });
+};
