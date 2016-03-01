@@ -26,6 +26,11 @@ exports.deleteFolder = function (path) {
     return fs.remove(config.get('user_files')+'/'+path);
 };
 
+exports.copyFolder = function (src, dest) {
+    var us = config.get('user_files')+'/';
+    return fs.copy(us+src, us+dest);
+};
+
 exports.newFile = function (path) {
     return fs.ensureFile(config.get('user_files')+'/'+path);
 };

@@ -49,6 +49,12 @@ class ProjectStore extends EventEmitter {
                     delete this.projects[a.name];
                     this.emit('changed');
                     break;
+                case 'project.clone':
+                    a.project.user = a.user;
+                    a.project.name = a.name;
+                    this.projects[a.name] = a.project;
+                    this.emit('changed');
+                    break;
                 case 'project.update_description':
                     this.projects[a.name].desc = a.desc;
                     this.emit('changed:'+[a.name]);

@@ -66,4 +66,25 @@ Router.post('/delete', function (req, res) {
     });
 });
 
+Router.post('/clone', function (req, res) {
+    var user = req.body.user,
+        source = req.body.source,
+        dest = req.body.dest,
+        proj;
+    store.copyFolder(user+'/'+source, user+'/'+dest)
+    .then(function() {
+        return store.load(user, 'projects');
+    }).then(function(projects) {
+        proj = JSON.parse(JSON.stringify(projects[source]));
+        projects[dest] = proj;
+        return store.write(projects, user, 'projects');
+    }).then(function() {
+        log.info('cloned project '+user+'/'+source+' to '+user+'/'+dest);
+        res.send({ok: true, data: proj});
+    }).catch(function(error) {
+        log.error(error);
+        res.send({ok: false, error:error});
+    });
+});
+
 module.exports = Router;

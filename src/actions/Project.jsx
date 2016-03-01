@@ -40,6 +40,19 @@ exports.delete = function (name) {
     });
 };
 
+exports.clone = function (source, dest) {
+    var user = window.UserStore.getUser();
+    api.call('api/project/clone', { user, source, dest })
+    .then(function(project) {
+        window.Dispatcher.dispatch({
+            actionType: 'project.clone',
+            user, name: dest, project
+        });
+    }).catch(function(error) {
+        api.log(data.error);
+    });
+};
+
 exports.new = function (name) {
     api.call('api/project/new', { user: window.UserStore.getUser(), project: name })
     .then(function() {

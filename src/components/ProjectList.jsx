@@ -17,6 +17,9 @@ class ProjectSnippet extends React.Component {
         var desc = p.desc || 'Click edit to add a description...';
         return <Row title={name} collapsable={false} actions={{
                 'Open': () => Actions.project.open(name),
+                'Clone': () => Actions.prompt({
+                    model: t.struct({ name: t.Str })
+                }).then(data => Actions.project.clone(name, data.name)),
                 'Delete': () => Actions.prompt(undefined, 'Do you really want to delete '+name+'?')
                 .then(() => Actions.project.delete(name))
                 .catch(() => {}),
