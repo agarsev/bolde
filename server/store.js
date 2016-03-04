@@ -1,54 +1,116 @@
 var fs = require('fs-promise'),
-    yaml = require('js-yaml'),
+    nedb = require('nedb'),
     log4js = require('log4js'),
     respath = require('../src/utils/path');
 
 var log = log4js.getLogger('store');
 
-var config;
+var user_files, db;
 
 exports.init = function (conf) {
-    config = conf;
+    user_files = conf.user_files
+    db = new nedb.Datastore({
+        filename: conf.db,
+        autoload: true,
+        onload: (error) => {
+            if (error) {
+                log.error('Could not load database file: '+conf.db);
+            } else {
+                log.info('Loaded database file: '+conf.db)
+            }
+        }
+    })
 };
 
-exports.load = function() {
-    var resource = Array.prototype.slice.call(arguments).join('/');
-    return fs.readFile(config.get('user_files')+'/'+resource+'.yml', {encoding: 'utf8'})
-    .then(function(data) { return yaml.safeLoad(data); });
-}
+exports.find = function (query, projection) {
+    return new Promise(function (resolve, reject) {
+        var solve = function (err, doc) {
+            if (err || doc == null) {
+                reject(err);
+            } else {
+                resolve(doc);
+            }
+        };
+        if (projection) {
+            db.findOne(query, projection, solve);
+        } else {
+            db.findOne(query, solve);
+        }
+    });
+};
 
-exports.write = function (data) {
-    var resource = Array.prototype.slice.call(arguments, 1).join('/');
-    return fs.outputFile(config.get('user_files')+'/'+resource+'.yml', yaml.safeDump(data));
-}
+exports.findall = function (query, projection) {
+    return new Promise(function (resolve, reject) {
+        var solve = function (err, docs) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve(docs);
+            }
+        };
+        if (projection) {
+            db.findOne(query, projection, solve);
+        } else {
+            db.findOne(query, solve);
+        }
+    });
+};
+
+exports.insert = function (doc) {
+    return new Promise(function (resolve, reject) {
+        db.insert(doc, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+};
+
+exports.remove = function (query) {
+    db.remove(query);
+};
+
+exports.update = function (query, update, opts) {
+    return new Promise(function (resolve, reject) {
+        db.update(query, update, opts || {}, function (err) {
+            if (err) {
+                reject(err);
+            } else {
+                resolve();
+            }
+        });
+    });
+};
 
 exports.deleteFolder = function (path) {
-    return fs.remove(config.get('user_files')+'/'+path);
+    return fs.remove(user_files+'/'+path);
 };
 
 exports.copyFolder = function (src, dest) {
-    var us = config.get('user_files')+'/';
+    var us = user_files+'/';
     return fs.copy(us+src, us+dest);
 };
 
 exports.newFile = function (path) {
-    return fs.ensureFile(config.get('user_files')+'/'+path);
+    return fs.ensureFile(user_files+'/'+path);
 };
 
 exports.newDir = function (path) {
-    return fs.mkdir(config.get('user_files')+'/'+path);
+    return fs.mkdir(user_files+'/'+path);
 };
 
 exports.deleteFile = function (path) {
-    return fs.remove(config.get('user_files')+'/'+path);
+    return fs.remove(user_files+'/'+path);
 };
 
 exports.readFile = function (path) {
-    return fs.readFile(config.get('user_files')+'/'+path, {encoding: 'utf8'});
+    return fs.readFile(user_files+'/'+path, {encoding: 'utf8'});
 };
 
 exports.writeFile = function (path, data) {
-    return fs.outputFile(config.get('user_files')+'/'+path, data);
+    return fs.outputFile(user_files+'/'+path, data);
 };
 
 exports.getFileOpts = function (path) {
@@ -62,7 +124,7 @@ exports.getFileOpts = function (path) {
 };
 
 exports.copyFile = function (from, to) {
-    var uf = config.get('user_files')+'/';
+    var uf = user_files+'/';
     return fs.readFile(uf+from)
     .then(function (data) {
         return fs.outputFile(uf+to, data);

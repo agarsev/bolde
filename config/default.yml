@@ -1,6 +1,7 @@
 %YAML 1.2
 ---
 user_files: user_files
+db: user_files/bolde.db
 server:
     protocol: http
     hostname: localhost

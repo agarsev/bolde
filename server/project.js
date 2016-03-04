@@ -8,10 +8,12 @@ var log = log4js.getLogger('project');
 var Router = new express.Router();
 
 Router.post('/files', function (req, res) {
-    store.load(req.body.project, 'files')
-    .then(function(files) {
-        res.send({ok: true, data:{ files: files }});
-    }).catch(function(error) {
+    var project = req.body.project,
+        user = req.body.user;
+    store.findall({ type: 'file', owner: user, project: project })
+    .then(files => {
+        res.send({ok: true, data: { files: files }});
+    }).catch(error => {
         log.error(error);
         res.send({ok: false, error:error});
     });
@@ -19,30 +21,33 @@ Router.post('/files', function (req, res) {
 
 Router.post('/new', function (req, res) {
     var user = req.body.user,
-        project = req.body.project;
-    store.write({}, user, project, 'files')
-    .then(function() {
-        return store.load(user, 'projects');
-    }).then(function(projects) {
-        projects[project] = { desc: '' };
-        return store.write(projects, user, 'projects');
-    }).then(function() {
+        project = req.body.project,
+        doc = {
+            type: 'project',
+            owner: user,
+            name: project,
+            desc: ''
+        };
+    store.insert(doc)
+    .then(() => store.newDir(user+'/'+project))
+    .then(() => {
         log.info('created project '+user+'/'+project);
         res.send({ok: true, data: {}});
-    }).catch(function(error) {
+    }).catch(error => {
         log.error(error);
         res.send({ok: false, error:error});
     });
 });
 
 Router.post('/update', function (req, res) {
-    store.load(req.body.user, 'projects')
-    .then(function(projects) {
-        projects[req.body.project].desc = req.body.desc;
-        return store.write(projects, req.body.user, 'projects');
-    }).then(function() {
+    var user = req.body.user,
+        project = req.body.project,
+        desc = req.body.desc;
+    store.update({ type: 'project', owner: user, name: project },
+        { $set: { desc: desc } })
+    .then(() => {
         res.send({ok: true, data: {}});
-    }).catch(function(error) {
+    }).catch(error => {
         log.error(error);
         res.send({ok: false, error:error});
     });
@@ -52,12 +57,8 @@ Router.post('/delete', function (req, res) {
     var user = req.body.user,
         project = req.body.project;
     store.deleteFolder(user+'/'+project)
-    .then(function() {
-        return store.load(user, 'projects');
-    }).then(function(projects) {
-        delete projects[project];
-        return store.write(projects, user, 'projects');
-    }).then(function() {
+    .then(() => {
+        store.remove({ type: 'project', owner: user, name: project });
         log.info('deleted project '+user+'/'+project);
         res.send({ok: true, data: {}});
     }).catch(function(error) {
@@ -72,16 +73,16 @@ Router.post('/clone', function (req, res) {
         dest = req.body.dest,
         proj;
     store.copyFolder(user+'/'+source, user+'/'+dest)
-    .then(function() {
-        return store.load(user, 'projects');
-    }).then(function(projects) {
-        proj = JSON.parse(JSON.stringify(projects[source]));
-        projects[dest] = proj;
-        return store.write(projects, user, 'projects');
-    }).then(function() {
+    .then(() => store.find({ type: 'project', owner: user, name: source }))
+    .then(project => {
+        proj = JSON.parse(JSON.stringify(project));
+        delete proj._id;
+        proj.name = dest;
+        return store.insert(proj);
+    }).then(() => {
         log.info('cloned project '+user+'/'+source+' to '+user+'/'+dest);
         res.send({ok: true, data: proj});
-    }).catch(function(error) {
+    }).catch(error => {
         log.error(error);
         res.send({ok: false, error:error});
     });
