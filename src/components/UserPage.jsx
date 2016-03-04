@@ -46,14 +46,16 @@ class UserPage extends React.Component {
             var ms = us.getMessages();
             return <div className="paper">
                 <p>{"Welcome back, "+u}</p>
+                <Form title='Settings' onChange={Actions.user.changeSettings} getData={us.getSettingsForm.bind(us)} />
+            </div>;
+            /*
                 <h1>Conversations</h1>
                 {Object.keys(ms).map(c => <Conversation key={c} name={c}
                                      body={ms[c]}
                                      reply={this.sendMsg.bind(this)}
                                      />)}
                 <button onClick={this.sendMsg.bind(this, undefined, undefined)}>New message</button>
-                <Form title='Settings' onChange={Actions.user.changeSettings} getData={us.getSettingsForm.bind(us)} />
-            </div>;
+            */
         } else {
             var error = us.getLoginError();
             return <div className="paper">

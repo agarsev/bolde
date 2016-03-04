@@ -102,7 +102,11 @@ function openpad (file) {
     } else {
         log.debug("creating pad for file "+file);
         var d = docs[file] = { file: file };
-        return store.getFileOpts(file).then(function (fileOpts) {
+        var res = Path.parse(file);
+        return store.find({ type: 'file',
+            owner: res[1], project: res[2],
+            path: res[3] })
+        .then(function (fileOpts) {
             d.name = "doc_"+(padNumber++);
             d.mode = modes[file.substr(file.search(/\.[^.]+$/)+1)];
             d.type = fileOpts.type;

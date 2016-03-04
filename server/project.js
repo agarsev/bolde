@@ -32,7 +32,7 @@ Router.post('/new', function (req, res) {
     .then(() => store.newDir(user+'/'+project))
     .then(() => {
         log.info('created project '+user+'/'+project);
-        res.send({ok: true, data: {}});
+        res.send({ok: true});
     }).catch(error => {
         log.error(error);
         res.send({ok: false, error:error});

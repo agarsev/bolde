@@ -38,7 +38,7 @@ Router.post('/login', function (req, res) {
         res_data.projects = projects;
         res.send({ok: true, data: res_data });
     }).catch(error => {
-        log.debug(error);
+        log.debug("Wrong login: "+error);
         res.send({ok:false, error:"Invalid username or password"});
     });
 });

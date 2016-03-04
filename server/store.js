@@ -9,7 +9,7 @@ var user_files, db;
 
 exports.init = function (conf) {
     user_files = conf.user_files
-    db = new nedb.Datastore({
+    db = new nedb({
         filename: conf.db,
         autoload: true,
         onload: (error) => {
@@ -49,9 +49,9 @@ exports.findall = function (query, projection) {
             }
         };
         if (projection) {
-            db.findOne(query, projection, solve);
+            db.find(query, projection, solve);
         } else {
-            db.findOne(query, solve);
+            db.find(query, solve);
         }
     });
 };
@@ -68,8 +68,8 @@ exports.insert = function (doc) {
     });
 };
 
-exports.remove = function (query) {
-    db.remove(query);
+exports.remove = function (query, opts) {
+    db.remove(query, opts || {});
 };
 
 exports.update = function (query, update, opts) {
@@ -111,16 +111,6 @@ exports.readFile = function (path) {
 
 exports.writeFile = function (path, data) {
     return fs.outputFile(user_files+'/'+path, data);
-};
-
-exports.getFileOpts = function (path) {
-    var res = respath.parse(path);
-    return exports.load(res[1],res[2],'files')
-    .then(function(files) {
-        var f = { files: files, path: res[3] };
-        respath.navigate(f);
-        return f.files[f.path];
-    });
 };
 
 exports.copyFile = function (from, to) {

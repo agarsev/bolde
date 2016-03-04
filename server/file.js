@@ -14,28 +14,18 @@ Router.post('/new', function (req, res) {
         path = req.body.path,
         type = req.body.type,
         fullname = user+'/'+project+'/'+path;
-    var nufiles;
     (type=='dir'?store.newDir(fullname):store.newFile(fullname))
-    .then(function () {
-        return store.load(user, project, 'files');
-    }).then(function (files) {
-        nufiles = files;
-        var p = { files: files, path: path };
-        Path.navigate(p);
-        if (type === 'dir') {
-            p.files[p.path] = { type: type, files: {} };
-        } else {
-            p.files[p.path] = { type: type };
-        }
-        return store.write(nufiles, user, project, 'files');
-    }).then(function () {
-        if (type=='dir') {
-            log.info('new directory '+fullname);
-        } else {
-            log.info('new file '+fullname);
-        }
-        res.send({ok: true, data:{files:nufiles}});
-    }).catch(function(error) {
+    .then(() => store.insert({ type: 'file',
+            owner: user,
+            project: project,
+            path: path,
+            type: type
+        }))
+    .then(() => {
+        log.info('new '+(type=='dir'?'directory':'file')
+                 +' '+fullname);
+        res.send({ok: true});
+    }).catch(error => {
         applog.warn(error);
         res.send({ok: false, error:error});
     });
@@ -46,20 +36,16 @@ Router.post('/delete', function (req, res) {
         project = req.body.project,
         path = req.body.path,
         fullname = user+'/'+project+'/'+path;
-    var nufiles;
     store.deleteFile(fullname)
-    .then(function () {
-        return store.load(user, project, 'files');
-    }).then(function (files) {
-        nufiles = files;
-        var p = { files: files, path: path };
-        Path.navigate(p);
-        delete p.files[p.path];
-        return store.write(nufiles, user, project, 'files');
-    }).then(function () {
+    .then(() => store.remove({ type: 'file', owner: user,
+            project: project,
+            path: new Regexp('(^'+path+'$)|(^'+path+'/.*)')
+        }, { multi: true }))
+    .then(() => store.findall({ type: 'file', owner: user, project: project }))
+    .then(files => {
         log.info('deleted file '+fullname);
-        res.send({ok: true, data:{files:nufiles}});
-    }).catch(function(error) {
+        res.send({ok: true, files:files });
+    }).catch(error => {
         applog.warn(error);
         res.send({ok: false, error:error});
     });
@@ -67,25 +53,22 @@ Router.post('/delete', function (req, res) {
 
 Router.post('/copy', function (req, res) {
     var from = Path.parse(req.body.from),
-        to = Path.parse(req.body.to);
-    var nufiles, type;
+        to = Path.parse(req.body.to),
+        type;
     store.copyFile(req.body.from, req.body.to)
-    .then(function () {
-        return Promise.all([store.load(from[1], from[2], 'files')
-                          ,store.load(to[1], to[2], 'files')]);
-    }).then(function (files) {
-        var fromp = {files: files[0], path: from[3]};
-        Path.navigate(fromp);
-        var top = {files: files[1], path: to[3]};
-        nufiles = top.files;
-        Path.navigate(top);
-        type = fromp.files[fromp.path].type;
-        top.files[top.path] = { type: type };
-        return store.write(nufiles, to[1], to[2], 'files');
-    }).then(function () {
+    .then(() => store.find({ type: 'file', owner: from[1],
+        project: from[2], path: from[3] }))
+    .then(file => {
+        delete file._id;
+        file.owner = to[1];
+        file.project = to[2];
+        file.path = to[3];
+        type = file.type;
+        return store.insert(file);
+    }).then(() => {
         log.info('copy file '+req.body.from+' to '+req.body.to);
-        res.send({ok: true, data:{files:nufiles,type:type}});
-    }).catch(function(error) {
+        res.send({ok: true, type:type});
+    }).catch(error => {
         applog.warn(error);
         res.send({ok: false, error:error});
     });

@@ -11,12 +11,8 @@ class ProjectStore extends EventEmitter {
         this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
                 case 'user.login':
-                    this.projects = a.projects;
-                    Object.keys(this.projects).forEach(p => {
-                        if (!this.projects[p]) { this.projects[p] = {} }
-                        this.projects[p].user = a.user;
-                        this.projects[p].name = p;
-                    });
+                    this.projects = {};
+                    a.projects.forEach(p => this.projects[p.name] = p);
                     this.emit('changed');
                     break;
                 case 'user.logout':
@@ -28,7 +24,7 @@ class ProjectStore extends EventEmitter {
                     this.emit('changed');
                     break;
                 case 'file.new':
-                    this.projects[a.project].files = a.files;
+                    this.projects[a.project].files.push(a.file);
                     this.emit('changed:'+a.project);
                     break;
                 case 'file.delete':

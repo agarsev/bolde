@@ -70,11 +70,12 @@ exports.new = function(user, project, path, type) {
     .then(function(data) {
         window.Dispatcher.dispatch({
             actionType: 'file.new',
-            user: user,
-            project: project,
-            path: path,
-            files: data.files,
-            type: type
+            file: {
+                user: user,
+                project: project,
+                path: path,
+                type: type
+            }
         });
     });
 };
@@ -127,11 +128,12 @@ exports.paste_at_selected = function (user, project, filename) {
     .then(function(data) {
         window.Dispatcher.dispatch({
             actionType: 'file.new',
-            user: user,
-            project: project,
-            path: path,
-            files: data.files,
-            type: data.type
+            file: {
+                user: user,
+                project: project,
+                path: path,
+                type: data.type
+            }
         });
     });
 };
