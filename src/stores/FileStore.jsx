@@ -4,7 +4,7 @@ var EventEmitter = require('events').EventEmitter;
 var Actions = require('../Actions');
 
 function fullpath (action) {
-    return a.user+'/'+a.project+'/'+a.path;
+    return action.user+'/'+action.project+'/'+action.path;
 }
 
 class FileStore extends EventEmitter {

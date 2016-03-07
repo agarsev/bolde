@@ -40,7 +40,7 @@ var load = function (user, project, path) {
 exports.load = load;
 
 exports.keepalive = function (fullpaths) {
-    api.call('api/sharejs/keepalive', {fullpaths});
+    api.call('api/sharejs/keepalive', {paths: fullpaths});
 };
 
 exports.open = function (user, project, path) {

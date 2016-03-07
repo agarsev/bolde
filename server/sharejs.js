@@ -102,7 +102,7 @@ function openpad (user, project, path) {
     if (docs[fullpath]) {
         log.debug("opening existing pad for file "+fullpath);
         startSaving(fullpath);
-        return Promise.resolve({ mode: docs[file].mode, name: docs[file].name, type: docs[file].type });
+        return Promise.resolve({ mode: docs[fullpath].mode, name: docs[fullpath].name, type: docs[fullpath].type });
     } else {
         log.debug("creating pad for file "+fullpath);
         var d = docs[fullpath] = { file: fullpath };

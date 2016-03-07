@@ -56,14 +56,15 @@ class TabStore extends EventEmitter {
                     this.closeProjectView(a.name);
                     break;
                 case 'file.open':
-                    if (this.tabs['file_'+a.filename]) {
-                        this.focusTab('file_'+a.filename);
+                    var fullpath = a.user + '/' + a.project + '/' + a.path;
+                    if (this.tabs['file_'+fullpath]) {
+                        this.focusTab('file_'+fullpath);
                     } else {
-                        this.addTab('file_'+a.filename,
-                             a.filename.substr(a.filename.search(/\/[^\/]+$/)+1),
-                             a.type=='text'?Components.Editor(a.filename):Components.VisualEditor(a.filename),
+                        this.addTab('file_'+fullpath,
+                             fullpath.substr(fullpath.search(/\/[^\/]+$/)+1),
+                             a.type=='text'?Components.Editor(fullpath):Components.VisualEditor(fullpath),
                              1,
-                             () => { Actions.file.close(a.user, a.project, a.file); return true; }
+                             () => { Actions.file.close(a.user, a.project, a.path); return true; }
                         );
                     }
                     break;
