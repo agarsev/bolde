@@ -4,12 +4,13 @@ var api = require('./api');
 
 var respath = require('../utils/path');
 
-var load = function (path) {
+var load = function (user, project, path) {
+    var fullpath = user + '/' + project + '/' + path;
     return new Promise(function (resolve, reject) {
-        if (window.FileStore.isLoaded(path)) {
-            resolve(window.FileStore.getFile(path).type);
+        if (window.FileStore.isLoaded(fullpath)) {
+            resolve(window.FileStore.getFile(fullpath).type);
         } else {
-            api.call('api/sharejs/open/', {file: path})
+            api.call('api/sharejs/open/', {user,project,path})
             .then(function(data) {
                 api.loading(true);
 
@@ -24,8 +25,7 @@ var load = function (path) {
                         else {
                             window.Dispatcher.dispatch({
                                 actionType: 'file.load',
-                                filename: path,
-                                doc,
+                                user, project, path, doc,
                                 type: data.type,
                                 mode: data.mode
                             });
@@ -39,29 +39,22 @@ var load = function (path) {
 };
 exports.load = load;
 
-exports.keepalive = function (paths) {
-    api.call('api/sharejs/keepalive', {paths});
+exports.keepalive = function (fullpaths) {
+    api.call('api/sharejs/keepalive', {fullpaths});
 };
 
-exports.open = function (user, project, file) {
-    var path = user + '/' + project + '/' + file;
-    load(path).then((type) =>
+exports.open = function (user, project, path) {
+    load(user, project, path).then((type) =>
         window.Dispatcher.dispatch({
           actionType: 'file.open',
-          filename: path,
-          type: type,
-          user: user,
-          project: project,
-          file: file
+          type, user, project, path
         }));
 };
 
-exports.close = function (user, project, file) {
+exports.close = function (user, project, path) {
     window.Dispatcher.dispatch({
         actionType: 'file.close',
-        user: user,
-        project: project,
-        file: file
+        user, project, path
     });
 };
 
@@ -70,12 +63,8 @@ exports.new = function(user, project, path, type) {
     .then(function(data) {
         window.Dispatcher.dispatch({
             actionType: 'file.new',
-            file: {
-                user: user,
-                project: project,
-                path: path,
-                type: type
-            }
+            user, project,
+            file: { path, type }
         });
     });
 };
@@ -89,51 +78,46 @@ exports.new_at_selected = function (user, project, filename, type) {
 
 exports.delete = function (user, project, path) {
     exports.close(user, project, path);
-    api.call('api/file/delete', {user: user, project: project, path: path})
+    api.call('api/file/delete', { user, project, path })
     .then(function(data) {
         window.Dispatcher.dispatch({
             actionType: 'file.delete',
-            user: user,
-            project: project,
-            path: path,
+            user, project, path,
             files: data.files
         });
     });
 };
 
-exports.put = function (path, content) {
-    var parts = respath.parse(path);
-    exports.new(parts[1], parts[2], parts[3])
-    .then(load.bind(null, path))
+exports.put = function (fullpath, content) {
+    var parts = respath.parse(fullpath),
+        user = parts[1],
+        project = parts[2],
+        path = parts[3];
+    exports.new(user, project, path)
+    .then(() => load(user, project, path))
     .then(function () {
         window.Dispatcher.dispatch({
             actionType: 'file.put',
-            path, content
+            user, project, path, content
         });
     });
 };
 
 var copyPath;
-
 exports.copy = function (user, project, file) {
     copyPath = user+'/'+project+'/'+file;
 };
 
-exports.paste_at_selected = function (user, project, filename) {
+exports.paste_at_selected = function (user, project, path) {
     var dir = window.ProjectStore.get(project).cwd;
     if (!dir) { dir = ''; }
     else { dir += '/'; }
-    var path = user+'/'+project+'/'+dir+filename;
-    return api.call('api/file/copy', {from: copyPath, to: path})
+    var fullpath = user+'/'+project+'/'+dir+path;
+    return api.call('api/file/copy', {from: copyPath, to: fullpath})
     .then(function(data) {
         window.Dispatcher.dispatch({
             actionType: 'file.new',
-            file: {
-                user: user,
-                project: project,
-                path: path,
-                type: data.type
-            }
+            file: { user, project, path, type: data.type }
         });
     });
 };

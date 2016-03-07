@@ -48,24 +48,38 @@ class DirTree extends React.Component {
         var below;
         var selected = this.props.selected || this.state.selected;
         if (this.state.open) {
-            var list = Object.keys(this.props.files).map(filename => {
-                var file = this.props.files[filename];
-                if (file.type=='dir') {
-                    return(<li key={filename}>
-                           <DirTree openFile={this.props.openFile} path={this.state.fullname}
-                           selected={selected} clickFile={this.clickFile.bind(this)}
-                           name={filename} files={file.files} />
-                           </li>);
+            var subdirs = {};
+            var list = {};
+            this.props.files.forEach(f => {
+                var p = f.path;
+                var slash = p.indexOf('/');
+                if (slash >= 0) {
+                    var dir = p.substr(0,slash);
+                    var rest = { path: p.substr(slash+1), type: f.type };
+                    if (subdirs[dir] === undefined) {
+                        subdirs[dir] = [rest];
+                    } else {
+                        subdirs[dir].push(rest);
+                    }
+                } else if (f.type == 'dir') {
+                    if (subdirs[p] === undefined) {
+                        subdirs[p] = [];
+                    }
                 } else {
-                    var fullname = this.props.root?filename:this.state.fullname+'/'+filename;
-                    return(<li key={filename} className={selected==fullname?'selected':''}
-                           onClick={this.clickFile.bind(this, fullname, false)}
-                           onDoubleClick={this.dblClickFile.bind(this, fullname)}>
-                           <a>{filename}</a>
-                           </li>);
+                    var fullname = this.props.root?p:this.state.fullname+'/'+p;
+                    list[p] = <li key={p} className={selected==fullname?'selected':''}
+                       onClick={this.clickFile.bind(this, fullname, false)}
+                       onDoubleClick={this.dblClickFile.bind(this, fullname)}>
+                       <a>{p}</a>
+                   </li>;
                 }
             });
-            below = <ul>{list}</ul>;
+            var ds = Object.keys(subdirs).sort().map(dir => <li key={dir}>
+                <DirTree openFile={this.props.openFile} path={this.state.fullname}
+                selected={selected} clickFile={this.clickFile.bind(this)}
+                name={dir} files={subdirs[dir]} />
+            </li>);
+            below = <ul>{ds}{Object.keys(list).sort().map(l => list[l])}</ul>;
         }
         if (this.props.root) {
             return <div className="DirTree" >{below}</div>;

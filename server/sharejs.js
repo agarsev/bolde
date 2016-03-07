@@ -3,6 +3,7 @@ var sharejs = require('share').server,
     bodyParser = require('body-parser'),
     log4js = require('log4js'),
 
+    db = require('./db'),
     store = require('./store');
 
 var log = log4js.getLogger('sharejs');
@@ -69,8 +70,10 @@ exports.init = function (router, mount, conf) {
         res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
         res.header('Expires', '-1');
         res.header('Pragma', 'no-cache');
-        var file = req.body.file;
-        openpad(file).then(function(data) {
+        var user = req.body.user,
+            project = req.body.project,
+            path = req.body.path;
+        openpad(user,project,path).then(function(data) {
             res.send({ok: true, data:data});
         }).catch(function(error) {
             applog.warn(error);
@@ -94,22 +97,20 @@ exports.init = function (router, mount, conf) {
 }
 
 var padNumber=0;
-function openpad (file) {
-    if (docs[file]) {
-        log.debug("opening existing pad for file "+file);
-        startSaving(file);
+function openpad (user, project, path) {
+    var fullpath = user + '/' + project + '/' + path;
+    if (docs[fullpath]) {
+        log.debug("opening existing pad for file "+fullpath);
+        startSaving(fullpath);
         return Promise.resolve({ mode: docs[file].mode, name: docs[file].name, type: docs[file].type });
     } else {
-        log.debug("creating pad for file "+file);
-        var d = docs[file] = { file: file };
-        var res = Path.parse(file);
-        return store.find({ type: 'file',
-            owner: res[1], project: res[2],
-            path: res[3] })
-        .then(function (fileOpts) {
+        log.debug("creating pad for file "+fullpath);
+        var d = docs[fullpath] = { file: fullpath };
+        return db.file.get(user, project, path)
+        .then(function (file) {
             d.name = "doc_"+(padNumber++);
-            d.mode = modes[file.substr(file.search(/\.[^.]+$/)+1)];
-            d.type = fileOpts.type;
+            d.mode = modes[fullpath.substr(fullpath.search(/\.[^.]+$/)+1)];
+            d.type = file.type;
             return new Promise(function(resolve, reject) {
                 client.open(d.name, d.type, channelurl, function(error, doc) {
                     if (error) { reject(error); }
@@ -123,7 +124,7 @@ function openpad (file) {
                     d.doc.insert(0, content, function (err) {
                         if (err) { reject(err); }
                         log.debug("created text pad for file "+d.file+" ("+d.name+")");
-                        startSaving(file);
+                        startSaving(d.file);
                         resolve({ mode: d.mode, name: d.name, type: d.type });
                     });
                 } else {

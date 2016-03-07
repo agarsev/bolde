@@ -3,6 +3,10 @@
 var EventEmitter = require('events').EventEmitter;
 var Actions = require('../Actions');
 
+function fullpath (action) {
+    return a.user+'/'+a.project+'/'+a.path;
+}
+
 class FileStore extends EventEmitter {
 
     constructor () {
@@ -14,21 +18,21 @@ class FileStore extends EventEmitter {
         this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
                 case 'file.load':
-                    this.files[a.filename] = {
+                    this.files[fullpath(a)] = {
                         doc: a.doc,
                         mode: a.mode,
                         type: a.type,
                     };
                     break;
                 case 'file.close':
-                    var path = a.user+'/'+a.project+'/'+a.file;
+                    var path = fullpath(a);
                     if (this.files[path]) {
                         this.files[path].doc.close();
                         delete this.files[path];
                     }
                     break;
                 case 'file.put':
-                    var f = this.files[a.path];
+                    var f = this.files[fullpath(a)];
                     if (f.type !== 'text') {
                         throw 'Trying to write to non-text file';
                     }
