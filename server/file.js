@@ -2,6 +2,7 @@ var express = require('express'),
     log4js = require('log4js');
 
 var store = require('./store');
+var db = require('./db');
 var Path = require('../src/utils/path');
 
 var log = log4js.getLogger('file');
@@ -15,12 +16,7 @@ Router.post('/new', function (req, res) {
         type = req.body.type,
         fullname = user+'/'+project+'/'+path;
     (type=='dir'?store.newDir(fullname):store.newFile(fullname))
-    .then(() => store.insert({ type: 'file',
-            owner: user,
-            project: project,
-            path: path,
-            type: type
-        }))
+    .then(() => db.file.new(user,project,path,type))
     .then(() => {
         log.info('new '+(type=='dir'?'directory':'file')
                  +' '+fullname);
@@ -37,11 +33,8 @@ Router.post('/delete', function (req, res) {
         path = req.body.path,
         fullname = user+'/'+project+'/'+path;
     store.deleteFile(fullname)
-    .then(() => store.remove({ type: 'file', owner: user,
-            project: project,
-            path: new Regexp('(^'+path+'$)|(^'+path+'/.*)')
-        }, { multi: true }))
-    .then(() => store.findall({ type: 'file', owner: user, project: project }))
+    .then(() => db.file.remove(user,project,path))
+    .then(() => db.file.all(user,project))
     .then(files => {
         log.info('deleted file '+fullname);
         res.send({ok: true, files:files });
@@ -56,15 +49,10 @@ Router.post('/copy', function (req, res) {
         to = Path.parse(req.body.to),
         type;
     store.copyFile(req.body.from, req.body.to)
-    .then(() => store.find({ type: 'file', owner: from[1],
-        project: from[2], path: from[3] }))
+    .then(() => db.file.get(from[1],from[2],from[3]))
     .then(file => {
-        delete file._id;
-        file.owner = to[1];
-        file.project = to[2];
-        file.path = to[3];
         type = file.type;
-        return store.insert(file);
+        return db.file.new(to[1],to[2],to[3],file.type);
     }).then(() => {
         log.info('copy file '+req.body.from+' to '+req.body.to);
         res.send({ok: true, type:type});

@@ -10,7 +10,7 @@ var Pipeline = require('./Pipeline');
 var pro = require('utils/promises');
 
 exports.open = function (name) {
-    api.call('api/project/files', { project: window.UserStore.getUser()+'/'+name })
+    api.call('api/project/files', { user: window.UserStore.getUser(), project: name })
     .then(function (data) {
         window.Dispatcher.dispatch({
             actionType: 'project.open',

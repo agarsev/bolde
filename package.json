@@ -1,10 +1,10 @@
 {
   "name": "tfm",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Prototype tfm",
   "main": "server/app.js",
   "scripts": {
-    "start": "node --harmony server/app.js"
+    "start": "node server/app.js"
   },
   "dependencies": {
     "body-parser": "^1.12.0",

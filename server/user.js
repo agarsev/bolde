@@ -4,6 +4,9 @@ var crypto = require('crypto'),
     log4js = require('log4js');
 
 var store = require('./store');
+var db = require('./db');
+
+var default_settings = { editor: 'default' };
 
 var log = log4js.getLogger('auth');
 
@@ -16,7 +19,7 @@ Router.post('/login', function (req, res) {
     var username = req.body.user,
         password = req.body.password,
         res_data;
-    store.find({ type: 'user', name: username })
+    db.user.get(username)
     .then(user => {
         var salted = password+user.salt;
         var hash = crypto.createHash('md5').update(salted).digest('hex');
@@ -33,7 +36,7 @@ Router.post('/login', function (req, res) {
             token:token,
             settings: user.settings
         };
-        return store.findall({ type: 'project', owner: username });
+        return db.project.all(username);
     }).then(projects => {
         res_data.projects = projects;
         res.send({ok: true, data: res_data });
@@ -52,20 +55,13 @@ Router.post('/new', function (req, res) {
         var salt = crypto.randomBytes(16).toString('hex');
         var salted = password+salt;
         var hash = crypto.createHash('md5').update(salted).digest('hex');
-        doc = {
-            type: 'user',
-            name: username,
-            salt: salt,
-            hash: hash,
-            settings: { editor: 'default' }
-        };
-        store.insert(doc)
+        db.user.new(username,salt,hash,default_settings)
         .then(() => store.newDir(username))
         .then(() => {
             log.warn('created user '+username);
             res.send({ok: true, data: "Created "+username});
         }).catch(error => {
-            store.remove({ type: 'user', name: username });
+            db.user.remove(username);
             log.error('Could not create user '+username+', error: '+error);
             res.send({ok:false, error: error});
         });
@@ -75,8 +71,7 @@ Router.post('/new', function (req, res) {
 Router.post('/settings', function (req, res) {
     var username = req.body.user,
         settings = req.body.settings;
-    store.update({ type: 'user', name: username },
-                 { $set: { settings: settings } })
+    db.user.setsettings(username, settings)
     .then(() => res.send({ok: true, data: {}}))
     .catch(error => {
         applog.warn(error);

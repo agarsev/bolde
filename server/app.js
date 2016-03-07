@@ -9,6 +9,9 @@ var express = require('express'),
 var store = require('./store');
 store.init(config);
 
+var db = require('./db');
+db.init(config);
+
 var sharejs = require('./sharejs'),
     user = require('./user');
 
