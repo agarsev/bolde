@@ -22,14 +22,14 @@ exports.new = function (user, project, path, type) {
 exports.remove = function (user, project, path) {
     var match = {
         _type: 'file',
-        owner: user,
+        owner: user
     };
     if (project !== undefined) {
         match.project = project;
     }
     if (path !== undefined) {
-        match.path = new Regexp('(^'+path+'$)|(^'+path+'/.*)')
-    };
+        match.path = new RegExp('(^'+path+'$)|(^'+path+'/.*)');
+    }
     return db.remove(match, {multi: true});
 };
 

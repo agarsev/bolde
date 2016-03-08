@@ -20,9 +20,9 @@ Router.post('/new', function (req, res) {
     .then(() => {
         log.info('new '+(type=='dir'?'directory':'file')
                  +' '+fullname);
-        res.send({ok: true});
+        res.send({ok: true, data:{}});
     }).catch(error => {
-        applog.warn(error);
+        log.warn(error);
         res.send({ok: false, error:error});
     });
 });
@@ -37,7 +37,7 @@ Router.post('/delete', function (req, res) {
     .then(() => db.file.all(user,project))
     .then(files => {
         log.info('deleted file '+fullname);
-        res.send({ok: true, files:files });
+        res.send({ok: true, data:{files} });
     }).catch(error => {
         applog.warn(error);
         res.send({ok: false, error:error});
@@ -55,7 +55,7 @@ Router.post('/copy', function (req, res) {
         return db.file.new(to[1],to[2],to[3],file.type);
     }).then(() => {
         log.info('copy file '+req.body.from+' to '+req.body.to);
-        res.send({ok: true, type:type});
+        res.send({ok: true, data:{type}});
     }).catch(error => {
         applog.warn(error);
         res.send({ok: false, error:error});

@@ -117,7 +117,8 @@ exports.paste_at_selected = function (user, project, path) {
     .then(function(data) {
         window.Dispatcher.dispatch({
             actionType: 'file.new',
-            file: { user, project, path, type: data.type }
+            user, project,
+            file: { path: dir+path, type: data.type }
         });
     });
 };
