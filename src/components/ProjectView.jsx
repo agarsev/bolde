@@ -12,8 +12,7 @@ class ProjectView extends React.Component {
 
     constructor (props) {
         super(props);
-        var p = window.ProjectStore.get(this.props.project);
-        this.state = { user: p.user, pname: p.name };
+        this.state = {};
     }
 
     componentDidMount () {
@@ -21,7 +20,7 @@ class ProjectView extends React.Component {
     }
 
     render () {
-        var p = window.ProjectStore.get(this.props.project);
+        var p = window.ProjectStore.get(this.props.user, this.props.project);
         return (<div className="projectView">
             <span>
                 <button title="copy" onClick={this.copySelected.bind(this)}>c</button>
@@ -40,14 +39,14 @@ class ProjectView extends React.Component {
     }
 
     openFile (file) {
-        Actions.file.open(this.state.user, this.state.pname, file);
+        Actions.file.open(this.props.user, this.props.project, file);
     }
 
     deleteSelected () {
         var file = this.state.selected;
         if (file !== undefined) {
             Actions.prompt(undefined, 'Do you really want to delete '+file+'?')
-            .then(() => Actions.file.delete(this.state.user, this.state.pname, file))
+            .then(() => Actions.file.delete(this.props.user, this.props.project, file))
             .catch(() => {});
         }
     }
@@ -55,7 +54,7 @@ class ProjectView extends React.Component {
     copySelected () {
         var file = this.state.selected;
         if (file !== undefined) {
-            Actions.file.copy(this.state.user, this.state.pname, file);
+            Actions.file.copy(this.props.user, this.props.project, file);
         }
     }
 
@@ -65,8 +64,8 @@ class ProjectView extends React.Component {
                 filename: t.Str,
             })
         }).then(data => {
-            Actions.file.paste_at_selected(window.UserStore.getUser(),
-                     this.state.pname, data.filename);
+            Actions.file.paste_at_selected(this.props.user,
+                     this.props.project, data.filename);
         }).catch(() => {});
     }
 
@@ -81,21 +80,21 @@ class ProjectView extends React.Component {
             }},
             value: { type: 'text' }
         }).then(data => {
-            Actions.file.new_at_selected(window.UserStore.getUser(),
-                     this.state.pname, data.filename, data.type);
+            Actions.file.new_at_selected(this.props.user,
+                     this.props.project, data.filename, data.type);
         }).catch(() => {});
     }
 
     run () {
-        Actions.project.run(window.UserStore.getUser()+'/'+this.state.pname);
+        Actions.project.run(this.props.user,this.props.project);
     }
 
     selectFile (file, isdir) {
         this.setState({ selected: file, selisdir: isdir });
         if (isdir) {
-            Actions.project.select_dir(this.state.user, this.state.pname, file);
+            Actions.project.select_dir(this.props.user, this.props.project, file);
         } else {
-            Actions.project.select_file(this.state.user, this.state.pname, file);
+            Actions.project.select_file(this.props.user, this.props.project, file);
         }
     }
 

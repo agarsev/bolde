@@ -9,37 +9,39 @@ var Pipeline = require('./Pipeline');
 
 var pro = require('utils/promises');
 
-exports.open = function (name) {
-    api.call('api/project/files', { user: window.UserStore.getUser(), project: name })
+exports.open = function (user, name) {
+    api.call('api/project/files', { user, project: name })
     .then(function (data) {
         window.Dispatcher.dispatch({
             actionType: 'project.open',
-            name: name,
+            user, name,
             files: data.files
         });
     });
 };
 
-exports.close = function (name) {
+exports.close = function (user, name) {
     window.Dispatcher.dispatch({
         actionType: 'project.close',
-        name: name
+        user,name
     });
 };
 
 exports.delete = function (name) {
-    exports.close(name);
-    api.call('api/project/delete', { user: window.UserStore.getUser(), project: name })
+    var user = window.UserStore.getUser();
+    exports.close(user, name);
+    api.call('api/project/delete', { user, project: name })
     .then(function() {
         window.Dispatcher.dispatch({
             actionType: 'project.delete',
-            name
+            user,name
         });
     }).catch(function(error) {
         api.log(data.error);
     });
 };
 
+// TODO NEW ARCH FOR SHARING
 exports.clone = function (source, dest) {
     var user = window.UserStore.getUser();
     api.call('api/project/clone', { user, source, dest })
@@ -54,23 +56,24 @@ exports.clone = function (source, dest) {
 };
 
 exports.new = function (name) {
-    api.call('api/project/new', { user: window.UserStore.getUser(), project: name })
+    var user = window.UserStore.getUser();
+    api.call('api/project/new', { user, project: name })
     .then(function() {
         window.Dispatcher.dispatch({
             actionType: 'project.new',
-            name
+            user, name
         });
     }).catch(function(error) {
         api.log(data.error);
     });
 };
 
-exports.update_description = function (name, desc) {
-    api.call('api/project/update', { user: window.UserStore.getUser(), project: name, desc })
+exports.update_description = function (user, name, desc) {
+    api.call('api/project/update', { user, project: name, desc })
     .then(function () {
         window.Dispatcher.dispatch({
             actionType: 'project.update_description',
-            name, desc
+            user, name, desc
         });
     }).catch(function(error) {
         api.log(data.error);
@@ -91,6 +94,7 @@ exports.select_file = function (user, project, path) {
     });
 };
 
+// TODO NEW ARCH FOR SHARING
 exports.run = function (project) {
     var conf;
     api.loading(true);

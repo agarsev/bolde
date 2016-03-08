@@ -5,7 +5,8 @@ function decode (doc) {
     return {
         name: doc.name,
         user: doc.owner,
-        desc: doc.desc
+        desc: doc.desc,
+        shared: doc.shared || []
     };
 }
 
@@ -15,7 +16,8 @@ exports.new = function (user, project, desc) {
         _type: 'project',
         owner: user,
         name: project,
-        desc
+        desc,
+        shared: []
     };
     return db.insert(doc);
 };
@@ -56,10 +58,19 @@ exports.copy = function (user1, project1, user2, project2) {
 };
 
 exports.all = function (user) {
-    var match = {
+    var own = {
         _type: 'project',
         owner: user
     };
-    return db.findAll(match)
-    .then(projects => projects.map(decode));
+    var shared = {
+        _type: 'project',
+        shared: user
+    };
+    return Promise.all([db.findAll(own), db.findAll(shared)])
+    .then(ps => {
+        return {
+            own: ps[0].map(decode),
+            shared: ps[1].map(decode)
+        };
+    });
 };

@@ -11,8 +11,17 @@ class ProjectStore extends EventEmitter {
         this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
                 case 'user.login':
-                    this.projects = {};
-                    a.projects.forEach(p => this.projects[p.name] = p);
+                    this.projects = {[a.user]:{}};
+                    a.projects.own.forEach(p => {
+                        this.projects[a.user][p.name] = p;
+                    });
+                    a.projects.shared.forEach(p => {
+                        if (this.projects[p.user]===undefined) {
+                            this.projects[p.user] = {[p.name]: p};
+                        } else {
+                            this.projects[p.user][p.name] = p;
+                        }
+                    });
                     this.emit('changed');
                     break;
                 case 'user.logout':
@@ -24,53 +33,51 @@ class ProjectStore extends EventEmitter {
                     this.emit('changed');
                     break;
                 case 'file.new':
-                    this.projects[a.project].files.push(a.file);
-                    this.emit('changed:'+a.project);
+                    this.projects[a.user][a.project].files.push(a.file);
+                    this.emit(`changed:${a.user}/${a.project}`);
                     break;
                 case 'file.delete':
-                    this.projects[a.project].files = a.files;
-                    this.emit('changed:'+a.project);
+                    this.projects[a.user][a.project].files = a.files;
+                    this.emit(`changed:${a.user}/${a.project}`);
                     break;
                 case 'project.open':
-                    this.projects[a.name].files = a.files;
+                    this.projects[a.user][a.name].files = a.files;
                     break;
                 case 'project.new':
-                    this.projects[a.name] = {
-                        user: window.UserStore.getUser(),
+                    this.projects[a.user][a.name] = {
+                        user: a.user,
                         name: a.name
                     };
                     this.emit('changed');
                     break;
                 case 'project.delete':
-                    delete this.projects[a.name];
+                    delete this.projects[a.user][a.name];
                     this.emit('changed');
                     break;
                 case 'project.clone':
-                    a.project.user = a.user;
-                    a.project.name = a.name;
-                    this.projects[a.name] = a.project;
+                    this.projects[a.user][a.name] = a.project;
                     this.emit('changed');
                     break;
                 case 'project.update_description':
-                    this.projects[a.name].desc = a.desc;
+                    this.projects[a.user][a.name].desc = a.desc;
                     this.emit('changed:'+[a.name]);
                     break;
                 case 'project.select_dir':
-                    this.projects[a.project].cwd = a.path;
+                    this.projects[a.user][a.project].cwd = a.path;
                     break;
                 case 'project.select_file':
-                    this.projects[a.project].cwd = a.path.substr(0, a.path.lastIndexOf('/'));
+                    this.projects[a.user][a.project].cwd = a.path.substr(0, a.path.lastIndexOf('/'));
                     break;
             }
         });
     }
 
-    get (name) {
-        return this.projects[name];
+    get (user, name) {
+        return this.projects[user][name];
     }
 
     getAll () {
-        return Object.keys(this.projects);
+        return this.projects;
     }
 
 };

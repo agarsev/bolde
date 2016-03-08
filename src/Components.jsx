@@ -8,8 +8,8 @@ exports.MDText = function (text, links) {
 };
 
 var PV = require('./components/ProjectView');
-exports.ProjectView = function (project) {
-    return <PV project={project} />;
+exports.ProjectView = function (user, project) {
+    return <PV user={user} project={project} />;
 };
 
 var PL = require('./components/ProjectList');

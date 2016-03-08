@@ -44,11 +44,14 @@ class TabStore extends EventEmitter {
                     break;
                 case 'project.open':
                     window.Dispatcher.waitFor([window.ProjectStore.dispatchToken]);
-                    if (this.tabs['projv_'+a.name]) {
-                        this.focusTab('projv_'+a.name);
+                    var tabname = `projv_${a.user}/${a.name}`;
+                    if (this.tabs[tabname]) {
+                        this.focusTab(tabname);
                     } else {
-                        this.addTab('projv_'+a.name, a.name, Components.ProjectView(a.name), 0,
-                                    () => { Actions.project.close(a.name); return false; }
+                        this.addTab(tabname, a.name,
+                            Components.ProjectView(a.user, a.name), 0,
+                            () => { Actions.project.close(a.user, a.name);
+                                    return false; }
                         );
                     }
                     break;
