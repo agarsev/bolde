@@ -115,3 +115,15 @@ exports.run = function (project) {
         api.log(error);
     });
 };
+
+exports.share = function (user, project, shared) {
+    api.call('api/project/share', { user, project, shared })
+    .then(function () {
+        window.Dispatcher.dispatch({
+            actionType: 'project.update_share',
+            user, name, shared
+        });
+    }).catch(function(error) {
+        api.log(data.error);
+    });
+}

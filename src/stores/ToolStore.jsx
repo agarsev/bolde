@@ -25,9 +25,7 @@ class ToolStore extends EventEmitter {
         this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
                 case 'user.logout':
-                    window.ProjectStore.getAll()
-                        .forEach(name => this.removeTool('Proj_'+name));
-                    this.removeTool('_settings');
+                    // TODO DEPRECATE
                     break;
                 case 'toolbar.add':
                     this.addTool(a.id, a.title, a.click, a.right);

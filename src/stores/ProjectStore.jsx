@@ -60,7 +60,11 @@ class ProjectStore extends EventEmitter {
                     break;
                 case 'project.update_description':
                     this.projects[a.user][a.name].desc = a.desc;
-                    this.emit('changed:'+[a.name]);
+                    this.emit(`changed:${a.user}/${a.name}`);
+                    break;
+                case 'project.update_share':
+                    this.projects[a.user][a.name].shared = a.shared;
+                    this.emit(`changed:${a.user}/${a.name}`);
                     break;
                 case 'project.select_dir':
                     this.projects[a.user][a.project].cwd = a.path;

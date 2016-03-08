@@ -37,8 +37,7 @@ class TabStore extends EventEmitter {
                     break;
                 case 'user.logout':
                     this.tabs['_UserTab'].title = 'Anonymous User';
-                    window.ProjectStore.getAll()
-                        .forEach(name => this.closeProjectView(name));
+                    this.closeAllFilesAndProjects();
                     this.closeTab('_ProjectList');
                     this.closeTab('_settings');
                     break;
@@ -56,7 +55,7 @@ class TabStore extends EventEmitter {
                     }
                     break;
                 case 'project.close':
-                    this.closeProjectView(a.name);
+                    this.closeProjectView(a.user, a.name);
                     break;
                 case 'file.open':
                     var fullpath = a.user + '/' + a.project + '/' + a.path;
@@ -188,11 +187,18 @@ class TabStore extends EventEmitter {
         };
     }
 
-    closeProjectView (name) {
+    closeProjectView (user, name) {
         Object.keys(this.tabs)
-            .filter(id => id.match('^file_[^/]*\\/'+name))
+            .filter(id => id.match('^file_[^/]*\\/'+user+'/'+name))
             .forEach(id => this.closeTab(id));
-        this.closeTab('projv_'+name);
+        this.closeTab(`projv_${a.user}/${a.name}`);
+        this.emit('changed');
+    }
+
+    closeAllFilesAndProjects () {
+        Object.keys(this.tabs)
+            .filter(id => id.match('^file_|^projv'))
+            .forEach(id => this.closeTab(id));
         this.emit('changed');
     }
 

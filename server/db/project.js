@@ -74,3 +74,12 @@ exports.all = function (user) {
         };
     });
 };
+
+exports.updateshare = function (user, project, shared) {
+    var match = {
+        _type: 'project',
+        owner: user,
+        name: project
+    };
+    return db.update(match, {$set: {shared}});
+};

@@ -32,6 +32,7 @@
     "share": "^0.6.3",
     "sse-pusher": "^1.1.1",
     "tcomb": "^1.1.0",
-    "tcomb-form": "^0.4.11"
+    "tcomb-form": "^0.4.11",
+    "tcomb-validation": "^1.0.3"
   }
 }

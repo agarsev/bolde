@@ -68,9 +68,22 @@ Router.post('/clone', function (req, res) {
         proj;
     store.copyFolder(user+'/'+source, user+'/'+dest)
     .then(() => db.project.copy(user, source, user, dest))
-    .then(() =>{
+    .then(() => {
         log.info('cloned project '+user+'/'+source+' to '+user+'/'+dest);
         res.send({ok: true, data: proj});
+    }).catch(error => {
+        log.error(error);
+        res.send({ok: false, error:error});
+    });
+});
+
+Router.post('/share', function (req, res) {
+    var user = req.body.user,
+        project = req.body.project,
+        shared = req.body.shared;
+    db.project.updateshare(user, project, shared)
+    .then(() =>{
+        res.send({ok: true, data: {}});
     }).catch(error => {
         log.error(error);
         res.send({ok: false, error:error});
