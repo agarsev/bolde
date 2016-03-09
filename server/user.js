@@ -29,9 +29,11 @@ Router.post('/login', function (req, res) {
         var token = crypto.randomBytes(48).toString('hex');
         sessions[token] = { user: username };
         log.info('logged in '+username);
-        var stream = SSE(res);
-        ssestreams[username] = stream;
-        Router.get('/sse/'+username, stream.handler());
+        if (ssestreams[username] === undefined) {
+            var stream = SSE(res);
+            ssestreams[username] = stream;
+            Router.get('/sse/'+username, stream.handler());
+        }
         res_data = {
             token:token,
             settings: user.settings
