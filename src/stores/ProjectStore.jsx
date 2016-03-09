@@ -36,7 +36,7 @@ class ProjectStore extends EventEmitter {
                     this.projects[a.user][a.project].files.push(a.file);
                     this.emit(`changed:${a.user}/${a.project}`);
                     break;
-                case 'file.delete':
+                case 'project.files':
                     this.projects[a.user][a.project].files = a.files;
                     this.emit(`changed:${a.user}/${a.project}`);
                     break;

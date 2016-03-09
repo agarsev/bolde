@@ -18,7 +18,6 @@ var login = function (user, password) {
         var sse = new EventSource('api/user/sse/'+user);
         sse.onmessage = function (event) {
             data = JSON.parse(event.data);
-            data.actionType = 'server.'+data.action;
             window.Dispatcher.dispatch(data);
         };
         sses[user] = sse;

@@ -79,4 +79,13 @@ Router.post('/settings', function (req, res) {
     });
 });
 
-module.exports = Router;
+exports.router = Router;
+
+exports.notify = function (users, action) {
+    users.forEach(u => {
+        var sse = ssestreams[u];
+        if (sse !== undefined) {
+            sse(action);
+        }
+    });
+}

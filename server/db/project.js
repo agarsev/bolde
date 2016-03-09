@@ -83,3 +83,13 @@ exports.updateshare = function (user, project, shared) {
     };
     return db.update(match, {$set: {shared}});
 };
+
+exports.allmembers = function (user, project) {
+    var match = {
+        _type: 'project',
+        owner: user,
+        name: project
+    };
+    return db.findOne(match, {shared: 1})
+    .then(p => [user].concat(p.shared));
+};

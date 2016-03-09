@@ -59,14 +59,7 @@ exports.close = function (user, project, path) {
 };
 
 exports.new = function(user, project, path, type) {
-    return api.call('api/file/new', {user, project, path, type })
-    .then(function(data) {
-        window.Dispatcher.dispatch({
-            actionType: 'file.new',
-            user, project,
-            file: { path, type }
-        });
-    });
+    return api.call('api/file/new', {user, project, path, type });
 };
 
 exports.new_at_selected = function (user, project, filename, type) {
@@ -77,15 +70,7 @@ exports.new_at_selected = function (user, project, filename, type) {
 };
 
 exports.delete = function (user, project, path) {
-    exports.close(user, project, path);
-    api.call('api/file/delete', { user, project, path })
-    .then(function(data) {
-        window.Dispatcher.dispatch({
-            actionType: 'file.delete',
-            user, project, path,
-            files: data.files
-        });
-    });
+    return api.call('api/file/delete', { user, project, path });
 };
 
 exports.put = function (fullpath, content) {
@@ -113,12 +98,5 @@ exports.paste_at_selected = function (user, project, path) {
     if (!dir) { dir = ''; }
     else { dir += '/'; }
     var fullpath = user+'/'+project+'/'+dir+path;
-    return api.call('api/file/copy', {from: copyPath, to: fullpath})
-    .then(function(data) {
-        window.Dispatcher.dispatch({
-            actionType: 'file.new',
-            user, project,
-            file: { path: dir+path, type: data.type }
-        });
-    });
+    return api.call('api/file/copy', {from: copyPath, to: fullpath});
 };

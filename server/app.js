@@ -36,7 +36,7 @@ app.use(bodyParser.json());
 
 // TODO permissions
 
-app.use('/api/user/', require('./user'));
+app.use('/api/user/', require('./user').router);
 app.use('/api/project', require('./project'));
 
 app.use('/api/file/delete', function (req, res, next) {
