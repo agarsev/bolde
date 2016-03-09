@@ -10,7 +10,7 @@ var log = log4js.getLogger('file');
 
 var Router = new express.Router();
 
-function newAction (user, project, path, type) {
+function action_new (user, project, path, type) {
     return { actionType: 'file.new',
         user, project, file: { path, type }};
 }

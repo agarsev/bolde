@@ -16,29 +16,32 @@ class ProjectSnippet extends React.Component {
     render () {
         var p = this.props.project;
         var desc = p.desc || 'Click edit to add a description...';
-        return <Row title={this.props.name} collapsable={false} actions={{
-                'Open': () => Actions.project.open(p.user, p.name),
-                'Clone': () => Actions.prompt({
-                        model: t.struct({ name: t.Str })
-                    }).then(data => Actions.project.clone(p.user, p.name, data.name)),
+        var menu = {
+            'Open': () => Actions.project.open(p.user, p.name),
+            'Clone': () => Actions.prompt({
+                    model: t.struct({ name: t.Str })
+                }).then(data => Actions.project.clone(p.user, p.name, data.name))
+        };
+        if (this.props.admin) {
+            menu.Edit = {
+                'Description': () => Actions.prompt({
+                        model: t.struct({
+                            description: t.Str,
+                        }),
+                        value: { description: desc }
+                    }).then(function (data) {
+                        Actions.project.update_description(p.user, p.name, data.description);
+                    }).catch(() => {}),
                 'Share': () => Actions.prompt({
                         model: t.list(t.Str),
                         value: p.shared.length>0?p.shared:['username']
                     }).then(data => Actions.project.share(p.user, p.name, data)),
-                'Edit': {
-                    'Description': () => Actions.prompt({
-                            model: t.struct({
-                                description: t.Str,
-                            }),
-                            value: { description: desc }
-                        }).then(function (data) {
-                            Actions.project.update_description(p.user, p.name, data.description);
-                        }).catch(() => {}),
-                    'Delete': () => Actions.prompt(undefined, 'Do you really want to delete '+name+'?')
-                        .then(() => Actions.project.delete(p.name))
-                        .catch(() => {}),
-                }
-            }}>
+                'Delete': () => Actions.prompt(undefined, 'Do you really want to delete '+name+'?')
+                    .then(() => Actions.project.delete(p.name))
+                    .catch(() => {}),
+            };
+        };
+        return <Row title={this.props.name} collapsable={false} actions={menu}>
             <p>{desc}</p>
         </Row>;
     }
@@ -67,11 +70,11 @@ class ProjectList extends React.Component {
             if (u == me) {
                 own = Object.keys(ps).map(p =>
                     <ProjectSnippet key={`${u}/${p}`}
-                         name={p} project={ps[p]} />);
+                         name={p} project={ps[p]} admin={true} />);
             } else {
                 Object.keys(ps).forEach(p => {
                     shared.push(<ProjectSnippet key={`${u}/${p}`}
-                         name={`${u}/${p}`} project={ps[p]} />);
+                         name={`${u}/${p}`} project={ps[p]} admin={false} />);
                  });
             }
         });

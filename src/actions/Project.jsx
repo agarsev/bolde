@@ -31,12 +31,7 @@ exports.delete = function (name) {
     var user = window.UserStore.getUser();
     exports.close(user, name);
     api.call('api/project/delete', { user, project: name })
-    .then(function() {
-        window.Dispatcher.dispatch({
-            actionType: 'project.delete',
-            user,name
-        });
-    }).catch(function(error) {
+    .catch(function(error) {
         api.log(data.error);
     });
 };
@@ -70,12 +65,7 @@ exports.new = function (name) {
 
 exports.update_description = function (user, name, desc) {
     api.call('api/project/update', { user, project: name, desc })
-    .then(function () {
-        window.Dispatcher.dispatch({
-            actionType: 'project.update_description',
-            user, name, desc
-        });
-    }).catch(function(error) {
+    .catch(function(error) {
         api.log(data.error);
     });
 };
@@ -118,7 +108,7 @@ exports.run = function (project) {
 
 exports.share = function (user, project, shared) {
     api.call('api/project/share', { user, project, shared })
-    .then(function () {
+    .then(function (data) {
         window.Dispatcher.dispatch({
             actionType: 'project.update_share',
             user, name, shared

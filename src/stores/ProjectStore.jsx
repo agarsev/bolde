@@ -50,6 +50,19 @@ class ProjectStore extends EventEmitter {
                     };
                     this.emit('changed');
                     break;
+                case 'project.newshare':
+                    if (this.projects[a.user] == undefined) {
+                        this.projects[a.user] = {};
+                    }
+                    if (this.projects[a.user][a.name] == undefined) {
+                        this.projects[a.user][a.name] = {
+                            user: a.user,
+                            name: a.name,
+                            desc: a.desc
+                        };
+                        this.emit('changed');
+                    }
+                    break;
                 case 'project.delete':
                     delete this.projects[a.user][a.name];
                     this.emit('changed');
