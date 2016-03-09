@@ -189,9 +189,9 @@ class TabStore extends EventEmitter {
 
     closeProjectView (user, name) {
         Object.keys(this.tabs)
-            .filter(id => id.match('^file_[^/]*\\/'+user+'/'+name))
+            .filter(id => id.match('^file_'+user+'/'+name))
             .forEach(id => this.closeTab(id));
-        this.closeTab(`projv_${a.user}/${a.name}`);
+        this.closeTab(`projv_${user}/${name}`);
         this.emit('changed');
     }
 

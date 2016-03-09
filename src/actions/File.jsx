@@ -70,7 +70,7 @@ exports.new = function(user, project, path, type) {
 };
 
 exports.new_at_selected = function (user, project, filename, type) {
-    var dir = window.ProjectStore.get(project).cwd;
+    var dir = window.ProjectStore.get(user, project).cwd;
     if (!dir) { dir = ''; }
     else { dir += '/'; }
     exports.new(user, project, dir+filename, type);

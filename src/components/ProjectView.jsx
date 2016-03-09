@@ -16,7 +16,7 @@ class ProjectView extends React.Component {
     }
 
     componentDidMount () {
-        window.ProjectStore.on('changed:'+this.props.project, this.forceUpdate.bind(this));
+        window.ProjectStore.on('changed:'+this.props.user+'/'+this.props.project, this.forceUpdate.bind(this));
     }
 
     render () {
