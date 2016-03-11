@@ -36,14 +36,14 @@ exports.delete = function (name) {
     });
 };
 
-// TODO NEW ARCH FOR SHARING
-exports.clone = function (source, dest) {
-    var user = window.UserStore.getUser();
-    api.call('api/project/clone', { user, source, dest })
+exports.clone = function (user, source, dest) {
+    var me = window.UserStore.getUser();
+    api.call('api/project/clone', { from: { user, project:source },
+             to: { user:me, project:dest } })
     .then(function(project) {
         window.Dispatcher.dispatch({
-            actionType: 'project.clone',
-            user, name: dest, project
+            actionType: 'project.new',
+            project
         });
     }).catch(function(error) {
         api.log(data.error);
@@ -56,7 +56,7 @@ exports.new = function (name) {
     .then(function() {
         window.Dispatcher.dispatch({
             actionType: 'project.new',
-            user, name
+            project: { user, name }
         });
     }).catch(function(error) {
         api.log(data.error);

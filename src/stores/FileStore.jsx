@@ -24,6 +24,7 @@ class FileStore extends EventEmitter {
                         type: a.type,
                     };
                     break;
+                case 'file.delete':
                 case 'file.close':
                     var path = fullpath(a);
                     if (this.files[path]) {

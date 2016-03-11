@@ -54,8 +54,12 @@ class TabStore extends EventEmitter {
                         );
                     }
                     break;
+                case 'project.delete':
                 case 'project.close':
-                    this.closeProjectView(a.user, a.name);
+                    this.closeTab(`projv_${a.user}/${a.name}`);
+                    Object.keys(this.tabs)
+                        .filter(id => id.match(`^file_${a.user}/${a.name}`))
+                        .forEach(id => this.closeTab(id));
                     break;
                 case 'file.open':
                     var fullpath = a.user + '/' + a.project + '/' + a.path;
@@ -70,6 +74,7 @@ class TabStore extends EventEmitter {
                         );
                     }
                     break;
+                case 'file.delete':
                 case 'file.close':
                     this.closeTab('file_'+a.user+'/'+a.project+'/'+a.path);
                     break;
@@ -91,10 +96,6 @@ class TabStore extends EventEmitter {
                     } else {
                         this.addTab('log_'+a.name, project+" log", Components.LogView(a.name), 2);
                     }
-                    break;
-                case 'tab.openSettings':
-                    this.addTab('_settings', 'Settings',
-                        Components.Form('User Settings', Actions.changeSettings, window.UserStore.getSettingsForm.bind(window.UserStore)));
                     break;
                 case 'output':
                     var tn = 'output_'+a.name;
@@ -185,14 +186,6 @@ class TabStore extends EventEmitter {
         }, this)) {
             this.selected[panel] = -1;
         };
-    }
-
-    closeProjectView (user, name) {
-        Object.keys(this.tabs)
-            .filter(id => id.match('^file_'+user+'/'+name))
-            .forEach(id => this.closeTab(id));
-        this.closeTab(`projv_${user}/${name}`);
-        this.emit('changed');
     }
 
     closeAllFilesAndProjects () {

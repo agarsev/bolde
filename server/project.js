@@ -62,7 +62,7 @@ Router.post('/delete', function (req, res) {
     .then(() => {
         log.info('deleted project '+user+'/'+project);
         res.send({ok: true, data: {}});
-    }).then(() => notify(mebers, {
+    }).then(() => notify(members, {
             actionType: 'project.delete',
             user,name:project }))
     .catch(function(error) {
@@ -72,14 +72,16 @@ Router.post('/delete', function (req, res) {
 });
 
 Router.post('/clone', function (req, res) {
-    var user = req.body.user,
-        source = req.body.source,
-        dest = req.body.dest,
-        proj;
-    store.copyFolder(user+'/'+source, user+'/'+dest)
-    .then(() => db.project.copy(user, source, user, dest))
-    .then(() => {
-        log.info('cloned project '+user+'/'+source+' to '+user+'/'+dest);
+    var from = req.body.from,
+        to = req.body.to;
+    store.copyFolder(from.user+'/'+from.project,
+                     to.user+'/'+to.project)
+    .then(() => db.project.copy(from.user, from.project,
+                                to.user, to.project))
+    .then(() => db.project.get(to.user, to.project))
+    .then(proj => {
+        log.info('cloned project '+from.user+'/'+from.project
+                 +' to '+to.user+'/'+to.project);
         res.send({ok: true, data: proj});
     }).catch(error => {
         log.error(error);
@@ -95,9 +97,8 @@ Router.post('/share', function (req, res) {
     .then(() => db.project.get(user, project))
     .then(proj => {
         res.send({ok: true, data: {shared}});
-        notify(shared, { actionType: 'project.newshare',
-               user, name: project, desc: proj.desc
-        });
+        notify(shared, { actionType: 'project.new',
+               project: proj });
     }).catch(error => {
         log.error(error);
         res.send({ok: false, error:error});

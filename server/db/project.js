@@ -40,7 +40,7 @@ exports.remove = function (user, project) {
         match.name = project;
     }
     return db.remove(match)
-    .then(() => file.remove(user));
+    .then(() => file.remove(user, project));
 };
 
 exports.get = function (user, project) {
@@ -53,8 +53,12 @@ exports.get = function (user, project) {
 };
 
 exports.copy = function (user1, project1, user2, project2) {
+    var proj;
     return exports.get(user1, project1)
-    .then(project => exports.new(user2, project2, project.desc));
+    .then(project => exports.new(user2, project2, project.desc))
+    .then(() => file.all(user1, project1))
+    .then(files => Promise.all(files.map(f =>
+            file.new(user2, project2, f.path, f.type))));
 };
 
 exports.all = function (user) {

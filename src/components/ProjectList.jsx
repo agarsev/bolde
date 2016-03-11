@@ -36,7 +36,7 @@ class ProjectSnippet extends React.Component {
                         model: t.list(t.Str),
                         value: p.shared.length>0?p.shared:['username']
                     }).then(data => Actions.project.share(p.user, p.name, data)),
-                'Delete': () => Actions.prompt(undefined, 'Do you really want to delete '+name+'?')
+                'Delete': () => Actions.prompt(undefined, 'Do you really want to delete '+p.name+'?')
                     .then(() => Actions.project.delete(p.name))
                     .catch(() => {}),
             };
