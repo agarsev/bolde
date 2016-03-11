@@ -46,6 +46,10 @@ class UserPage extends React.Component {
             var ms = us.getMessages();
             return <div className="paper">
                 <p>{"Welcome back, "+u}</p>
+                <p>
+                    <button onClick={() => Actions.user.logout()}>Logout</button>
+                    <button onClick={() => Actions.user.openPList()}>Projects</button>
+                </p>
                 <Form title='Settings' onChange={Actions.user.changeSettings} getData={us.getSettingsForm.bind(us)} />
             </div>;
             /*

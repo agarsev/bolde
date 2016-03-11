@@ -9,13 +9,10 @@ exports.new_msg = function (title, text, links) {
     });
 };
 
-exports.open = function (id, title, node, panel) {
+exports.open = function (id, title, node, panel, cb) {
     window.Dispatcher.dispatch({
         actionType: 'tab.open',
-        id: id,
-        title: title,
-        node: node,
-        panel: panel
+        id, title, node, panel, cb
     });
 };
 

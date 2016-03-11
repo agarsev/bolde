@@ -83,3 +83,7 @@ exports.clearConversation = function (to, subject) {
         api.log(error);
     });
 };
+
+exports.openPList = function () {
+    window.Dispatcher.dispatch({ actionType: 'user.open_plist' });
+}

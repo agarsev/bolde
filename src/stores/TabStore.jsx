@@ -20,7 +20,7 @@ class TabStore extends EventEmitter {
                     this.openMessage(a.title, a.text, a.links);
                     break;
                 case 'tab.open':
-                    this.addTab(a.id, a.title, a.node, a.panel);
+                    this.addTab(a.id, a.title, a.node, a.panel, a.cb);
                     break;
                 case 'tab.close':
                     this.closeTab(a.id);
@@ -33,6 +33,7 @@ class TabStore extends EventEmitter {
                     break;
                 case 'user.login':
                     this.tabs['_UserTab'].title = 'User: '+a.user;
+                case 'user.open_plist':
                     this.addTab('_ProjectList', 'Projects', Components.ProjectList(), 1);
                     break;
                 case 'user.logout':
