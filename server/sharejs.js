@@ -134,7 +134,7 @@ function openpad (user, project, path) {
                     d.doc.at().set(o, function (err) {
                         if (err) { reject(err); }
                         log.debug("created json pad for file "+d.file+" ("+d.name+")");
-                        startSaving(file);
+                        startSaving(d.file);
                         resolve({ mode: d.mode, name: d.name, type: d.type });
                     });
                 }

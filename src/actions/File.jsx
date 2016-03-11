@@ -94,7 +94,7 @@ exports.copy = function (user, project, file) {
 };
 
 exports.paste_at_selected = function (user, project, path) {
-    var dir = window.ProjectStore.get(project).cwd;
+    var dir = window.ProjectStore.get(user, project).cwd;
     if (!dir) { dir = ''; }
     else { dir += '/'; }
     var fullpath = user+'/'+project+'/'+dir+path;

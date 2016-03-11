@@ -63,12 +63,12 @@ Router.post('/delete', function (req, res) {
 Router.post('/copy', function (req, res) {
     var from = Path.parse(req.body.from),
         to = Path.parse(req.body.to),
-        type;
+        user=to[1], project=to[2], path=to[3], type;
     store.copyFile(req.body.from, req.body.to)
     .then(() => db.file.get(from[1],from[2],from[3]))
     .then(file => {
         type = file.type;
-        return db.file.new(to[1],to[2],to[3],file.type);
+        return db.file.new(user,project,path,file.type);
     }).then(() => {
         log.info('copy file '+req.body.from+' to '+req.body.to);
         res.send({ok: true, data:{}});
