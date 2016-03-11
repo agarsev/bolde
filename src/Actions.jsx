@@ -4,7 +4,6 @@ var api = require('./actions/api');
 
 exports.project = require('./actions/Project');
 exports.tab = require('./actions/Tab');
-exports.toolbar = require('./actions/Toolbar');
 exports.file = require('./actions/File');
 exports.engine = require('./actions/Engine');
 exports.treebank = require('./actions/Treebank');

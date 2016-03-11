@@ -11,8 +11,6 @@ var UserStore = require('stores/UserStore');
 var UserPage = require('components/UserPage');
 var TabStore = require('stores/TabStore');
 var TabPanel = require('components/TabPanel');
-var ToolStore = require('stores/ToolStore');
-var ToolBar = require('components/ToolBar');
 var ProjectStore = require('stores/ProjectStore');
 var FileStore = require('stores/FileStore');
 var LogStore = require('stores/LogStore');
@@ -27,14 +25,12 @@ window.Dispatcher = new Dispatcher();
 
 window.UserStore = new UserStore();
 window.TabStore = new TabStore();
-window.ToolStore = new ToolStore();
 window.ProjectStore = new ProjectStore();
 window.FileStore = new FileStore();
 window.LogStore = new LogStore();
 window.TreebankStore = new TreebankStore();
 
 React.render(<TabPanel />, document.getElementById('TabPanel'));
-React.render(<ToolBar />, document.getElementById('NavBar'));
 
 window.Dispatcher.register(a => { switch(a.actionType) {
     case 'prompt.in':

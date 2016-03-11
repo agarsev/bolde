@@ -26,8 +26,7 @@ class ProjectStore extends EventEmitter {
                     break;
                 case 'user.logout':
                     window.Dispatcher.waitFor([
-                        window.TabStore.dispatchToken,
-                        window.ToolStore.dispatchToken
+                        window.TabStore.dispatchToken
                     ]);
                     this.projects = {};
                     this.emit('changed');
