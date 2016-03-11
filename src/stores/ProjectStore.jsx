@@ -33,8 +33,10 @@ class ProjectStore extends EventEmitter {
                     this.emit('changed');
                     break;
                 case 'file.new':
-                    this.projects[a.user][a.project].files.push(a.file);
-                    this.emit(`changed:${a.user}/${a.project}`);
+                    if (this.projects[a.user] && this.projects[a.user][a.project]) {
+                        this.projects[a.user][a.project].files.push(a.file);
+                        this.emit(`changed:${a.user}/${a.project}`);
+                    }
                     break;
                 case 'project.files':
                     this.projects[a.user][a.project].files = a.files;
@@ -58,11 +60,13 @@ class ProjectStore extends EventEmitter {
                     this.emit('changed');
                     break;
                 case 'project.update_description':
-                    this.projects[a.user][a.name].desc = a.desc;
-                    this.emit(`changed:${a.user}/${a.name}`);
+                    if (this.projects[a.user] && this.projects[a.user][a.project]) {
+                        this.projects[a.user][a.name].desc = a.desc;
+                        this.emit(`changed:${a.user}/${a.name}`);
+                    }
                     break;
                 case 'project.update_share':
-                    this.projects[a.user][a.name].shared = a.shared;
+                    this.projects[a.user][a.project].shared = a.shared;
                     this.emit(`changed:${a.user}/${a.name}`);
                     break;
                 case 'project.select_dir':

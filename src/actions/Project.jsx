@@ -31,9 +31,7 @@ exports.delete = function (name) {
     var user = window.UserStore.getUser();
     exports.close(user, name);
     api.call('api/project/delete', { user, project: name })
-    .catch(function(error) {
-        api.log(data.error);
-    });
+    .catch(error => api.log(error));
 };
 
 exports.clone = function (user, source, dest) {
@@ -45,9 +43,7 @@ exports.clone = function (user, source, dest) {
             actionType: 'project.new',
             project
         });
-    }).catch(function(error) {
-        api.log(data.error);
-    });
+    }).catch(error => api.log(error));
 };
 
 exports.new = function (name) {
@@ -58,16 +54,12 @@ exports.new = function (name) {
             actionType: 'project.new',
             project: { user, name }
         });
-    }).catch(function(error) {
-        api.log(data.error);
-    });
+    }).catch(error => api.log(error));
 };
 
 exports.update_description = function (user, name, desc) {
     api.call('api/project/update', { user, project: name, desc })
-    .catch(function(error) {
-        api.log(data.error);
-    });
+    .catch(error => api.log(error));
 };
 
 exports.select_dir = function (user, project, path) {
@@ -111,9 +103,7 @@ exports.share = function (user, project, shared) {
     .then(function (data) {
         window.Dispatcher.dispatch({
             actionType: 'project.update_share',
-            user, name, shared
+            user, project, shared
         });
-    }).catch(function(error) {
-        api.log(data.error);
-    });
+    }).catch(error => api.log(error));
 }

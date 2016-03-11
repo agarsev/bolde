@@ -25,17 +25,19 @@ class ProjectSnippet extends React.Component {
         if (this.props.admin) {
             menu.Edit = {
                 'Description': () => Actions.prompt({
-                        model: t.struct({
-                            description: t.Str,
-                        }),
+                        model: t.struct({ description: t.Str, }),
                         value: { description: desc }
                     }).then(function (data) {
                         Actions.project.update_description(p.user, p.name, data.description);
                     }).catch(() => {}),
                 'Share': () => Actions.prompt({
-                        model: t.list(t.Str),
-                        value: p.shared.length>0?p.shared:['username']
-                    }).then(data => Actions.project.share(p.user, p.name, data)),
+                        model: t.struct({ share: t.maybe(t.Str) }),
+                        options: {
+                            help: 'Comma-separated list of usernames, e.g: "john, mary, bill"',
+                            auto: 'none',
+                            legend: 'Share with: '
+                        }, value: { share: p.shared.join(', ') }
+                    }).then(data => this.update_share(data.share)),
                 'Delete': () => Actions.prompt(undefined, 'Do you really want to delete '+p.name+'?')
                     .then(() => Actions.project.delete(p.name))
                     .catch(() => {}),
@@ -44,6 +46,15 @@ class ProjectSnippet extends React.Component {
         return <Row title={this.props.name} collapsable={false} actions={menu}>
             <p>{desc}</p>
         </Row>;
+    }
+
+    update_share (list) {
+        var users = [];
+        if (list) {
+            users = list.split(/\s*,\s*/);
+        }
+        var p = this.props.project;
+        Actions.project.share(p.user, p.name, users);
     }
 
 }
