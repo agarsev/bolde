@@ -77,7 +77,6 @@ class ParadigmEditor extends React.Component {
         }).then(data => {
             doc.at('name').set(data.name);
         }).catch(() => {});
-        e.stopPropagation();
     }
 
     add () {

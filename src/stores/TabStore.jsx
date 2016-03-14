@@ -64,11 +64,11 @@ class TabStore extends EventEmitter {
                     break;
                 case 'file.open':
                     var fullpath = a.user + '/' + a.project + '/' + a.path;
-                    if (this.tabs['file_'+fullpath]) {
-                        this.focusTab('file_'+fullpath);
+                    var tname = 'file_'+fullpath;
+                    if (this.tabs[tname]) {
+                        this.focusTab(tname);
                     } else {
-                        this.addTab('file_'+fullpath,
-                             fullpath.substr(fullpath.search(/\/[^\/]+$/)+1),
+                        this.addTab(tname, a.path,
                              a.type=='text'?Components.Editor(fullpath):Components.VisualEditor(fullpath),
                              1,
                              () => { Actions.file.close(a.user, a.project, a.path); return true; }
@@ -80,18 +80,17 @@ class TabStore extends EventEmitter {
                     this.closeTab('file_'+a.user+'/'+a.project+'/'+a.path);
                     break;
                 case 'file.put':
-                    if (this.tabs['file_'+a.path]) {
-                        this.closeTab('file_'+a.path);
-                        window.Dispatcher.waitFor([window.FileStore.dispatchToken]);
-                        this.addTab('file_'+a.path,
-                            a.path.substr(a.path.search(/\/[^\/]+$/)+1),
-                            Components.Editor(a.path)
-                        );
+                    window.Dispatcher.waitFor([window.FileStore.dispatchToken]);
+                    var fullpath = a.user + '/' + a.project + '/' + a.path;
+                    var tname = 'file_'+fullpath;
+                    if (this.tabs[tname]) {
+                        this.closeTab(tname);
+                        this.addTab(tname, a.path, Components.Editor(fullpath));
                     }
                     break;
                 case 'log.new':
-                    var project = a.name.substr(a.name.search(/\/[^\/]+$/)+1);
                     window.Dispatcher.waitFor([window.LogStore.dispatchToken]);
+                    var project = a.name.substr(a.name.search(/\/[^\/]+$/)+1);
                     if (this.tabs['log_'+a.name]) {
                         this.focusTab('log_'+a.name);
                     } else {

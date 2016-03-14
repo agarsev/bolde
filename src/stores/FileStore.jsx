@@ -7,6 +7,14 @@ function fullpath (action) {
     return action.user+'/'+action.project+'/'+action.path;
 }
 
+function resolvepath (userOrFullpath, project, path) {
+    if (project === undefined) {
+        return userOrFullpath;
+    } else {
+        return userOrFullpath+'/'+project+'/'+path;
+    }
+}
+
 class FileStore extends EventEmitter {
 
     constructor () {
@@ -51,16 +59,16 @@ class FileStore extends EventEmitter {
         });
     }
 
-    isLoaded (path) {
-        return path in this.files;
+    isLoaded () {
+        return resolvepath(...arguments) in this.files;
     }
 
-    getFile (path) {
-        return this.files[path];
+    getFile () {
+        return this.files[resolvepath(...arguments)];
     }
 
-    getContents (path) {
-        var f = this.files[path];
+    getContents () {
+        var f = this.files[resolvepath(...arguments)];
         if (f.type === 'text') {
             return f.doc.getText();
         } else {

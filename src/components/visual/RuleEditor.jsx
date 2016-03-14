@@ -75,7 +75,6 @@ class RuleEditor extends React.Component {
         }).then(data => {
             doc.at('name').set(data.name);
         }).catch(() => {});
-        e.stopPropagation();
     }
 
     render () {

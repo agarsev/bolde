@@ -5,10 +5,15 @@ var api = require('./api');
 var respath = require('../utils/path');
 
 var load = function (user, project, path) {
-    var fullpath = user + '/' + project + '/' + path;
+    if (project === undefined) {
+        var parts = respath.parse(user),
+            user = parts[1],
+            project = parts[2],
+            path = parts[3];
+    }
     return new Promise(function (resolve, reject) {
-        if (window.FileStore.isLoaded(fullpath)) {
-            resolve(window.FileStore.getFile(fullpath).type);
+        if (window.FileStore.isLoaded(user, project, path)) {
+            resolve(window.FileStore.getFile(user, project, path).type);
         } else {
             api.call('api/sharejs/open/', {user,project,path})
             .then(function(data) {
@@ -78,7 +83,7 @@ exports.put = function (fullpath, content) {
         user = parts[1],
         project = parts[2],
         path = parts[3];
-    exports.new(user, project, path)
+    exports.new(user, project, path, 'text')
     .then(() => load(user, project, path))
     .then(function () {
         window.Dispatcher.dispatch({

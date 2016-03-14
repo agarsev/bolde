@@ -76,18 +76,17 @@ exports.select_file = function (user, project, path) {
     });
 };
 
-// TODO NEW ARCH FOR SHARING
-exports.run = function (project) {
+exports.run = function (user, project) {
     var conf;
     api.loading(true);
-    load(project+'/run.yml')
+    load(user, project, 'run.yml')
     .then (function () {
-        conf = yaml.safeLoad(window.FileStore.getContents(project+'/run.yml'));
+        conf = yaml.safeLoad(window.FileStore.getContents(user, project, 'run.yml'));
         conf.connect.forEach(pipeline => pipeline.forEach(element => {
             if (element.files !== undefined && !element['_files_have_been_processed']) {
                 element['_files_have_been_processed'] = true;
                 Object.keys(element.files).forEach(name => {
-                    element.files[name] = project+'/'+element.files[name];
+                    element.files[name] = user+'/'+project+'/'+element.files[name];
                 });
             }
         }));
