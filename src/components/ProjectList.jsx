@@ -45,6 +45,7 @@ class ProjectSnippet extends React.Component {
         };
         return <Row title={this.props.name} collapsable={false} actions={menu}>
             <p>{desc}</p>
+            <p><a href={`api/project/backup/${p.user}/${p.name}`}>Download backup</a></p>
         </Row>;
     }
 

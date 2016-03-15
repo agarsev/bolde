@@ -40,3 +40,5 @@ exports.writeFile = function (path, data) {
 exports.copyFile = function (from, to) {
     return fs.copy(uf+from, uf+to);
 };
+
+exports.realpath = path => uf+path;

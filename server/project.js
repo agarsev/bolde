@@ -1,5 +1,6 @@
 var express = require('express'),
-    log4js = require('log4js');
+    log4js = require('log4js'),
+    AdmZip = require('adm-zip');
 
 var store = require('./store');
 var notify = require('./user').notify;
@@ -102,6 +103,32 @@ Router.post('/share', function (req, res) {
     }).catch(error => {
         log.error(error);
         res.send({ok: false, error:error});
+    });
+});
+
+// monkey-patching AdmZip
+function newZip () {
+    zip = new AdmZip();
+    zip._monkey_addFile = zip.addFile;
+    zip.addFile = function(filename, data, comment) {
+        zip._monkey_addFile(filename, data, comment, 0o666 << 16);
+    }
+    return zip;
+}
+
+Router.get('/backup/:user/:project', function (req, res) {
+    var user = req.params.user,
+        project = req.params.project,
+        zip = newZip();
+    zip.addLocalFolder(store.realpath(user+'/'+project), 'files');
+    db.project.backup(user, project)
+    .then(docs => {
+        zip.addFile('project.db', new Buffer(JSON.stringify(docs)));
+        var buf = zip.toBuffer();
+        res.setHeader('Content-disposition', 'attachment; filename='+project+'.zip');
+        res.contentType('zip');
+        res.write(buf);
+        res.end();
     });
 });
 
