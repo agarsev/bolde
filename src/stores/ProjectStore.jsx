@@ -54,6 +54,7 @@ class ProjectStore extends EventEmitter {
                     break;
                 case 'project.new':
                     var p = a.project;
+                    p.readonly = false;
                     if (this.projects[p.user] == undefined) {
                         this.projects[p.user] = {};
                     }

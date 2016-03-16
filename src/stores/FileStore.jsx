@@ -26,10 +26,12 @@ class FileStore extends EventEmitter {
         this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
                 case 'file.load':
+                    var proj = window.ProjectStore.get(a.user, a.project);
                     this.files[fullpath(a)] = {
                         doc: a.doc,
                         mode: a.mode,
                         type: a.type,
+                        readonly: proj.readonly
                     };
                     break;
                 case 'file.delete':

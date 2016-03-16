@@ -36,6 +36,9 @@ class Editor extends React.Component {
         var editor = ace.edit("Editor_"+this.props.filename);
         this.init(editor);
         var file = window.FileStore.getFile(this.props.filename);
+        if (file.readonly) {
+            editor.setOptions({ readOnly: true });
+        }
         file.doc.attach_ace(editor);
         editor.getSession().setMode("ace/mode/"+file.mode);
         editor.getSession().setUndoManager(new ace.UndoManager());
