@@ -22,6 +22,14 @@ class ProjectStore extends EventEmitter {
                             this.projects[p.user][p.name] = p;
                         }
                     });
+                    a.projects.public.forEach(p => {
+                        p.readonly = true;
+                        if (this.projects[p.user]===undefined) {
+                            this.projects[p.user] = {[p.name]: p};
+                        } else {
+                            this.projects[p.user][p.name] = p;
+                        }
+                    });
                     this.emit('changed');
                     break;
                 case 'user.logout':
@@ -63,6 +71,10 @@ class ProjectStore extends EventEmitter {
                         this.projects[a.user][a.name].desc = a.desc;
                         this.emit(`changed:${a.user}/${a.name}`);
                     }
+                    break;
+                case 'project.publish':
+                    this.projects[a.user][a.project].public = a.make_public;
+                    this.emit("changed");
                     break;
                 case 'project.update_share':
                     this.projects[a.user][a.project].shared = a.shared;

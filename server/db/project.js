@@ -6,10 +6,14 @@ function decode (doc) {
         name: doc.name,
         user: doc.owner,
         desc: doc.desc,
-        shared: doc.shared || []
+        shared: doc.shared || [],
+        public: doc.public || false
     };
 }
 
+function template (owner, name) {
+    return { _type: 'project', owner, name };
+}
 
 exports.new = function (user, project, desc) {
     var doc = {
@@ -17,17 +21,14 @@ exports.new = function (user, project, desc) {
         owner: user,
         name: project,
         desc,
-        shared: []
+        shared: [],
+        public: false
     };
     return db.insert(doc);
 };
 
 exports.setdesc = function (user, project, desc) {
-    var match = {
-        _type: 'project',
-        owner: user,
-        name: project
-    };
+    var match = template(user, project);
     return db.update(match, {$set: {desc}});
 };
 
@@ -44,11 +45,7 @@ exports.remove = function (user, project) {
 };
 
 exports.get = function (user, project) {
-    var match = {
-        _type: 'project',
-        owner: user,
-        name: project
-    };
+    var match = template(user, project);
     return db.findOne(match).then(decode);
 };
 
@@ -67,32 +64,34 @@ exports.all = function (user) {
     };
     var shared = {
         _type: 'project',
+        $not: { owner: user },
         shared: user
     };
-    return Promise.all([db.findAll(own), db.findAll(shared)])
+    var publics = {
+        _type: 'project',
+        public: true,
+        $and: [
+            {$not: { owner: user }},
+            {$not: { shared: { $elemMatch: user }}}
+        ]
+    };
+    return Promise.all([db.findAll(own), db.findAll(shared), db.findAll(publics)])
     .then(ps => {
         return {
             own: ps[0].map(decode),
-            shared: ps[1].map(decode)
+            shared: ps[1].map(decode),
+            public: ps[2].map(decode)
         };
     });
 };
 
 exports.updateshare = function (user, project, shared) {
-    var match = {
-        _type: 'project',
-        owner: user,
-        name: project
-    };
+    var match = template(user, project);
     return db.update(match, {$set: {shared}});
 };
 
 exports.allmembers = function (user, project) {
-    var match = {
-        _type: 'project',
-        owner: user,
-        name: project
-    };
+    var match = template(user, project);
     return db.findOne(match, {shared: 1})
     .then(p => [user].concat(p.shared));
 };
@@ -115,4 +114,9 @@ exports.restore = function (user, project, docs) {
     return exports.new(user, project, proj.desc)
     .then(() => Promise.all(docs.map(f =>
         file.new(user, project, f.path, f.type))));
+};
+
+exports.setpublic = function (user, project, is_public) {
+    var match = template(user, project);
+    return db.update(match, {$set: {public:is_public}});
 };

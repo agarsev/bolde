@@ -53,6 +53,18 @@ Router.post('/update', function (req, res) {
     });
 });
 
+Router.post('/publish', function (req, res) {
+    var user = req.body.user,
+        project = req.body.project,
+        make_public = req.body.make_public;
+    db.project.setpublic(user,project,make_public)
+    .then(() => res.send({ok: true, data: {}}))
+    .catch(error => {
+        log.error(error);
+        res.send({ok: false, error:error});
+    });
+});
+
 Router.post('/delete', function (req, res) {
     var user = req.body.user,
         project = req.body.project,

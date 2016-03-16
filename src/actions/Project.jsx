@@ -62,6 +62,17 @@ exports.update_description = function (user, name, desc) {
     .catch(error => api.log(error));
 };
 
+exports.publish = function (project, make_public) {
+    var user = window.UserStore.getUser();
+    api.call('api/project/publish', { user, project, make_public })
+    .then(() => {
+        window.Dispatcher.dispatch({
+            actionType: 'project.publish',
+            user, project, make_public
+        });
+    }).catch(error => api.log(error));
+};
+
 exports.select_dir = function (user, project, path) {
     window.Dispatcher.dispatch({
         actionType: 'project.select_dir',
