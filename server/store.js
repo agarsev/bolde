@@ -41,4 +41,8 @@ exports.copyFile = function (from, to) {
     return fs.copy(uf+from, uf+to);
 };
 
+exports.move = function (from, to) {
+    return fs.move(uf+from, uf+to);
+};
+
 exports.realpath = path => uf+path;

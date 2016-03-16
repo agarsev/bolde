@@ -1,6 +1,7 @@
 var express = require('express'),
     log4js = require('log4js'),
-    AdmZip = require('adm-zip');
+    AdmZip = require('adm-zip'),
+    multer = require('multer');
 
 var store = require('./store');
 var notify = require('./user').notify;
@@ -108,7 +109,7 @@ Router.post('/share', function (req, res) {
 
 // monkey-patching AdmZip
 function newZip () {
-    zip = new AdmZip();
+    zip = new AdmZip(...arguments);
     zip._monkey_addFile = zip.addFile;
     zip.addFile = function(filename, data, comment) {
         zip._monkey_addFile(filename, data, comment, 0o666 << 16);
@@ -129,6 +130,30 @@ Router.get('/backup/:user/:project', function (req, res) {
         res.contentType('zip');
         res.write(buf);
         res.end();
+    });
+});
+
+var upload = multer({storage:multer.memoryStorage()});
+
+Router.post('/restore', upload.single('zip'), function (req, res) {
+    var user = req.body.user,
+        project = req.body.project,
+        path = user+'/'+project,
+        zip = newZip(req.file.buffer)
+        docs = null;
+    var pr = new Promise(function (resolve, reject) {
+        zip.extractAllTo(store.realpath(path+'.tmp'), true);
+        resolve(JSON.parse(zip.readAsText('project.db')));
+    }).then(docs => db.project.restore(user, project, docs))
+    .then(() => store.move(path+'.tmp/files',path))
+    .then(() => store.deleteFile(path+'.tmp'))
+    .then(() => db.project.get(user, project))
+    .then(proj => {
+        log.info('Restored project '+user+'/'+project);
+        res.send({ok: true, data: proj});
+    }).catch(error => {
+        log.error(error);
+        res.send({ok: false, error});
     });
 });
 

@@ -106,3 +106,13 @@ exports.share = function (user, project, shared) {
         });
     }).catch(error => api.log(error));
 }
+
+exports.restore = function (formdata) {
+    api.call('api/project/restore', formdata, true)
+    .then(function (proj) {
+        window.Dispatcher.dispatch({
+            actionType: 'project.new',
+            project: proj
+        });
+    }).catch(error => api.log(error));
+}

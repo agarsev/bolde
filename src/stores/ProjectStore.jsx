@@ -59,7 +59,7 @@ class ProjectStore extends EventEmitter {
                     this.emit('changed');
                     break;
                 case 'project.update_description':
-                    if (this.projects[a.user] && this.projects[a.user][a.project]) {
+                    if (this.projects[a.user] && this.projects[a.user][a.name]) {
                         this.projects[a.user][a.name].desc = a.desc;
                         this.emit(`changed:${a.user}/${a.name}`);
                     }

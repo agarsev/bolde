@@ -17,12 +17,18 @@ function syslog (log, level) {
 exports.log = syslog;
 
 var refresh_msg = false;
-exports.call = function (url, data) {
+exports.call = function (url, data, ismultipart) {
     loading(true);
     return new Promise(function (resolve, reject) {
-        var client = new XMLHttpRequest();
+        var client = new XMLHttpRequest(),
+            tosend;
         client.open('POST', url);
-        client.setRequestHeader('Content-type', 'application/json');
+        if (ismultipart) {
+            tosend = data;
+        } else {
+            tosend = JSON.stringify(data);
+            client.setRequestHeader('Content-type', 'application/json');
+        }
         client.onload = function () {
             if (this.status == 200) {
                 var res = JSON.parse(this.response);
@@ -50,6 +56,6 @@ exports.call = function (url, data) {
             }
             loading(false);
         };
-        client.send(JSON.stringify(data));
+        client.send(tosend);
     });
 };

@@ -101,11 +101,18 @@ exports.backup = function (user, project) {
     var proj;
     return exports.get(user, project)
     .then(p => {
-        proj = { name: p.name, desc: p.desc };
+        proj = { desc: p.desc };
         return file.all(user, project);
     }).then(files =>
         [proj].concat(files.map(f => {
             return { path: f.path, type: f.type };
         }))
     );
+};
+
+exports.restore = function (user, project, docs) {
+    var proj = docs.shift();
+    return exports.new(user, project, proj.desc)
+    .then(() => Promise.all(docs.map(f =>
+        file.new(user, project, f.path, f.type))));
 };
