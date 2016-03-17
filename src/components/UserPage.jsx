@@ -64,6 +64,7 @@ class UserPage extends React.Component {
             var error = us.getLoginError();
             return <div className="paper">
                 <p>Please log in or register to access BOLDE</p>
+                <p><button onClick={() => Actions.user.openPList()}>Browse public projects</button></p>
                 <h3>Login</h3>
                 <LoginForm />
                 <h3>Register</h3>

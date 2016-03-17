@@ -119,6 +119,17 @@ Router.post('/share', function (req, res) {
     });
 });
 
+Router.post('/all', function (req, res) {
+    var user = req.body.user;
+    db.project.all(user)
+    .then(projects => {
+        res.send({ok: true, data: projects });
+    }).catch(error => {
+        log.error(error);
+        res.send({ok: false, error:error});
+    });
+});
+
 // monkey-patching AdmZip
 function newZip () {
     zip = new AdmZip(...arguments);

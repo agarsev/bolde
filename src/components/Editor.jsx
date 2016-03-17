@@ -26,7 +26,7 @@ class Editor extends React.Component {
         }]);
         editor.getSession().setUseWrapMode(true);
         var settings = window.UserStore.getSettings();
-        if (!!settings.editor && settings.editor != "default") {
+        if (settings && !!settings.editor && settings.editor != "default") {
             editor.setKeyboardHandler("ace/keyboard/"+settings.editor);
         }
         editor.focus();

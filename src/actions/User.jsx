@@ -85,5 +85,9 @@ exports.clearConversation = function (to, subject) {
 };
 
 exports.openPList = function () {
-    window.Dispatcher.dispatch({ actionType: 'user.open_plist' });
-}
+    var user = window.UserStore.getUser();
+    api.call('api/project/all', {user})
+    .then(projects => window.Dispatcher.dispatch({
+        actionType: 'user.open_plist', user, projects
+    })).catch(api.log);
+};

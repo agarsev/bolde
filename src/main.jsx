@@ -46,8 +46,10 @@ var welcome = fs.readFileSync('config/welcome.md', 'utf8');
 
 Actions.tab.new_msg('Welcome', welcome);
 Actions.tab.open('_UserTab', 'Anonymous User', <UserPage />, 2, () => {
-    Actions.prompt(undefined, 'Do you want to log out?')
-         .then(() => Actions.user.logout());
+    if (window.UserStore.getUser()) {
+        Actions.prompt(undefined, 'Do you want to log out?')
+             .then(() => Actions.user.logout());
+    }
     return false;
 });
 

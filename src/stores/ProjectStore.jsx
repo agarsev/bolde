@@ -11,17 +11,21 @@ class ProjectStore extends EventEmitter {
         this.dispatchToken = window.Dispatcher.register(a => {
             switch (a.actionType) {
                 case 'user.login':
-                    this.projects = {[a.user]:{}};
-                    a.projects.own.forEach(p => {
-                        this.projects[a.user][p.name] = p;
-                    });
-                    a.projects.shared.forEach(p => {
-                        if (this.projects[p.user]===undefined) {
-                            this.projects[p.user] = {[p.name]: p};
-                        } else {
-                            this.projects[p.user][p.name] = p;
-                        }
-                    });
+                case 'user.open_plist':
+                    this.projects = {};
+                    if (a.user) {
+                        this.projects[a.user] = {};
+                        a.projects.own.forEach(p => {
+                            this.projects[a.user][p.name] = p;
+                        });
+                        a.projects.shared.forEach(p => {
+                            if (this.projects[p.user]===undefined) {
+                                this.projects[p.user] = {[p.name]: p};
+                            } else {
+                                this.projects[p.user][p.name] = p;
+                            }
+                        });
+                    }
                     a.projects.public.forEach(p => {
                         p.readonly = true;
                         if (this.projects[p.user]===undefined) {

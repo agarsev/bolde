@@ -19,10 +19,12 @@ class ProjectSnippet extends React.Component {
         var mode = this.props.mode;
         var desc = p.desc || 'Click edit to add a description...';
         var menu = {
-            'Open': () => Actions.project.open(p.user, p.name),
-            'Clone': () => Actions.prompt({
-                    model: t.struct({ name: t.Str })
-                }).then(data => Actions.project.clone(p.user, p.name, data.name))
+            'Open': () => Actions.project.open(p.user, p.name)
+        };
+        if (window.UserStore.getUser()) {
+            menu.Clone = () => Actions.prompt({
+                model: t.struct({ name: t.Str })
+            }).then(data => Actions.project.clone(p.user, p.name, data.name))
         };
         if (mode == "owner") {
             menu.Edit = {
