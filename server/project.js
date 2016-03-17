@@ -131,8 +131,8 @@ Router.post('/all', function (req, res) {
 });
 
 // monkey-patching AdmZip
-function newZip () {
-    zip = new AdmZip(...arguments);
+function newZip (buffer) {
+    zip = new AdmZip(buffer);
     zip._monkey_addFile = zip.addFile;
     zip.addFile = function(filename, data, comment) {
         zip._monkey_addFile(filename, data, comment, 0o666 << 16);
