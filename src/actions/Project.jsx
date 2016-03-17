@@ -52,7 +52,7 @@ exports.new = function (name) {
     .then(function() {
         window.Dispatcher.dispatch({
             actionType: 'project.new',
-            project: { user, name }
+            project: { user, name, shared: [] }
         });
     }).catch(error => api.log(error));
 };

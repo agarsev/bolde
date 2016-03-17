@@ -32,7 +32,10 @@ Router.post('/login', function (req, res) {
         if (ssestreams[username] === undefined) {
             var stream = SSE(res);
             ssestreams[username] = stream;
-            Router.get('/sse/'+username, stream.handler());
+            Router.get('/sse/'+username, function(req, res, next) {
+                res.setHeader("X-Accel-Buffering", "no");
+                next();
+            }, stream.handler());
         }
         res_data = {
             token:token,
