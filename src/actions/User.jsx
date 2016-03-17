@@ -1,10 +1,12 @@
 "use strict";
 
 var api = require('./api');
+var progress = require('./progress');
 
 var sses = {};
 
 var login = function (user, password) {
+    var prg = progress.start('Logging in '+user);
     api.call('api/user/login', {user:user, password:password})
     .then(function(data){
         window.Dispatcher.dispatch({
@@ -21,11 +23,13 @@ var login = function (user, password) {
             window.Dispatcher.dispatch(data);
         };
         sses[user] = sse;
+        progress.stop(prg);
     }).catch(function(error){
         window.Dispatcher.dispatch({
             actionType: 'user.loginFail',
             error
         });
+        progress.stop(prg);
     });
 };
 exports.login = login;
@@ -51,12 +55,17 @@ exports.logout = function () {
 };
 
 exports.changeSettings = function (settings) {
+    var prg = progress.start('Changing settings');
     api.call('api/user/settings', {user:window.UserStore.getUser(), settings})
     .then(function(data) {
         window.Dispatcher.dispatch({
             actionType: 'user.changeSettings',
             settings
         });
+        progress.stop(prg);
+    }).catch(error => {
+        progress.stop(prg);
+        api.log(error);
     });
 };
 
@@ -85,9 +94,16 @@ exports.clearConversation = function (to, subject) {
 };
 
 exports.openPList = function () {
+    var prg = progress.start('Loading projects');
     var user = window.UserStore.getUser();
     api.call('api/project/all', {user})
-    .then(projects => window.Dispatcher.dispatch({
-        actionType: 'user.open_plist', user, projects
-    })).catch(api.log);
+    .then(projects => {
+        window.Dispatcher.dispatch({
+            actionType: 'user.open_plist', user, projects
+        });
+        progress.stop(prg);
+    }).catch(error => {
+        progress.stop(prg);
+        api.log(error);
+    });
 };

@@ -3,6 +3,7 @@
 var yaml = require('js-yaml');
 
 var api = require('./api');
+var progress = require('./progress');
 
 var load = require('./File').load;
 var Pipeline = require('./Pipeline');
@@ -89,7 +90,7 @@ exports.select_file = function (user, project, path) {
 
 exports.run = function (user, project) {
     var conf;
-    api.loading(true);
+    var prg = progress.start('Running '+project);
     load(user, project, 'run.yml')
     .then (function () {
         conf = yaml.safeLoad(window.FileStore.getContents(user, project, 'run.yml'));
@@ -101,29 +102,40 @@ exports.run = function (user, project) {
                 });
             }
         }));
-        pro.chain(conf.connect, pipeline => Pipeline.run(project, pipeline));
-    }).catch (function (error) {
-        api.loading(false);
+        return pro.chain(conf.connect, pipeline => Pipeline.run(project, pipeline));
+    }).then(() => progress.stop(prg))
+    .catch (function (error) {
+        progress.stop(prg);
         api.log(error);
     });
 };
 
 exports.share = function (user, project, shared) {
+    var prg = progress.start('Sharing '+project);
     api.call('api/project/share', { user, project, shared })
     .then(function (data) {
         window.Dispatcher.dispatch({
             actionType: 'project.update_share',
             user, project, shared
         });
-    }).catch(error => api.log(error));
+        progress.stop(prg);
+    }).catch(error => {
+        progress.stop(prg);
+        api.log(error);
+    });
 }
 
 exports.restore = function (formdata) {
+    var prg = progress.start('Restoring project');
     api.call('api/project/restore', formdata, true)
     .then(function (proj) {
         window.Dispatcher.dispatch({
             actionType: 'project.new',
             project: proj
         });
-    }).catch(error => api.log(error));
+        progress.stop(prg);
+    }).catch(error => {
+        progress.stop(prg);
+        api.log(error);
+    });
 }

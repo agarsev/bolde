@@ -1,6 +1,7 @@
 "use strict";
 
 var api = require('./api');
+var progress = require('./progress');
 
 var respath = require('../utils/path');
 
@@ -15,9 +16,9 @@ var load = function (user, project, path) {
         if (window.FileStore.isLoaded(user, project, path)) {
             resolve(window.FileStore.getFile(user, project, path).type);
         } else {
+            var prg = progress.start('Load '+path);
             api.call('api/sharejs/open/', {user,project,path})
             .then(function(data) {
-                api.loading(true);
 
                 window.BCSocket = require("share/node_modules/browserchannel/dist/bcsocket.js").BCSocket;
                 require("share/webclient/share.js");
@@ -36,8 +37,11 @@ var load = function (user, project, path) {
                             });
                             resolve(data.type);
                         }
-                        api.loading(false);
+                        progress.stop(prg);
                     });
+            }).catch(error => {
+                api.syslog(error);
+                progress.stop(prg);
             });
         }
     });
@@ -64,7 +68,13 @@ exports.close = function (user, project, path) {
 };
 
 exports.new = function(user, project, path, type) {
-    return api.call('api/file/new', {user, project, path, type });
+    var prg = progress.start('New file '+path);
+    return api.call('api/file/new', {user, project, path, type })
+    .then(() => progress.stop(prg))
+    .catch(error => {
+        api.syslog(error);
+        progress.stop(prg);
+    });
 };
 
 exports.new_at_selected = function (user, project, filename, type) {
@@ -75,7 +85,13 @@ exports.new_at_selected = function (user, project, filename, type) {
 };
 
 exports.delete = function (user, project, path) {
-    return api.call('api/file/delete', { user, project, path });
+    var prg = progress.start('Delete '+path);
+    return api.call('api/file/delete', { user, project, path })
+    .then(() => progress.stop(prg))
+    .catch(error => {
+        api.syslog(error);
+        progress.stop(prg);
+    });
 };
 
 exports.put = function (fullpath, content) {
@@ -99,9 +115,15 @@ exports.copy = function (user, project, file) {
 };
 
 exports.paste_at_selected = function (user, project, path) {
+    var prg = progress.start('Copy '+path);
     var dir = window.ProjectStore.get(user, project).cwd;
     if (!dir) { dir = ''; }
     else { dir += '/'; }
     var fullpath = user+'/'+project+'/'+dir+path;
-    return api.call('api/file/copy', {from: copyPath, to: fullpath});
+    return api.call('api/file/copy', {from: copyPath, to: fullpath})
+    .then(() => progress.stop(prg))
+    .catch(error => {
+        api.syslog(error);
+        progress.stop(prg);
+    });
 };

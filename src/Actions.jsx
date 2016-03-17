@@ -8,6 +8,7 @@ exports.file = require('./actions/File');
 exports.engine = require('./actions/Engine');
 exports.treebank = require('./actions/Treebank');
 exports.user = require('./actions/User');
+exports.progress = require('./actions/progress');
 
 exports.clearLogs = function (name) {
     window.Dispatcher.dispatch({

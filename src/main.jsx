@@ -15,6 +15,7 @@ var ProjectStore = require('stores/ProjectStore');
 var FileStore = require('stores/FileStore');
 var LogStore = require('stores/LogStore');
 var TreebankStore = require('stores/TreebankStore');
+var ProgressBar = require('components/ProgressBar');
 var Prompt = require('components/Prompt');
 
 var Actions = require('Actions');
@@ -31,6 +32,8 @@ window.LogStore = new LogStore();
 window.TreebankStore = new TreebankStore();
 
 React.render(<TabPanel />, document.getElementById('TabPanel'));
+React.render(<ProgressBar />, document.getElementById('header'));
+React.render(<ProgressBar />, document.getElementById('footer'));
 
 window.Dispatcher.register(a => { switch(a.actionType) {
     case 'prompt.in':

@@ -1,10 +1,5 @@
 "use strict";
 
-function loading (yes) {
-    window.Dispatcher.dispatch({ actionType: 'loading.'+(yes?'start':'end') });
-};
-exports.loading = loading;
-
 function syslog (log, level) {
     if (level === undefined) { level = "ERROR"; }
     window.Dispatcher.dispatch({
@@ -18,7 +13,6 @@ exports.log = syslog;
 
 var refresh_msg = false;
 exports.call = function (url, data, ismultipart) {
-    loading(true);
     return new Promise(function (resolve, reject) {
         var client = new XMLHttpRequest(),
             tosend;
@@ -37,7 +31,6 @@ exports.call = function (url, data, ismultipart) {
             } else {
                 reject('API call to '+url+': response '+this.status);
             }
-            loading(false);
         };
         client.onerror = function (e) {
             if (this.statusText == "") {
@@ -54,7 +47,6 @@ exports.call = function (url, data, ismultipart) {
             } else {
                 reject(this.statusText);
             }
-            loading(false);
         };
         client.send(tosend);
     });

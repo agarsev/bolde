@@ -108,3 +108,19 @@ body {
         }
     }
 }
+
+@keyframes loadanim {
+    0% {
+        background-color: @light;
+    }
+    100% {
+        background-color: @blue;
+    }
+}
+
+header .loading, footer .loading {
+    display: block;
+    height: 100%;
+    animation: loadanim 0.5s infinite linear;
+    animation-direction: alternate;
+}
