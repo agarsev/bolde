@@ -21,14 +21,19 @@ class ProjectView extends React.Component {
 
     render () {
         var p = window.ProjectStore.get(this.props.user, this.props.project);
-        return (<div className="projectView">
-            <span>
-                <button title="copy" onClick={this.copySelected.bind(this)}>c</button>
-                <button title="paste" onClick={this.paste.bind(this)}>p</button>
-                <button title="new" onClick={this.newFile.bind(this)}>+</button>
+        var tools = [
+            <button title="copy" onClick={this.copySelected.bind(this)}>c</button>,
+            <button title="run" onClick={this.run.bind(this)}>▶</button>
+        ];
+        if (!p.readonly) {
+            tools.splice(1, 0,
+                <button title="paste" onClick={this.paste.bind(this)}>p</button>,
+                <button title="new" onClick={this.newFile.bind(this)}>+</button>,
                 <button title="delete" onClick={this.deleteSelected.bind(this)}>x</button>
-                <button title="run" onClick={this.run.bind(this)}>▶</button>
-            </span>
+           );
+        }
+        return (<div className="projectView">
+            <span>{tools}</span>
             <span>
                 <DirTree files={p.files} root="true"
                     selectFile={this.selectFile.bind(this)}

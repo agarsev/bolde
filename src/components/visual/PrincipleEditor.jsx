@@ -68,11 +68,11 @@ class PrincipleEditor extends React.Component {
         var doc = this.props.doc;
         var a = doc.at('a').get();
         var c = doc.at('c').get();
-        return <Row ref="row" title={doc.at('name').get()} initShown={false} collapsable={true} actions={{
+        return <Row ref="row" title={doc.at('name').get()} initShown={false} collapsable={true} actions={this.props.editable?{
             edit: this.editToggle.bind(this),
             name: this.changeName.bind(this),
             remove: this.props.rm
-            }}><span className="borjes">
+            }:null}><span className="borjes">
             <BorjesReact x={a} cpbuffer={this.props.cpbuffer} update={this.update.bind(this, 'a')} opts={{editable:this.state.editable, signature:this.props.sig}}/>
             {"⇒"}
             <BorjesReact x={c} cpbuffer={this.props.cpbuffer} update={this.update.bind(this, 'c')} opts={{editable:this.state.editable, signature:this.props.sig}}/>

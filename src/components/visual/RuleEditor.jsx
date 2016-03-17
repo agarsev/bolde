@@ -78,11 +78,11 @@ class RuleEditor extends React.Component {
     }
 
     render () {
-        return <Row ref="row" title={this.props.doc.at('name').get()} initShown={false} collapsable={true} actions={{
+        return <Row ref="row" title={this.props.doc.at('name').get()} initShown={false} collapsable={true} actions={this.props.editable?{
             edit: this.editToggle.bind(this),
             name: this.changeName.bind(this),
             remove: this.props.rm
-            }}>
+            }:null}>
             <BorjesReact x={this.state.tree} cpbuffer={this.props.cpbuffer} update={this.update.bind(this)} opts={{editable:this.state.editable, signature:this.props.sig}}/>
         </Row>;
     }

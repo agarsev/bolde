@@ -51,7 +51,7 @@ class FileStore extends EventEmitter {
                     doc.del(0, doc.getText().length);
                     doc.insert(0, a.content);
                     break;
-                case 'logout':
+                case 'user.logout':
                     for (path in this.files) {
                         this.files[path].doc.close();
                     }
