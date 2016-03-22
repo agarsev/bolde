@@ -26,6 +26,10 @@ Router.post('/files', function (req, res) {
 Router.post('/new', function (req, res) {
     var user = req.body.user,
         project = req.body.project;
+    if (project.includes('/')) {
+        res.send({ok: false, error:"Invalid character / in name: "+project});
+        return;
+    }
     store.newDir(user+'/'+project)
     .then(() => db.project.new(user,project,''))
     .then(() => {
@@ -88,6 +92,10 @@ Router.post('/delete', function (req, res) {
 Router.post('/clone', function (req, res) {
     var from = req.body.from,
         to = req.body.to;
+    if (to.project.includes('/')) {
+        res.send({ok: false, error:"Invalid character / in name: "+to.project});
+        return;
+    }
     store.copyFolder(from.user+'/'+from.project,
                      to.user+'/'+to.project)
     .then(() => db.project.copy(from.user, from.project,
@@ -149,7 +157,7 @@ Router.get('/backup/:user/:project', function (req, res) {
     .then(docs => {
         zip.addFile('project.db', new Buffer(JSON.stringify(docs)));
         var buf = zip.toBuffer();
-        res.setHeader('Content-disposition', 'attachment; filename='+project+'.zip');
+        res.setHeader('Content-disposition', 'attachment; filename='+project.replace(' ','_')+'.zip');
         res.contentType('zip');
         res.write(buf);
         res.end();

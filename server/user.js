@@ -54,8 +54,10 @@ Router.post('/login', function (req, res) {
 Router.post('/new', function (req, res) {
     var username = req.body.user,
         password = req.body.password;
-    if (!username || !password || username=='BOLDE') {
+    if (!username || !password) {
         res.send({ok:false, error: "Missing username or password"});
+    } else if (username.includes('/') || username=='BOLDE') {
+        res.send({ok:false, error: "Invalid username "+username});
     } else {
         var salt = crypto.randomBytes(16).toString('hex');
         var salted = password+salt;

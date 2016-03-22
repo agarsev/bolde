@@ -61,7 +61,7 @@ class ProjectSnippet extends React.Component {
             {mode!=="read" && p.public?
                 <p><i>This project is public</i></p>:null}
             {mode!=="read"?
-                <p><a href={`api/project/backup/${p.user}/${p.name}`}>Download backup</a></p>:null}
+                <p><a target="_blank" href={`api/project/backup/${p.user}/${p.name}`}>Download backup</a></p>:null}
         </Row>;
     }
 

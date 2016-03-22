@@ -56,7 +56,8 @@ class VisualEditor extends React.Component {
     }
 
     updateSignature (x) {
-        this.state.doc.at('global').at('signature').set(x);
+        var doc = this.state.file.doc;
+        doc.at('global').at('signature').set(x);
     }
 
     render () {
