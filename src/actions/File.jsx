@@ -40,7 +40,7 @@ var load = function (user, project, path) {
                         progress.stop(prg);
                     });
             }).catch(error => {
-                api.syslog(error);
+                api.log(error);
                 progress.stop(prg);
             });
         }
@@ -72,7 +72,7 @@ exports.new = function(user, project, path, type) {
     return api.call('api/file/new', {user, project, path, type })
     .then(() => progress.stop(prg))
     .catch(error => {
-        api.syslog(error);
+        api.log(error);
         progress.stop(prg);
     });
 };
@@ -89,7 +89,7 @@ exports.delete = function (user, project, path) {
     return api.call('api/file/delete', { user, project, path })
     .then(() => progress.stop(prg))
     .catch(error => {
-        api.syslog(error);
+        api.log(error);
         progress.stop(prg);
     });
 };
@@ -123,7 +123,7 @@ exports.paste_at_selected = function (user, project, path) {
     return api.call('api/file/copy', {from: copyPath, to: fullpath})
     .then(() => progress.stop(prg))
     .catch(error => {
-        api.syslog(error);
+        api.log(error);
         progress.stop(prg);
     });
 };
