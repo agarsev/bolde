@@ -12,7 +12,7 @@ class TabPanel extends React.Component {
     }
 
     tabMouseDown (id) {
-        var centralrect = React.findDOMNode(this.refs.central).getBoundingClientRect();
+        var centralrect = this.central.getBoundingClientRect();
         document.onmousemove = function(e) {
             if (e.clientX<centralrect.left) {
                 Actions.tab.move_to_panel(id, 0);
@@ -78,17 +78,17 @@ class TabPanel extends React.Component {
         });
         return (
             <main>
-                <section ref="left">
+                <section ref={d=>this.left=d}>
                     {navs[0]}
                     {conts[0]}
                 </section>
-                <Gutter dir="right" getTarget={() => React.findDOMNode(this.refs['left'])} />
-                <section ref="central" style={{flex:"1"}} >
+                <Gutter dir="right" getTarget={() => this.left} />
+                <section ref={d=>this.central=d} style={{flex:"1"}} >
                     {navs[1]}
                     {conts[1]}
                 </section>
-                <Gutter dir="left" getTarget={() => React.findDOMNode(this.refs['right'])} />
-                <section ref="right">
+                <Gutter dir="left" getTarget={() => this.right} />
+                <section ref={d=>this.right=d}>
                     {navs[2]}
                     {conts[2]}
                 </section>

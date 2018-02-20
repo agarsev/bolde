@@ -9,8 +9,8 @@ class LoginForm extends React.Component {
     render () {
         var register = this.props.action == 'register';
         return (<form action="#" onSubmit={this.submitLogin.bind(this)}>
-                    <input ref="user" placeholder="username" name="user" type="text" />
-                    <input ref="password" placeholder="password" name="password" type="password" />
+                    <input ref={d => this.username=d} placeholder="username" name="user" type="text" />
+                    <input ref={d => this.password=d} placeholder="password" name="password" type="password" />
                     <button formAction="submit">{register?"Register":"Login"}</button>
                 </form>);
     }
@@ -18,8 +18,8 @@ class LoginForm extends React.Component {
     submitLogin (e) {
         e.preventDefault();
         e.stopPropagation();
-        var user = React.findDOMNode(this.refs.user).value;
-        var pass = React.findDOMNode(this.refs.password).value;
+        var user = this.username.value;
+        var pass = this.password.value;
         if (this.props.action == 'register') {
             Actions.user.register(user, pass);
         } else {

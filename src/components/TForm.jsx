@@ -9,7 +9,7 @@ class TForm extends React.Component {
         if (!data.value) { data.value = {}; }
         return (<div className="TForm">
             {this.props.title?<h1>{this.props.title}</h1>:null}
-            <t.form.Form ref="form"
+            <t.form.Form ref={d=>this.form=d}
                 type={data.model}
                 options={data.options}
                 value={data.value}
@@ -19,7 +19,7 @@ class TForm extends React.Component {
 
     formChange () {
         if (this.props.onChange===undefined) { return; }
-        var value = this.refs.form.getValue();
+        var value = this.form.getValue();
         if (value != null) {
             this.props.onChange(value);
         } else {
@@ -28,11 +28,11 @@ class TForm extends React.Component {
     }
 
     getValue () {
-        return this.refs.form.getValue();
+        return this.form.getValue();
     }
 
     focus () {
-        React.findDOMNode(this.refs.form).querySelector('input').focus();
+        this.form.querySelector('input').focus();
     }
 
 }

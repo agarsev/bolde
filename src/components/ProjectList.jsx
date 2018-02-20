@@ -52,14 +52,14 @@ class ProjectList extends React.Component {
                 }).then(function (data) {
                     Actions.project.new(data.name);
                 }).catch(() => {})}>New project</button></p>
-                <div><form style={{display:'inline'}} ref="restorefile">
+                    <div><form style={{display:'inline'}} ref={d=>this.restorefile=d}>
                         <input name="zip" type="file" />
                     </form>
                     <button onClick={() => Actions.prompt({
                             model: t.struct({ name: t.Str }),
                             options: { label: 'New project name', auto: 'none' }
                         }).then(data => {
-                            var form = React.findDOMNode(this.refs.restorefile);
+                            var form = this.restorefile;
                             var FD = new FormData(form);
                             FD.append('user', window.UserStore.getUser());
                             FD.append('project', data.name);

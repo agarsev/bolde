@@ -6,6 +6,7 @@ require('styles/dark');
 var fs = require('fs');
 
 var React = require('react');
+var ReactDOM = require('react-dom');
 
 var UserStore = require('stores/UserStore');
 var UserPage = require('components/UserPage');
@@ -31,17 +32,17 @@ window.FileStore = new FileStore();
 window.LogStore = new LogStore();
 window.TreebankStore = new TreebankStore();
 
-React.render(<TabPanel />, document.getElementById('TabPanel'));
-React.render(<ProgressBar />, document.getElementById('header'));
-React.render(<ProgressBar />, document.getElementById('footer'));
+ReactDOM.render(<TabPanel />, document.getElementById('TabPanel'));
+ReactDOM.render(<ProgressBar />, document.getElementById('header'));
+ReactDOM.render(<ProgressBar />, document.getElementById('footer'));
 
 window.Dispatcher.register(a => { switch(a.actionType) {
     case 'prompt.in':
-        React.render(<Prompt form={a.form} msg={a.msg} resolve={a.resolve} reject={a.reject} />,
+        ReactDOM.render(<Prompt form={a.form} msg={a.msg} resolve={a.resolve} reject={a.reject} />,
                      document.getElementById('Prompt'));
         break;
     case 'prompt.out':
-        React.unmountComponentAtNode(document.getElementById('Prompt'));
+        ReactDOM.unmountComponentAtNode(document.getElementById('Prompt'));
         break;
 }});
 

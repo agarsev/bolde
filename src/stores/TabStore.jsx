@@ -113,7 +113,7 @@ class TabStore extends EventEmitter {
     }
 
     openMessage (title, text, links) {
-        this.addTab('message_'+title, title, { node: Components.MDText(text, links) });
+        this.addTab('message_'+title, title, Components.MDText(text, links));
     }
 
     addTab (id, title, node, panel, closeCallback) {

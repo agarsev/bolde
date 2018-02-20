@@ -66,7 +66,7 @@ class ParadigmEditor extends React.Component {
     }
 
     open () {
-        this.refs['row'].open();
+        this.row.open();
     }
 
     changeName (e) {
@@ -81,7 +81,7 @@ class ParadigmEditor extends React.Component {
 
     add () {
         var doc = this.props.doc;
-        var word = React.findDOMNode(this.refs.addLex).value;
+        var word = this.addLex.value;
         var nparams = doc.at('nparams').get();
         if (word.length>0) {
             var val = [word];
@@ -189,7 +189,7 @@ class ParadigmEditor extends React.Component {
                 </td>);
             }
         }
-        return <Row ref="row" title={doc.at('name').get()} collapsable={true} initShown={false} actions={editable?{
+        return <Row ref={d=>this.row=d} title={doc.at('name').get()} collapsable={true} initShown={false} actions={editable?{
             name: this.changeName.bind(this),
             remove: this.props.rm
             }:null}>
@@ -239,7 +239,7 @@ class ParadigmEditor extends React.Component {
                 </td>:null}
             </tr>)}
             </tbody></table>
-            {editable?<span className="borjes"><input ref="addLex" type="text" /><button onClick={this.add.bind(this)}>+</button></span>:null}
+            {editable?<span className="borjes"><input ref={d=>this.addLex=d} type="text" /><button onClick={this.add.bind(this)}>+</button></span>:null}
         </Row>;
     }
 }

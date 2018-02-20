@@ -12,7 +12,7 @@ class LogView extends React.Component {
     }
 
     componentDidUpdate () {
-        var lw = React.findDOMNode(this.refs.logwindow);
+        var lw = this.logwindow;
         lw.scrollTop = lw.scrollHeight;
     }
 
@@ -45,7 +45,7 @@ class LogView extends React.Component {
             }
         };
         return (<div style={container}><button onClick={this.clear.bind(this)}>Clear</button>
-            <div ref="logwindow" style={messages}>{logs.map((l, i) =>
+            <div ref={d => this.logwindow = d} style={messages}>{logs.map((l, i) =>
                 <div style={styles[l.level]} key={i}>{"["+l.level+"]: "+l.message}</div>
             )}</div>
         </div>);
