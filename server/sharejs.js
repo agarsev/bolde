@@ -65,7 +65,7 @@ exports.close_pad = function (name) {
 var channelurl;
 
 exports.init = function (router, mount, conf) {
-    channelurl = conf.get('server.protocol')+'://localhost:'+conf.get('server.port')+mount+'/channel';
+    channelurl = conf.get('server.protocol')+'://'+conf.get('server.hostname')+':'+conf.get('server.port')+mount+'/channel';
     router.post('/open', bodyParser.json(), function (req, res) {
         res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
         res.header('Expires', '-1');
