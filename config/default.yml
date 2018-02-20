@@ -9,10 +9,16 @@ server:
     path: ''
 log:
     appenders:
-        - type: console
-        - type: file
-          filename: logs/bolde.log
-          maxLogSize: 100000
-          backups: 5
-    levels:
-        '[all]': 'TRACE'
+      console:
+        type: console
+      file:
+        type: file
+        filename: logs/bolde.log
+        maxLogSize: 10000
+        backups: 5
+    categories:
+      default:
+        appenders:
+          - console
+          - file
+        level: TRACE

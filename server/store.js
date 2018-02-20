@@ -1,4 +1,4 @@
-var fs = require('fs-promise'),
+var fs = require('fs-extra'),
     log4js = require('log4js');
 
 var log = log4js.getLogger('store');
