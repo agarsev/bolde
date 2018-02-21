@@ -1,6 +1,6 @@
 {
   "name": "BOLDE",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Borjes Online Linguistics Development Environment",
   "main": "server/app.js",
   "scripts": {
