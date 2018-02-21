@@ -5,7 +5,6 @@ var Bjs = require('borjes');
 var Lattice = Bjs.types.Lattice;
 
 var BorjesReact = require('borjes-react');
-var BorjesProtoLattice = require('borjes-react/dist/BorjesProtoLattice');
 
 var Row = require('./Row');
 
@@ -72,7 +71,7 @@ class VisualEditor extends React.Component {
             <h1>Signature</h1>
             <div style={{paddingRight: '1em'}}>
                 <Row actions={editable?{edit: this.editToggle.bind(this)}:{}}>
-                    <BorjesProtoLattice x={protosig} name='signature' update={this.updateSignature.bind(this)} cpbuffer={this.state.cpbuffer} opts={{editable:this.state.sigEdit}} />
+                    <BorjesReact.ProtoLattice x={protosig} name='signature' update={this.updateSignature.bind(this)} cpbuffer={this.state.cpbuffer} opts={{editable:this.state.sigEdit}} />
                 </Row>
             </div>
             <h1>Rules</h1>

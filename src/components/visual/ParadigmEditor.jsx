@@ -12,7 +12,7 @@ var Anything = Bjs.types.Anything;
 
 var Row = require('../Row');
 
-var BorjesReact = require('borjes-react');
+var BorjesReact = require('borjes-react').Component;
 
 class ParadigmEditor extends React.Component {
 

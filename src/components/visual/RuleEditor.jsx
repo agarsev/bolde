@@ -9,7 +9,7 @@ var FStruct = Bjs.types.FStruct;
 var Variable = Bjs.types.Variable;
 var Rule = Bjs.Rule;
 
-var BorjesReact = require('borjes-react');
+var BorjesReact = require('borjes-react').Component;
 
 var Row = require('../Row');
 var Actions = require('../../Actions');

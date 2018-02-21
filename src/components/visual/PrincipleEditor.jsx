@@ -7,7 +7,7 @@ var World = Bjs.types.World;
 var Principle = Bjs.Principle;
 var FStruct = Bjs.types.FStruct;
 
-var BorjesReact = require('borjes-react');
+var BorjesReact = require('borjes-react').Component;
 
 var Row = require('../Row');
 var Actions = require('../../Actions');
