@@ -8,8 +8,23 @@ An online demo version is available [here](https://garciasevilla.com/bolde/).
 
 BOLDE is meant as an academic work for demonstration, and probably would need a
 lot of work for real use. I upload it here because there seems to be some
-interest. While BOLDE is unsupported, I am available for some consultation and
-especially in case there is interest for further or related development :)
+interest. While BOLDE is not fully supported, I am available for some
+consultation, especially in case there is interest for further or related
+development :)
+
+### Screenshots
+
+Project workflow and HPSG grammars:
+
+![Demo screenshot of BOLDE](screenshots/bolde_demo_screenshot.png)
+
+CFG Parsing results and tree visualizer:
+
+![The results of CFG parsing](screenshots/bolde_treebank_parse.png)
+
+A morphological lexicon, which is a nice visual editor for lexical rules:
+
+![Morphological lexicon screenshot](screenshots/bolde_morphological_lexicon.png)
 
 ## Install
 
