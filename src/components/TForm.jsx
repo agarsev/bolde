@@ -1,4 +1,5 @@
 var React = require('react');
+var ReactDOM = require('react-dom');
 var t = require('tcomb-form');
 
 class TForm extends React.Component {
@@ -32,7 +33,7 @@ class TForm extends React.Component {
     }
 
     focus () {
-        this.form.querySelector('input').focus();
+        ReactDOM.findDOMNode(this.form).querySelector('input').focus();
     }
 
 }

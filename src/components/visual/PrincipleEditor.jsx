@@ -44,14 +44,14 @@ class PrincipleEditor extends React.Component {
     editToggle (e) {
         var ed = this.state.editable;
         if (!ed) {
-            this.refs['row'].open();
+            this._row.open();
         }
         this.setState({editable: !this.state.editable});
         if (e) { e.stopPropagation(); }
     }
 
     open () {
-        this.refs['row'].open();
+        this._row.open();
     }
 
     changeName (e) {
@@ -68,7 +68,7 @@ class PrincipleEditor extends React.Component {
         var doc = this.props.doc;
         var a = doc.at('a').get();
         var c = doc.at('c').get();
-        return <Row ref="row" title={doc.at('name').get()} initShown={false} collapsable={true} actions={this.props.editable?{
+        return <Row ref={d=>this._row=d} title={doc.at('name').get()} initShown={false} collapsable={true} actions={this.props.editable?{
             edit: this.editToggle.bind(this),
             name: this.changeName.bind(this),
             remove: this.props.rm

@@ -1,7 +1,7 @@
 "use strict";
 
 var React = require('react');
-var Borjes = require('borjes-react');
+var Borjes = require('borjes-react').Component;
 
 var Row = require('./Row');
 
