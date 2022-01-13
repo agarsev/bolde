@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+title: "BOLDE: Borjes Online Linguistics Development Environment"
+authors:
+  - family-names: Sevilla
+    given-names: Antonio F. G.
+    orcid: "https://orcid.org/0000-0001-9025-1724"
+abstract: | 
+    This is an prototype online IDE for computational linguistics, centered on
+    grammar development.
+version: 2.2.0
+date-released: "2018-02-21"
+message: |
+    If you use this software, please cite my master thesis, but also don't
+    hesitate to get in touch!
+preferred-citation:
+    title: "An online collaborative platform for the development of empirical grammars"
+    authors:
+      - family-names: Sevilla
+        given-names: Antonio F. G.
+        orcid: "https://orcid.org/0000-0001-9025-1724"
+    type: masterthesis
+    date-released: "2015-10-01"
+    url: "https://garciasevilla.com/2015/10/01/An-online-collaborative-platform-for-the-development-of-empirical-grammars/"
